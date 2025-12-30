@@ -471,6 +471,66 @@ export default function ApiReferencePage() {
           ]}
         />
       </DocsSection>
+
+      {/* MapCircleArea */}
+      <DocsSection title="MapCircleArea">
+        <p>
+          Draws a circular area on the map using a center point and radius.
+          Must be used inside <DocsCode>Map</DocsCode>.
+        </p>
+
+        <DocsPropTable
+          props={[
+            {
+              name: "center",
+              type: "[number, number]",
+              description:
+                "Center of the circle as [longitude, latitude].",
+            },
+            {
+              name: "radiusMeters",
+              type: "number",
+              description:
+                "Radius of the circle in meters.",
+            },
+            {
+              name: "fillColor",
+              type: "string",
+              default: '"#3b82f6"',
+              description:
+                "Fill color of the circle (CSS color value).",
+            },
+            {
+              name: "fillOpacity",
+              type: "number",
+              default: "0.2",
+              description:
+                "Opacity of the circle fill (0 to 1).",
+            },
+            {
+              name: "outlineColor",
+              type: "string",
+              default: '"#3b82f6"',
+              description:
+                "Color of the circle outline.",
+            },
+            {
+              name: "outlineWidth",
+              type: "number",
+              default: "2",
+              description:
+                "Width of the circle outline in pixels.",
+            },
+            {
+              name: "steps",
+              type: "number",
+              default: "64",
+              description:
+                "Number of points used to draw the circle. Higher values make the circle smoother.",
+            },
+          ]}
+        />
+      </DocsSection>
     </DocsLayout>
   );
 }
