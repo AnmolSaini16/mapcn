@@ -5,6 +5,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useTheme } from "next-themes";
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useId,
@@ -181,6 +182,7 @@ function MapMarker({
   const markerRef = useRef<MapLibreGL.Marker | null>(null);
   const markerElementRef = useRef<HTMLDivElement | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const markerOptionsRef = useRef(markerOptions);
 
   useEffect(() => {
     if (!isLoaded || !map) return;
@@ -198,9 +200,13 @@ function MapMarker({
 
     markerRef.current = marker;
 
-    if (onClick) container.addEventListener("click", onClick);
-    if (onMouseEnter) container.addEventListener("mouseenter", onMouseEnter);
-    if (onMouseLeave) container.addEventListener("mouseleave", onMouseLeave);
+    const handleClick = (e: MouseEvent) => onClick?.(e);
+    const handleMouseEnter = (e: MouseEvent) => onMouseEnter?.(e);
+    const handleMouseLeave = (e: MouseEvent) => onMouseLeave?.(e);
+
+    container.addEventListener("click", handleClick);
+    container.addEventListener("mouseenter", handleMouseEnter);
+    container.addEventListener("mouseleave", handleMouseLeave);
 
     const handleDragStart = () => {
       const lngLat = marker.getLngLat();
@@ -215,31 +221,27 @@ function MapMarker({
       onDragEnd?.({ lng: lngLat.lng, lat: lngLat.lat });
     };
 
-    if (draggable) {
-      marker.on("dragstart", handleDragStart);
-      marker.on("drag", handleDrag);
-      marker.on("dragend", handleDragEnd);
-    }
+    marker.on("dragstart", handleDragStart);
+    marker.on("drag", handleDrag);
+    marker.on("dragend", handleDragEnd);
 
     setIsReady(true);
 
     return () => {
-      if (onClick) container.removeEventListener("click", onClick);
-      if (onMouseEnter)
-        container.removeEventListener("mouseenter", onMouseEnter);
-      if (onMouseLeave)
-        container.removeEventListener("mouseleave", onMouseLeave);
-      if (draggable) {
-        marker.off("dragstart", handleDragStart);
-        marker.off("drag", handleDrag);
-        marker.off("dragend", handleDragEnd);
-      }
+      container.removeEventListener("click", handleClick);
+      container.removeEventListener("mouseenter", handleMouseEnter);
+      container.removeEventListener("mouseleave", handleMouseLeave);
+
+      marker.off("dragstart", handleDragStart);
+      marker.off("drag", handleDrag);
+      marker.off("dragend", handleDragEnd);
+
       marker.remove();
       markerRef.current = null;
       markerElementRef.current = null;
       setIsReady(false);
     };
-  }, [isLoaded]);
+  }, [map, isLoaded]);
 
   useEffect(() => {
     markerRef.current?.setLngLat([longitude, latitude]);
@@ -248,6 +250,30 @@ function MapMarker({
   useEffect(() => {
     markerRef.current?.setDraggable(draggable);
   }, [draggable]);
+
+  useEffect(() => {
+    if (!markerRef.current) return;
+    const prev = markerOptionsRef.current;
+
+    if (prev.offset !== markerOptions.offset) {
+      markerRef.current.setOffset(markerOptions.offset ?? [0, 0]);
+    }
+    if (prev.rotation !== markerOptions.rotation) {
+      markerRef.current.setRotation(markerOptions.rotation ?? 0);
+    }
+    if (prev.rotationAlignment !== markerOptions.rotationAlignment) {
+      markerRef.current.setRotationAlignment(
+        markerOptions.rotationAlignment ?? "auto"
+      );
+    }
+    if (prev.pitchAlignment !== markerOptions.pitchAlignment) {
+      markerRef.current.setPitchAlignment(
+        markerOptions.pitchAlignment ?? "auto"
+      );
+    }
+
+    markerOptionsRef.current = markerOptions;
+  }, [markerOptions]);
 
   return (
     <MarkerContext.Provider
@@ -298,6 +324,7 @@ function MarkerPopup({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const popupRef = useRef<MapLibreGL.Popup | null>(null);
   const [mounted, setMounted] = useState(false);
+  const popupOptionsRef = useRef(popupOptions);
 
   useEffect(() => {
     if (!isReady || !markerRef.current) return;
@@ -324,6 +351,20 @@ function MarkerPopup({
       setMounted(false);
     };
   }, [isReady]);
+
+  useEffect(() => {
+    if (!popupRef.current) return;
+    const prev = popupOptionsRef.current;
+
+    if (prev.offset !== popupOptions.offset) {
+      popupRef.current.setOffset(popupOptions.offset ?? 16);
+    }
+    if (prev.maxWidth !== popupOptions.maxWidth && popupOptions.maxWidth) {
+      popupRef.current.setMaxWidth(popupOptions.maxWidth ?? "none");
+    }
+
+    popupOptionsRef.current = popupOptions;
+  }, [popupOptions]);
 
   const handleClose = () => popupRef.current?.remove();
 
@@ -367,6 +408,7 @@ function MarkerTooltip({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const popupRef = useRef<MapLibreGL.Popup | null>(null);
   const [mounted, setMounted] = useState(false);
+  const popupOptionsRef = useRef(popupOptions);
 
   useEffect(() => {
     if (!isReady || !markerRef.current || !markerElementRef.current || !map)
@@ -407,6 +449,20 @@ function MarkerTooltip({
       setMounted(false);
     };
   }, [isReady, map]);
+
+  useEffect(() => {
+    if (!popupRef.current) return;
+    const prev = popupOptionsRef.current;
+
+    if (prev.offset !== popupOptions.offset) {
+      popupRef.current.setOffset(popupOptions.offset ?? 16);
+    }
+    if (prev.maxWidth !== popupOptions.maxWidth && popupOptions.maxWidth) {
+      popupRef.current.setMaxWidth(popupOptions.maxWidth ?? "none");
+    }
+
+    popupOptionsRef.current = popupOptions;
+  }, [popupOptions]);
 
   if (!mounted || !containerRef.current) return null;
 
@@ -517,30 +573,33 @@ function MapControls({
   const { map, isLoaded } = useMap();
   const [waitingForLocation, setWaitingForLocation] = useState(false);
 
-  if (!isLoaded) return null;
+  const handleZoomIn = useCallback(() => {
+    map?.zoomTo(map.getZoom() + 1, { duration: 300 });
+  }, [map]);
 
-  const handleZoomIn = () => map?.zoomTo(map.getZoom() + 1, { duration: 300 });
-  const handleZoomOut = () => map?.zoomTo(map.getZoom() - 1, { duration: 300 });
-  const handleResetBearing = () => map?.resetNorthPitch({ duration: 300 });
+  const handleZoomOut = useCallback(() => {
+    map?.zoomTo(map.getZoom() - 1, { duration: 300 });
+  }, [map]);
 
-  const handleLocate = () => {
+  const handleResetBearing = useCallback(() => {
+    map?.resetNorthPitch({ duration: 300 });
+  }, [map]);
+
+  const handleLocate = useCallback(() => {
     setWaitingForLocation(true);
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        (pos) => {
           const coords = {
-            longitude: position.coords.longitude,
-            latitude: position.coords.latitude,
+            longitude: pos.coords.longitude,
+            latitude: pos.coords.latitude,
           };
           map?.flyTo({
             center: [coords.longitude, coords.latitude],
             zoom: 14,
             duration: 1500,
           });
-          onLocate?.({
-            longitude: coords.longitude,
-            latitude: coords.latitude,
-          });
+          onLocate?.(coords);
           setWaitingForLocation(false);
         },
         (error) => {
@@ -549,9 +608,9 @@ function MapControls({
         }
       );
     }
-  };
+  }, [map, onLocate]);
 
-  const handleFullscreen = () => {
+  const handleFullscreen = useCallback(() => {
     const container = map?.getContainer();
     if (!container) return;
     if (document.fullscreenElement) {
@@ -559,7 +618,9 @@ function MapControls({
     } else {
       container.requestFullscreen();
     }
-  };
+  }, [map]);
+
+  if (!isLoaded) return null;
 
   return (
     <div
@@ -610,7 +671,7 @@ function MapControls({
   );
 }
 
-function CompassButton({ onClick }: { onClick?: () => void }) {
+function CompassButton({ onClick }: { onClick: () => void }) {
   const { isLoaded, map } = useMap();
   const compassRef = useRef<SVGSVGElement>(null);
 
@@ -636,12 +697,7 @@ function CompassButton({ onClick }: { onClick?: () => void }) {
   }, [isLoaded, map]);
 
   return (
-    <button
-      onClick={onClick}
-      aria-label="Reset bearing to north"
-      type="button"
-      className="flex items-center justify-center size-8 hover:bg-accent transition-colors"
-    >
+    <ControlButton onClick={onClick} label="Reset bearing to north">
       <svg
         ref={compassRef}
         viewBox="0 0 24 24"
@@ -653,7 +709,7 @@ function CompassButton({ onClick }: { onClick?: () => void }) {
         <path d="M12 22L16 12H12V22Z" className="fill-muted-foreground/60" />
         <path d="M12 22L8 12H12V22Z" className="fill-muted-foreground/30" />
       </svg>
-    </button>
+    </ControlButton>
   );
 }
 
@@ -677,6 +733,7 @@ function MapPopup({
 }: MapPopupProps) {
   const { map } = useMap();
   const popupRef = useRef<MapLibreGL.Popup | null>(null);
+  const popupOptionsRef = useRef(popupOptions);
 
   const container = useMemo(() => document.createElement("div"), []);
 
@@ -684,7 +741,7 @@ function MapPopup({
     if (!map) return;
 
     const popup = new MapLibreGL.Popup({
-      offset: 12,
+      offset: 16,
       ...popupOptions,
       closeButton: false,
     })
@@ -711,6 +768,20 @@ function MapPopup({
   useEffect(() => {
     popupRef.current?.setLngLat([longitude, latitude]);
   }, [longitude, latitude]);
+
+  useEffect(() => {
+    if (!popupRef.current) return;
+    const prev = popupOptionsRef.current;
+
+    if (prev.offset !== popupOptions.offset) {
+      popupRef.current.setOffset(popupOptions.offset ?? 16);
+    }
+    if (prev.maxWidth !== popupOptions.maxWidth && popupOptions.maxWidth) {
+      popupRef.current.setMaxWidth(popupOptions.maxWidth ?? "none");
+    }
+
+    popupOptionsRef.current = popupOptions;
+  }, [popupOptions]);
 
   const handleClose = () => {
     popupRef.current?.remove();
@@ -761,37 +832,31 @@ function MapRoute({
   const sourceId = `route-source-${id}`;
   const layerId = `route-layer-${id}`;
 
+  // Add source and layer on mount
   useEffect(() => {
-    if (!isLoaded || !map || coordinates.length < 2) return;
+    if (!isLoaded || !map) return;
 
-    const addRoute = () => {
-      if (map.getLayer(layerId)) map.removeLayer(layerId);
-      if (map.getSource(sourceId)) map.removeSource(sourceId);
+    map.addSource(sourceId, {
+      type: "geojson",
+      data: {
+        type: "Feature",
+        properties: {},
+        geometry: { type: "LineString", coordinates: [] },
+      },
+    });
 
-      map.addSource(sourceId, {
-        type: "geojson",
-        data: {
-          type: "Feature",
-          properties: {},
-          geometry: { type: "LineString", coordinates },
-        },
-      });
-
-      map.addLayer({
-        id: layerId,
-        type: "line",
-        source: sourceId,
-        layout: { "line-join": "round", "line-cap": "round" },
-        paint: {
-          "line-color": color,
-          "line-width": width,
-          "line-opacity": opacity,
-          ...(dashArray && { "line-dasharray": dashArray }),
-        },
-      });
-    };
-
-    addRoute();
+    map.addLayer({
+      id: layerId,
+      type: "line",
+      source: sourceId,
+      layout: { "line-join": "round", "line-cap": "round" },
+      paint: {
+        "line-color": color,
+        "line-width": width,
+        "line-opacity": opacity,
+        ...(dashArray && { "line-dasharray": dashArray }),
+      },
+    });
 
     return () => {
       try {
@@ -801,17 +866,32 @@ function MapRoute({
         // ignore
       }
     };
-  }, [
-    isLoaded,
-    map,
-    coordinates,
-    color,
-    width,
-    opacity,
-    dashArray,
-    sourceId,
-    layerId,
-  ]);
+  }, [isLoaded, map, sourceId, layerId]);
+
+  // When coordinates change, update the source data
+  useEffect(() => {
+    if (!isLoaded || !map || coordinates.length < 2) return;
+
+    const source = map.getSource(sourceId) as MapLibreGL.GeoJSONSource;
+    if (source) {
+      source.setData({
+        type: "Feature",
+        properties: {},
+        geometry: { type: "LineString", coordinates },
+      });
+    }
+  }, [isLoaded, map, coordinates, sourceId]);
+
+  useEffect(() => {
+    if (!isLoaded || !map || !map.getLayer(layerId)) return;
+
+    map.setPaintProperty(layerId, "line-color", color);
+    map.setPaintProperty(layerId, "line-width", width);
+    map.setPaintProperty(layerId, "line-opacity", opacity);
+    if (dashArray) {
+      map.setPaintProperty(layerId, "line-dasharray", dashArray);
+    }
+  }, [isLoaded, map, layerId, color, width, opacity, dashArray]);
 
   return null;
 }

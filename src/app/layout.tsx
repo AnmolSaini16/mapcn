@@ -68,12 +68,21 @@ export const metadata: Metadata = {
     siteName: siteName,
     title: "mapcn - Beautiful maps made simple",
     description: siteDescription,
+    images: [
+      {
+        url: "/banner.png",
+        width: 1200,
+        height: 630,
+        alt: "mapcn - Beautiful maps, made simple",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "mapcn - Beautiful maps made simple",
     description: siteDescription,
     creator: creator,
+    images: ["/banner.png"],
   },
   alternates: {
     canonical: siteUrl,
