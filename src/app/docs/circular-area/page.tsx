@@ -51,6 +51,7 @@ export default function CircleHighlightPage() {
           Displays and tracks the user’s current location on the map. 
           Indicates whether the user is inside or outside a predefined area (geofence), 
           and updates the map view and marker accordingly when the user clicks the Locate button.
+        </p>
       </DocsSection>
 
       <ComponentPreview code={geoFenceLocationTrackerSource}>
