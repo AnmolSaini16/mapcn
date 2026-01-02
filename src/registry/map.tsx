@@ -899,6 +899,148 @@ function MapRoute({
   return null;
 }
 
+type MapCircleAreaProps = {
+  center: [number, number];
+  radiusMeters: number;
+  fillColor?: string;
+  fillOpacity?: number;
+  outlineColor?: string;
+  outlineWidth?: number;
+  steps?: number;
+};
+
+function MapCircleArea({
+  center,
+  radiusMeters,
+  fillColor = "#3b82f6",
+  fillOpacity = 0.2,
+  outlineColor = "#3b82f6",
+  outlineWidth = 2,
+  steps = 64,
+}: MapCircleAreaProps) {
+  const { map, isLoaded } = useMap();
+  const id = useId();
+  const sourceId = `circle-source-${id}`;
+  const fillLayerId = `circle-fill-layer-${id}`;
+  const outlineLayerId = `circle-outline-layer-${id}`;
+  const centerLng = center[0];
+  const centerLat = center[1];
+
+  const computeCircle = (
+    lng: number,
+    lat: number,
+    radiusM: number,
+    numSteps: number
+  ): GeoJSON.Feature<GeoJSON.Polygon> => {
+    const R = 6378137; 
+    const toRad = (d: number) => (d * Math.PI) / 180;
+    const toDeg = (r: number) => (r * 180) / Math.PI;
+    const latRad = toRad(lat);
+    const lonRad = toRad(lng);
+    const dOverR = radiusM / R;
+
+    const coords: [number, number][] = [];
+    for (let i = 0; i <= numSteps; i++) {
+      const bearing = (i / numSteps) * 2 * Math.PI;
+      const lat2 = Math.asin(
+        Math.sin(latRad) * Math.cos(dOverR) +
+          Math.cos(latRad) * Math.sin(dOverR) * Math.cos(bearing)
+      );
+      const lon2 =
+        lonRad +
+        Math.atan2(
+          Math.sin(bearing) * Math.sin(dOverR) * Math.cos(latRad),
+          Math.cos(dOverR) - Math.sin(latRad) * Math.sin(lat2)
+        );
+      coords.push([toDeg(lon2), toDeg(lat2)]);
+    }
+
+    return {
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "Polygon",
+        coordinates: [coords],
+      },
+    };
+  };
+
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+
+    const circleFeature = computeCircle(
+      centerLng,
+      centerLat,
+      radiusMeters,
+      steps
+    );
+
+    const addCircle = () => {
+      try {
+        if (map.getLayer(fillLayerId)) map.removeLayer(fillLayerId);
+        if (map.getLayer(outlineLayerId)) map.removeLayer(outlineLayerId);
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+      } catch {
+        // ignore
+      }
+
+      map.addSource(sourceId, {
+        type: "geojson",
+        data: circleFeature,
+      });
+
+      map.addLayer({
+        id: fillLayerId,
+        type: "fill",
+        source: sourceId,
+        paint: {
+          "fill-color": fillColor,
+          "fill-opacity": fillOpacity,
+        },
+      });
+
+      map.addLayer({
+        id: outlineLayerId,
+        type: "line",
+        source: sourceId,
+        paint: {
+          "line-color": outlineColor,
+          "line-width": outlineWidth,
+          "line-opacity": Math.min(1, Math.max(fillOpacity, 0.4)),
+        },
+      });
+    };
+
+    addCircle();
+
+    return () => {
+      try {
+        if (map.getLayer(fillLayerId)) map.removeLayer(fillLayerId);
+        if (map.getLayer(outlineLayerId)) map.removeLayer(outlineLayerId);
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+      } catch {
+
+      }
+    };
+  }, [
+    isLoaded,
+    map,
+    centerLng,
+    centerLat,
+    radiusMeters,
+    fillColor,
+    fillOpacity,
+    outlineColor,
+    outlineWidth,
+    steps,
+    sourceId,
+    fillLayerId,
+    outlineLayerId,
+  ]);
+
+  return null;
+}
+
 export {
   Map,
   useMap,
@@ -910,4 +1052,5 @@ export {
   MapPopup,
   MapControls,
   MapRoute,
+  MapCircleArea,
 };

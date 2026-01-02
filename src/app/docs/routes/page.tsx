@@ -18,7 +18,7 @@ export default function RoutesPage() {
       title="Routes"
       description="Draw lines and paths connecting coordinates on the map."
       prev={{ title: "Popups", href: "/docs/popups" }}
-      next={{ title: "Advanced Usage", href: "/docs/advanced-usage" }}
+      next={{ title: "Circular Area", href: "/docs/circular-area" }}
     >
       <DocsSection>
         <p>
