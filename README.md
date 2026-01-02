@@ -39,6 +39,10 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+## React Vite Version (.Jsx)
+
+For a React Vite version that does not require Typescript - check [mapcn.jsx](https://github.com/Untitled-Master/mapcn.jsx).
+
 ## License
 
 MIT License - see the [LICENSE](LICENSE) file for details.
