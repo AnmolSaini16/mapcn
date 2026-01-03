@@ -12,9 +12,49 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "src/registry/map.tsx",
+          "path": "src/registry/map/index.tsx",
           "type": "registry:ui",
-          "target": "components/ui/map.tsx"
+          "target": "components/ui/map/index.tsx"
+        },
+        {
+          "path": "src/registry/map/types.ts",
+          "type": "registry:ui",
+          "target": "components/ui/map/types.ts"
+        },
+        {
+          "path": "src/registry/map/hooks.ts",
+          "type": "registry:ui",
+          "target": "components/ui/map/hooks.ts"
+        },
+        {
+          "path": "src/registry/map/map.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/map/map.tsx"
+        },
+        {
+          "path": "src/registry/map/marker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/map/marker.tsx"
+        },
+        {
+          "path": "src/registry/map/controls.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/map/controls.tsx"
+        },
+        {
+          "path": "src/registry/map/popup.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/map/popup.tsx"
+        },
+        {
+          "path": "src/registry/map/route.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/map/route.tsx"
+        },
+        {
+          "path": "src/registry/map/cluster.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/map/cluster.tsx"
         }
       ],
       "css": {
