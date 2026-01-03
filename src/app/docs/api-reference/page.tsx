@@ -481,12 +481,12 @@ export default function ApiReferencePage() {
         <DocsPropTable
           props={[
             {
-              name: "origin: Empire State Building",
+              name: "origin",
               type: "string | { lat: number; lng: number }",
               description: "Starting point of the route.",
             },
             {
-              name: "destination: Central Park",
+              name: "destination",
               type: "string | { lat: number; lng: number }",
               description: "Destination point of the route.",
             },
@@ -507,6 +507,37 @@ export default function ApiReferencePage() {
               type: "boolean | ReactNode",
               default: "false",
               description: "Shows duration, distance, and mode icon on hover.",
+            },
+          ]}
+        />
+      </DocsSection>
+
+      {/* ProximityMap */}
+      <DocsSection title="ProximityMap">
+        <p>
+          Visualizes a distance mesh between multiple points. Connects all points
+          to each other and displays distances.
+        </p>
+        <DocsPropTable
+          props={[
+            {
+              name: "points",
+              type: "ProximityPoint[]",
+              description:
+                "Array of points to connect. Each point has {lat, lng, label, color, props}.",
+            },
+            {
+              name: "unit",
+              type: '"metric" | "imperial"',
+              default: '"metric"',
+              description: "Unit system for distance labels (km or mi).",
+            },
+            {
+              name: "labels",
+              type: '"always" | "hover" | "none"',
+              default: '"always"',
+              description:
+                "Control visibility of distance labels.",
             },
           ]}
         />
