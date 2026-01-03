@@ -22,14 +22,14 @@ export function GoogleRouteExample() {
                 <MapMarker longitude={start.lng} latitude={start.lat}>
                     <MarkerContent>
                         <div className="size-4 rounded-full bg-red-600 border-2 border-white shadow-lg" />
-                        <MarkerLabel position="bottom">Origin</MarkerLabel>
+                        <MarkerLabel position="bottom">Origin: {start.name}</MarkerLabel>
                     </MarkerContent>
                 </MapMarker>
 
                 <MapMarker longitude={end.lng} latitude={end.lat}>
                     <MarkerContent>
                         <div className="size-4 rounded-full bg-blue-600 border-2 border-white shadow-lg" />
-                        <MarkerLabel position="bottom">Destination</MarkerLabel>
+                        <MarkerLabel position="bottom">Destination: {end.name}</MarkerLabel>
                     </MarkerContent>
                 </MapMarker>
             </Map>
