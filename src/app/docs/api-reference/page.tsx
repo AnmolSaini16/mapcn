@@ -542,6 +542,42 @@ export default function ApiReferencePage() {
           ]}
         />
       </DocsSection>
+
+      {/* GoogleProximityMap */}
+      <DocsSection title="GoogleProximityMap">
+        <p>
+          A wrapper around <DocsCode>ProximityMap</DocsCode> logic that calculates actual travel routes
+          via Google Directions API instead of straight lines.
+        </p>
+        <DocsPropTable
+          props={[
+            {
+              name: "points",
+              type: "GoogleProximityPoint[]",
+              description:
+                "Array of points to connect. Each point has {lat, lng, label, color, props}.",
+            },
+            {
+              name: "unit",
+              type: '"metric" | "imperial"',
+              default: '"metric"',
+              description: "Unit system for distance/duration labels.",
+            },
+            {
+              name: "labels",
+              type: '"always" | "hover" | "none"',
+              default: '"always"',
+              description: "Control visibility of route info labels.",
+            },
+            {
+              name: "mode",
+              type: '"driving" | "walking" | "bicycling" | "transit"',
+              default: '"driving"',
+              description: "Transportation mode for route calculation.",
+            },
+          ]}
+        />
+      </DocsSection>
     </DocsLayout>
   );
 }
