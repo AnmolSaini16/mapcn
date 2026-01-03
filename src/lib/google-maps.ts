@@ -92,7 +92,6 @@ export async function fetchGoogleRoute({
     const route = data.routes[0];
     const leg = route.legs[0];
 
-    // Google Directions API returns an encoded polyline in `overview_polyline.points`
     return {
         path: await decodePolyline(route.overview_polyline.points),
         leg: {

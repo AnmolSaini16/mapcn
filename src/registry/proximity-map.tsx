@@ -58,7 +58,6 @@ export function ProximityMap({
 
     return (
         <>
-            {/* 1. Render connecting lines FIRST (so they appear below markers) */}
             {connections.map((conn) => (
                 <MapRoute
                     key={`line-${conn.key}`}
@@ -66,15 +65,14 @@ export function ProximityMap({
                         [conn.start.lng, conn.start.lat],
                         [conn.end.lng, conn.end.lat],
                     ]}
-                    color={hoveredKey === conn.key ? "#3b82f6" : "#94a3b8"} // Highlight on hover
+                    color={hoveredKey === conn.key ? "#3b82f6" : "#94a3b8"}
                     width={hoveredKey === conn.key ? 3 : 2}
-                    dashArray={[2, 2]} // Dotted style
+                    dashArray={[2, 2]}
                     onMouseEnter={() => setHoveredKey(conn.key)}
                     onMouseLeave={() => setHoveredKey(null)}
                 />
             ))}
 
-            {/* 2. Render all points */}
             {points.map((point, i) => (
                 <MapMarker
                     key={`point-${i}`}
@@ -101,7 +99,6 @@ export function ProximityMap({
                 </MapMarker>
             ))}
 
-            {/* 3. Render distance labels at midpoints */}
             {labels !== "none" &&
                 connections.map((conn) => {
                     const isVisible = labels === "always" || (labels === "hover" && hoveredKey === conn.key);
