@@ -156,7 +156,7 @@ function useMarkerContext() {
   return context;
 }
 
-type MapMarkerProps = {
+export type MapMarkerProps = {
   longitude: number;
   latitude: number;
   children: ReactNode;
@@ -845,12 +845,13 @@ function MapRoute({
   useEffect(() => {
     if (!isLoaded || !map) return;
 
+
     map.addSource(sourceId, {
       type: "geojson",
       data: {
         type: "Feature",
         properties: {},
-        geometry: { type: "LineString", coordinates: [] },
+        geometry: { type: "LineString", coordinates },
       },
     });
 
@@ -866,6 +867,7 @@ function MapRoute({
         ...(dashArray && { "line-dasharray": dashArray }),
       },
     });
+
 
     return () => {
       try {
@@ -910,7 +912,7 @@ function MapRoute({
         geometry: { type: "LineString", coordinates },
       });
     }
-  }, [isLoaded, map, coordinates, sourceId]);
+  }, [isLoaded, map, JSON.stringify(coordinates), sourceId]);
 
   useEffect(() => {
     if (!isLoaded || !map || !map.getLayer(layerId)) return;
