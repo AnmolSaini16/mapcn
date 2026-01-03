@@ -96,6 +96,45 @@ export default function AdvancedPage() {
         <CustomLayerExample />
       </ComponentPreview>
 
+      <DocsSection title="Security & API Proxying">
+        <p>
+          The <DocsCode>GoogleMapRoute</DocsCode> component automatically handles security by proxying requests
+          through a Server Action. This ensures your API Key is never exposed to the client.
+        </p>
+
+        <h4 className="font-semibold mt-6 mb-3">Configuration</h4>
+        <p className="text-muted-foreground mb-3">
+          Simply add your API key to your <DocsCode>.env.local</DocsCode> file.
+        </p>
+        <CodeBlock
+          code="GOOGLE_MAPS_API_KEY=AIzaSy..."
+          language="bash"
+          showCopyButton={false}
+        />
+
+        <h4 className="font-semibold mt-6 mb-3">Using the Fetcher Directly</h4>
+        <p className="text-muted-foreground mb-3">
+          For advanced use cases where you need raw route data (e.g., custom visualizations or calculations),
+          you can import the securely implemented fetcher directly from the library.
+        </p>
+        <CodeBlock
+          code={`import { fetchGoogleRoute } from "@/lib/google-maps";
+
+function MyCustomComponent() {
+  useEffect(() => {
+    // This calls the Server Action securely
+    fetchGoogleRoute({
+      origin: "New York",
+      destination: "Boston"
+    }).then(data => {
+      console.log("Raw route data:", data);
+    });
+  }, []);
+}`}
+          language="tsx"
+        />
+      </DocsSection>
+
       <DocsSection title="Extend to Build">
         <p>You can extend this to build custom features like:</p>
         <ul>

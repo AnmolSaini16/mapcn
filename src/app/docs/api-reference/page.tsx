@@ -471,6 +471,113 @@ export default function ApiReferencePage() {
           ]}
         />
       </DocsSection>
+
+      {/* GoogleMapRoute */}
+      <DocsSection title="GoogleMapRoute">
+        <p>
+          A high-level wrapper for the Google Maps Directions API. Wraps{" "}
+          <DocsCode>MapRoute</DocsCode>.
+        </p>
+        <DocsPropTable
+          props={[
+            {
+              name: "origin",
+              type: "string | { lat: number; lng: number }",
+              description: "Starting point of the route.",
+            },
+            {
+              name: "destination",
+              type: "string | { lat: number; lng: number }",
+              description: "Destination point of the route.",
+            },
+            {
+              name: "mode",
+              type: '"driving" | "walking" | "bicycling" | "transit"',
+              default: '"driving"',
+              description: "Type of transport to query.",
+            },
+            {
+              name: "units",
+              type: '"metric" | "imperial"',
+              default: '"metric"',
+              description: "Unit system for distance text.",
+            },
+            {
+              name: "tooltip",
+              type: "boolean | ReactNode",
+              default: "false",
+              description: "Shows duration, distance, and mode icon on hover.",
+            },
+          ]}
+        />
+      </DocsSection>
+
+      {/* ProximityMap */}
+      <DocsSection title="ProximityMap">
+        <p>
+          Visualizes a distance mesh between multiple points. Connects all points
+          to each other and displays distances.
+        </p>
+        <DocsPropTable
+          props={[
+            {
+              name: "points",
+              type: "ProximityPoint[]",
+              description:
+                "Array of points to connect. Each point has {lat, lng, label, color, props}.",
+            },
+            {
+              name: "unit",
+              type: '"metric" | "imperial"',
+              default: '"metric"',
+              description: "Unit system for distance labels (km or mi).",
+            },
+            {
+              name: "labels",
+              type: '"always" | "hover" | "none"',
+              default: '"always"',
+              description:
+                "Control visibility of distance labels.",
+            },
+          ]}
+        />
+      </DocsSection>
+
+      {/* GoogleProximityMap */}
+      <DocsSection title="GoogleProximityMap">
+        <p>
+          A wrapper around <DocsCode>ProximityMap</DocsCode> logic that calculates actual travel routes
+          via Google Directions API instead of straight lines.
+        </p>
+        <DocsPropTable
+          props={[
+            {
+              name: "points",
+              type: "GoogleProximityPoint[]",
+              description:
+                "Array of points to connect. Each point has {lat, lng, label, color, props}.",
+            },
+            {
+              name: "unit",
+              type: '"metric" | "imperial"',
+              default: '"metric"',
+              description: "Unit system for distance/duration labels.",
+            },
+            {
+              name: "labels",
+              type: '"always" | "hover" | "none"',
+              default: '"always"',
+              description: "Control visibility of route info labels.",
+            },
+            {
+              name: "mode",
+              type: '"driving" | "walking" | "bicycling" | "transit"',
+              default: '"driving"',
+              description: "Transportation mode for route calculation.",
+            },
+          ]}
+        />
+      </DocsSection>
     </DocsLayout>
   );
 }
