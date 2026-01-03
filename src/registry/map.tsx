@@ -823,6 +823,7 @@ type MapRouteProps = {
   dashArray?: [number, number];
   onClick?: (e: MapLibreGL.MapLayerMouseEvent) => void;
   onMouseEnter?: (e: MapLibreGL.MapLayerMouseEvent) => void;
+  onMouseMove?: (e: MapLibreGL.MapLayerMouseEvent) => void;
   onMouseLeave?: (e: MapLibreGL.MapLayerMouseEvent) => void;
 };
 
@@ -834,6 +835,7 @@ function MapRoute({
   dashArray,
   onClick,
   onMouseEnter,
+  onMouseMove,
   onMouseLeave,
 }: MapRouteProps) {
   const { map, isLoaded } = useMap();
@@ -841,35 +843,43 @@ function MapRoute({
   const sourceId = `route-source-${id}`;
   const layerId = `route-layer-${id}`;
 
-  // Add source and layer on mount
+  // Add source and layer on mount and handle style updates
   useEffect(() => {
     if (!isLoaded || !map) return;
 
+    const addLayer = () => {
+      if (!map.getSource(sourceId)) {
+        map.addSource(sourceId, {
+          type: "geojson",
+          data: {
+            type: "Feature",
+            properties: {},
+            geometry: { type: "LineString", coordinates },
+          },
+        });
+      }
 
-    map.addSource(sourceId, {
-      type: "geojson",
-      data: {
-        type: "Feature",
-        properties: {},
-        geometry: { type: "LineString", coordinates },
-      },
-    });
+      if (!map.getLayer(layerId)) {
+        map.addLayer({
+          id: layerId,
+          type: "line",
+          source: sourceId,
+          layout: { "line-join": "round", "line-cap": "round" },
+          paint: {
+            "line-color": color,
+            "line-width": width,
+            "line-opacity": opacity,
+            ...(dashArray && { "line-dasharray": dashArray }),
+          },
+        });
+      }
+    };
 
-    map.addLayer({
-      id: layerId,
-      type: "line",
-      source: sourceId,
-      layout: { "line-join": "round", "line-cap": "round" },
-      paint: {
-        "line-color": color,
-        "line-width": width,
-        "line-opacity": opacity,
-        ...(dashArray && { "line-dasharray": dashArray }),
-      },
-    });
-
+    addLayer();
+    map.on("styledata", addLayer);
 
     return () => {
+      map.off("styledata", addLayer);
       try {
         if (map.getLayer(layerId)) map.removeLayer(layerId);
         if (map.getSource(sourceId)) map.removeSource(sourceId);
@@ -886,19 +896,23 @@ function MapRoute({
     const handleClick = (e: MapLibreGL.MapLayerMouseEvent) => onClick?.(e);
     const handleMouseEnter = (e: MapLibreGL.MapLayerMouseEvent) =>
       onMouseEnter?.(e);
+    const handleMouseMove = (e: MapLibreGL.MapLayerMouseEvent) =>
+      onMouseMove?.(e);
     const handleMouseLeave = (e: MapLibreGL.MapLayerMouseEvent) =>
       onMouseLeave?.(e);
 
     if (onClick) map.on("click", layerId, handleClick);
     if (onMouseEnter) map.on("mouseenter", layerId, handleMouseEnter);
+    if (onMouseMove) map.on("mousemove", layerId, handleMouseMove);
     if (onMouseLeave) map.on("mouseleave", layerId, handleMouseLeave);
 
     return () => {
       if (onClick) map.off("click", layerId, handleClick);
       if (onMouseEnter) map.off("mouseenter", layerId, handleMouseEnter);
+      if (onMouseMove) map.off("mousemove", layerId, handleMouseMove);
       if (onMouseLeave) map.off("mouseleave", layerId, handleMouseLeave);
     };
-  }, [isLoaded, map, layerId, onClick, onMouseEnter, onMouseLeave]);
+  }, [isLoaded, map, layerId, onClick, onMouseEnter, onMouseMove, onMouseLeave]);
 
   // When coordinates change, update the source data
   useEffect(() => {
