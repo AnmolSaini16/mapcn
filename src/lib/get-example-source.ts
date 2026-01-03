@@ -11,5 +11,7 @@ export function getExampleSource(filename: string): string {
   const source = fs.readFileSync(filePath, "utf-8");
 
   // Clean up the source for display:
-  return source.replace(/@\/registry\/map/g, "@/components/ui/map");
+  return source
+    .replace(/@\/registry\/map/g, "@/components/ui/map")
+    .replace(/@\/registry\/google-map-route/g, "@/components/ui/google-map-route");
 }

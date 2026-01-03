@@ -821,6 +821,9 @@ type MapRouteProps = {
   width?: number;
   opacity?: number;
   dashArray?: [number, number];
+  onClick?: (e: MapLibreGL.MapLayerMouseEvent) => void;
+  onMouseEnter?: (e: MapLibreGL.MapLayerMouseEvent) => void;
+  onMouseLeave?: (e: MapLibreGL.MapLayerMouseEvent) => void;
 };
 
 function MapRoute({
@@ -829,6 +832,9 @@ function MapRoute({
   width = 3,
   opacity = 0.8,
   dashArray,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
 }: MapRouteProps) {
   const { map, isLoaded } = useMap();
   const id = useId();
@@ -871,6 +877,27 @@ function MapRoute({
     };
   }, [isLoaded, map, sourceId, layerId]);
 
+  // Handle interaction events
+  useEffect(() => {
+    if (!isLoaded || !map || !map.getLayer(layerId)) return;
+
+    const handleClick = (e: MapLibreGL.MapLayerMouseEvent) => onClick?.(e);
+    const handleMouseEnter = (e: MapLibreGL.MapLayerMouseEvent) =>
+      onMouseEnter?.(e);
+    const handleMouseLeave = (e: MapLibreGL.MapLayerMouseEvent) =>
+      onMouseLeave?.(e);
+
+    if (onClick) map.on("click", layerId, handleClick);
+    if (onMouseEnter) map.on("mouseenter", layerId, handleMouseEnter);
+    if (onMouseLeave) map.on("mouseleave", layerId, handleMouseLeave);
+
+    return () => {
+      if (onClick) map.off("click", layerId, handleClick);
+      if (onMouseEnter) map.off("mouseenter", layerId, handleMouseEnter);
+      if (onMouseLeave) map.off("mouseleave", layerId, handleMouseLeave);
+    };
+  }, [isLoaded, map, layerId, onClick, onMouseEnter, onMouseLeave]);
+
   // When coordinates change, update the source data
   useEffect(() => {
     if (!isLoaded || !map || coordinates.length < 2) return;
@@ -910,4 +937,5 @@ export {
   MapPopup,
   MapControls,
   MapRoute,
+  type MapRouteProps,
 };
