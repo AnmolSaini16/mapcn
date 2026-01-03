@@ -2,6 +2,7 @@ import { DocsLayout, DocsSection, DocsCode } from "../_components/docs";
 import { ComponentPreview } from "../_components/component-preview";
 import { RouteExample } from "../_components/examples/route-example";
 import { OsrmRouteExample } from "../_components/examples/osrm-route-example";
+import { GoogleRouteExample } from "../_components/examples/google-route-example";
 import { getExampleSource } from "@/lib/get-example-source";
 import { Metadata } from "next";
 
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 export default function RoutesPage() {
   const routeSource = getExampleSource("route-example.tsx");
   const osrmRouteSource = getExampleSource("osrm-route-example.tsx");
+  const googleRouteSource = getExampleSource("google-route-example.tsx");
 
   return (
     <DocsLayout
@@ -45,6 +47,17 @@ export default function RoutesPage() {
 
       <ComponentPreview code={osrmRouteSource}>
         <OsrmRouteExample />
+      </ComponentPreview>
+
+      <DocsSection title="Google Maps Route">
+        <p>
+          A high-level wrapper for the Google Maps Directions API. It handles fetching,
+          decoding, and rendering the route automatically.
+        </p>
+      </DocsSection>
+
+      <ComponentPreview code={googleRouteSource}>
+        <GoogleRouteExample />
       </ComponentPreview>
     </DocsLayout>
   );

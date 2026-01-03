@@ -471,6 +471,46 @@ export default function ApiReferencePage() {
           ]}
         />
       </DocsSection>
+
+      {/* GoogleMapRoute */}
+      <DocsSection title="GoogleMapRoute">
+        <p>
+          A high-level wrapper for the Google Maps Directions API. Wraps{" "}
+          <DocsCode>MapRoute</DocsCode>.
+        </p>
+        <DocsPropTable
+          props={[
+            {
+              name: "origin: Empire State Building",
+              type: "string | { lat: number; lng: number }",
+              description: "Starting point of the route.",
+            },
+            {
+              name: "destination: Central Park",
+              type: "string | { lat: number; lng: number }",
+              description: "Destination point of the route.",
+            },
+            {
+              name: "mode",
+              type: '"driving" | "walking" | "bicycling" | "transit"',
+              default: '"driving"',
+              description: "Type of transport to query.",
+            },
+            {
+              name: "units",
+              type: '"metric" | "imperial"',
+              default: '"metric"',
+              description: "Unit system for distance text.",
+            },
+            {
+              name: "tooltip",
+              type: "boolean | ReactNode",
+              default: "false",
+              description: "Shows duration, distance, and mode icon on hover.",
+            },
+          ]}
+        />
+      </DocsSection>
     </DocsLayout>
   );
 }
