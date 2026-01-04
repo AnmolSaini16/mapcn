@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { Map as MapLibreMap, MapMouseEvent } from "maplibre-gl";
+import { useEffect, useState } from "react";
 import {
   Map,
   MapMarker,
@@ -11,8 +10,6 @@ import {
 } from "@/registry/map";
 import { Loader2, Clock, Route } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const getRouteId = (index: number) => `route-${index}`;
 
 const start = { name: "Amsterdam", lng: 4.9041, lat: 52.3676 };
 const end = { name: "Rotterdam", lng: 4.4777, lat: 51.9244 };
@@ -40,9 +37,7 @@ export function OsrmRouteExample() {
   const [routes, setRoutes] = useState<RouteData[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const mapRef = useRef<MapLibreMap | null>(null);
 
-  // Fetch routes
   useEffect(() => {
     async function fetchRoutes() {
       try {
@@ -75,60 +70,28 @@ export function OsrmRouteExample() {
     fetchRoutes();
   }, []);
 
-  // Handle route click - only select topmost route when overlapping
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || routes.length === 0) return;
-
-    const routeIds = routes.map((_, i) => getRouteId(i));
-
-    const handleClick = (e: MapMouseEvent) => {
-      const layers = routeIds.filter((id) => map.getLayer(id));
-      if (layers.length === 0) return;
-
-      const features = map.queryRenderedFeatures(e.point, { layers });
-      if (features.length === 0) return;
-
-      // Only select the topmost route
-      const topLayerId = features[0].layer.id;
-      const clickedIndex = routes.findIndex(
-        (_, i) => getRouteId(i) === topLayerId
-      );
-      if (clickedIndex !== -1 && clickedIndex !== selectedIndex) {
-        setSelectedIndex(clickedIndex);
-      }
-    };
-
-    map.on("click", handleClick);
-    return () => {
-      map.off("click", handleClick);
-    };
-  }, [routes, selectedIndex]);
-
-  // Sort routes so selected is always rendered last (on top)
-  const sortedRoutes = useMemo(
-    () =>
-      routes
-        .map((route, index) => ({ route, index }))
-        .sort((a, b) =>
-          a.index === selectedIndex ? 1 : b.index === selectedIndex ? -1 : 0
-        ),
-    [routes, selectedIndex]
-  );
+  // Sort routes: non-selected first, selected last (renders on top)
+  const sortedRoutes = routes
+    .map((route, index) => ({ route, index }))
+    .sort((a, b) => {
+      if (a.index === selectedIndex) return 1;
+      if (b.index === selectedIndex) return -1;
+      return 0;
+    });
 
   return (
     <div className="h-[500px] w-full relative">
-      <Map ref={mapRef} center={[4.69, 52.14]} zoom={8.5}>
+      <Map center={[4.69, 52.14]} zoom={8.5}>
         {sortedRoutes.map(({ route, index }) => {
           const isSelected = index === selectedIndex;
           return (
             <MapRoute
-              key={getRouteId(index)}
-              id={getRouteId(index)}
+              key={index}
               coordinates={route.coordinates}
               color={isSelected ? "#6366f1" : "#94a3b8"}
               width={isSelected ? 6 : 5}
               opacity={isSelected ? 1 : 0.6}
+              onClick={() => setSelectedIndex(index)}
             />
           );
         })}
