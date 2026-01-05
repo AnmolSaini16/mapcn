@@ -26,6 +26,7 @@ import type {
 } from "maplibre-gl";
 import type { MapRef } from "react-map-gl/maplibre";
 import {
+  useMap,
   Layer as MapLibreGLLayer,
   Map as MapLibreGLMap,
   Marker as MapLibreGLMarker,
@@ -35,19 +36,63 @@ import {
 
 import { cn } from "@/lib/utils";
 
-type MapContextValue = {
-  mapRef: React.RefObject<MapRef | null>;
-  isLoaded: boolean;
-};
+// Based on https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/compose-refs.tsx.
 
-const MapContext = createContext<MapContextValue | null>(null);
+type PossibleRef<T> = React.Ref<T> | undefined;
 
-function useMap() {
-  const context = useContext(MapContext);
-  if (!context) {
-    throw new Error("useMap must be used within a Map component");
+/**
+ * Set a given ref to a given value
+ * This utility takes care of different types of refs: callback refs and RefObject(s)
+ */
+function setRef<T>(ref: PossibleRef<T>, value: T) {
+  if (typeof ref === "function") {
+    return ref(value);
+  } else if (ref !== null && ref !== undefined) {
+    ref.current = value;
   }
-  return context;
+}
+
+/**
+ * A utility to compose multiple refs together
+ * Accepts callback refs and RefObject(s)
+ */
+function composeRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {
+  return (node) => {
+    let hasCleanup = false;
+    const cleanups = refs.map((ref) => {
+      const cleanup = setRef(ref, node);
+      if (!hasCleanup && typeof cleanup == "function") {
+        hasCleanup = true;
+      }
+      return cleanup;
+    });
+
+    // React <19 will log an error to the console if a callback ref returns a
+    // value. We don't use ref cleanups internally so this will only happen if a
+    // user's ref callback returns a value, which we only expect if they are
+    // using the cleanup functionality added in React 19.
+    if (hasCleanup) {
+      return () => {
+        for (let i = 0; i < cleanups.length; i++) {
+          const cleanup = cleanups[i];
+          if (typeof cleanup == "function") {
+            cleanup();
+          } else {
+            setRef(refs[i], null);
+          }
+        }
+      };
+    }
+  };
+}
+
+/**
+ * A custom hook that composes multiple refs
+ * Accepts callback refs and RefObject(s)
+ */
+function useComposedRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return React.useCallback(composeRefs(...refs), refs);
 }
 
 const defaultStyles = {
@@ -66,6 +111,7 @@ const DefaultLoader = () => (
 );
 
 function Map({
+  ref,
   children,
   mapStyle,
   renderWorldCopies = false,
@@ -79,6 +125,8 @@ function Map({
   const { resolvedTheme } = useTheme();
 
   const mapRef = useRef<MapRef | null>(null);
+
+  const composedRefs = useComposedRefs(mapRef, ref);
 
   const isClient = typeof window !== "undefined";
   const [isLoaded, setIsLoaded] = useState(false);
@@ -97,30 +145,23 @@ function Map({
   };
 
   return (
-    <MapContext.Provider
-      value={{
-        mapRef,
-        isLoaded: isClient && isLoaded && isStyleLoaded,
-      }}
+    <MapLibreGLMap
+      data-slot="map"
+      ref={composedRefs}
+      mapStyle={
+        mapStyle ??
+        (resolvedTheme === "dark" ? defaultStyles.dark : defaultStyles.light)
+      }
+      renderWorldCopies={renderWorldCopies}
+      attributionControl={attributionControl}
+      onLoad={handleLoad}
+      onStyleData={handleStyleData}
+      {...props}
     >
-      <MapLibreGLMap
-        data-slot="map"
-        ref={mapRef}
-        mapStyle={
-          mapStyle ??
-          (resolvedTheme === "dark" ? defaultStyles.dark : defaultStyles.light)
-        }
-        renderWorldCopies={renderWorldCopies}
-        attributionControl={attributionControl}
-        onLoad={handleLoad}
-        onStyleData={handleStyleData}
-        {...props}
-      >
-        {isLoading && <DefaultLoader />}
-        {/* SSR-safe: children render only when map is loaded on client */}
-        {isClient && children}
-      </MapLibreGLMap>
-    </MapContext.Provider>
+      {isLoading && <DefaultLoader />}
+      {/* SSR-safe: children render only when map is loaded on client */}
+      {isClient && children}
+    </MapLibreGLMap>
   );
 }
 
@@ -399,7 +440,7 @@ function MapControls({
   onLocate,
   ...props
 }: MapControlsProps) {
-  const { mapRef } = useMap();
+  const { current: map } = useMap();
   const [waitingForLocation, setWaitingForLocation] = useState(false);
 
   const positionClasses = {
@@ -410,22 +451,18 @@ function MapControls({
   };
 
   const handleZoomIn = () => {
-    const map = mapRef.current;
     map?.zoomTo(map.getZoom() + 1, { duration: 300 });
   };
 
   const handleZoomOut = () => {
-    const map = mapRef.current;
     map?.zoomTo(map.getZoom() - 1, { duration: 300 });
   };
 
   const handleResetBearing = () => {
-    const map = mapRef.current;
     map?.resetNorthPitch({ duration: 300 });
   };
 
   const handleLocate = () => {
-    const map = mapRef.current;
     if (!map) {
       return;
     }
@@ -455,8 +492,6 @@ function MapControls({
   };
 
   const handleFullscreen = () => {
-    const map = mapRef.current;
-
     const container = map?.getContainer();
     if (!container) {
       return;
@@ -521,12 +556,11 @@ function MapControls({
 }
 
 function CompassButton({ onClick }: { onClick: () => void }) {
-  const { mapRef } = useMap();
+  const { current: map } = useMap();
 
   const compassRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    const map = mapRef.current;
     if (!map) {
       return;
     }
@@ -551,7 +585,7 @@ function CompassButton({ onClick }: { onClick: () => void }) {
       map.off("rotate", updateRotation);
       map.off("pitch", updateRotation);
     };
-  }, []);
+  }, [map]);
 
   return (
     <ControlButton onClick={onClick} label="Reset bearing to north">
@@ -637,8 +671,6 @@ interface MapRouteProps {
   onMouseEnter?: () => void;
   /** Callback when mouse leaves the route line */
   onMouseLeave?: () => void;
-  /** Whether the route is interactive - shows pointer cursor on hover (default: true) */
-  interactive?: boolean;
 }
 
 function MapRoute({
@@ -651,9 +683,8 @@ function MapRoute({
   onClick,
   onMouseEnter,
   onMouseLeave,
-  interactive = true,
 }: MapRouteProps) {
-  const { mapRef } = useMap();
+  const { current: map } = useMap();
 
   const autoId = useId();
   const id = idProp ?? autoId;
@@ -662,12 +693,7 @@ function MapRoute({
   const layerId = `route-layer-${id}`;
 
   useEffect(() => {
-    if (!interactive) {
-      return;
-    }
-
-    const map = mapRef.current;
-    if (!map) {
+    if (!onClick || !map) {
       return;
     }
 
@@ -676,9 +702,7 @@ function MapRoute({
     };
 
     const handleMouseEnter = () => {
-      if (interactive) {
-        map.getCanvas().style.cursor = "pointer";
-      }
+      map.getCanvas().style.cursor = "pointer";
       onMouseEnter?.();
     };
 
@@ -696,7 +720,7 @@ function MapRoute({
       map.off("mouseenter", layerId, handleMouseEnter);
       map.off("mouseleave", layerId, handleMouseLeave);
     };
-  }, [mapRef, layerId, onClick, onMouseEnter, onMouseLeave, interactive]);
+  }, [map, layerId, onClick, onMouseEnter, onMouseLeave]);
 
   return (
     <MapLibreGLSource
@@ -769,7 +793,7 @@ function MapClusterLayer<
   onPointClick,
   onClusterClick,
 }: MapClusterLayerProps<P>) {
-  const { mapRef } = useMap();
+  const { current: map } = useMap();
 
   const autoId = useId();
   const id = idProp ?? autoId;
@@ -780,7 +804,6 @@ function MapClusterLayer<
   const unclusteredLayerId = `unclustered-point-${id}`;
 
   useEffect(() => {
-    const map = mapRef.current;
     if (!map) {
       return;
     }
@@ -876,7 +899,7 @@ function MapClusterLayer<
       map.off("mouseleave", unclusteredLayerId, handleMouseLeavePoint);
     };
   }, [
-    mapRef,
+    map,
     clusterLayerId,
     unclusteredLayerId,
     sourceId,
