@@ -6,12 +6,11 @@ import { Button } from "@/components/ui/button";
 import { RotateCcw, Mountain } from "lucide-react";
 
 function MapController() {
-  const { mapRef, isLoaded } = useMap();
+  const { current: map } = useMap();
   const [pitch, setPitch] = useState(0);
   const [bearing, setBearing] = useState(0);
 
   useEffect(() => {
-    const map = mapRef.current;
     if (!map) {
       return;
     }
@@ -25,15 +24,10 @@ function MapController() {
     return () => {
       map.off("move", handleMove);
     };
-  }, [mapRef]);
+  }, [map]);
 
   const handle3DView = () => {
-    const map = mapRef.current;
-    if (!map) {
-      return;
-    }
-
-    map.easeTo({
+    map?.easeTo({
       pitch: 60,
       bearing: -20,
       duration: 1000,
@@ -41,19 +35,12 @@ function MapController() {
   };
 
   const handleReset = () => {
-    const map = mapRef.current;
-    if (!map) {
-      return;
-    }
-
-    map.easeTo({
+    map?.easeTo({
       pitch: 0,
       bearing: 0,
       duration: 1000,
     });
   };
-
-  if (!isLoaded) return null;
 
   return (
     <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
