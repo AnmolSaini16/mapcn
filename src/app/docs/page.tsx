@@ -42,6 +42,10 @@ export default function IntroductionPage() {
           <strong className="text-foreground">mapcn</strong> provides
           beautifully designed, accessible, and customizable map components.
           Built on{" "}
+          <DocsLink href="https://visgl.github.io/react-map-gl/" external>
+            react-map-gl
+          </DocsLink>{" "}
+          and{" "}
           <DocsLink href="https://maplibre.org" external>
             MapLibre GL
           </DocsLink>

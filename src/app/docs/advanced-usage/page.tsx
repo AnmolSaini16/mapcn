@@ -41,18 +41,18 @@ import { useEffect } from "react";
 
 // For child components inside Map, use the useMap hook
 function MapEventListener() {
-  const { map, isLoaded } = useMap();
+  const { current: map } = useMap();
 
   useEffect(() => {
-    if (!map || !isLoaded) return;
-    
+    if (!map) return;
+
     const handleClick = (e) => {
       console.log("Clicked at:", e.lngLat);
     };
 
     map.on("click", handleClick);
     return () => map.off("click", handleClick);
-  }, [map, isLoaded]);
+  }, [map]);
 
   return null;
 }
@@ -75,8 +75,12 @@ export default function AdvancedPage() {
       <DocsSection>
         <p>
           Access the underlying MapLibre GL map instance to use any feature from
-          the MapLibre GL JS API. You can use either a <DocsCode>ref</DocsCode>{" "}
-          or the <DocsCode>useMap</DocsCode> hook.
+          the MapLibre GL JS API. Our components are built on top of{" "}
+          <DocsLink href="https://visgl.github.io/react-map-gl/" external>
+            react-map-gl
+          </DocsLink>
+          , giving you full access to the MapLibre GL API. You can use either a{" "}
+          <DocsCode>ref</DocsCode> or the <DocsCode>useMap</DocsCode> hook.
         </p>
       </DocsSection>
 
