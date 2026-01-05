@@ -22,7 +22,7 @@ export default function CircleHighlightPage() {
       title="Highlighted Circular Area"
       description="Highlight a circular area on the map using a center point and radius."
       prev={{ title: "Routes", href: "/docs/routes" }}
-      next={{ title: "Advanced Usage", href: "/docs/advanced-usage" }}
+      next={{ title: "Clusters", href: "/docs/clusters" }}      
     >
       <DocsSection>
         <p>
