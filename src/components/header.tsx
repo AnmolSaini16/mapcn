@@ -25,7 +25,7 @@ export function Header({ className, leftContent }: HeaderProps) {
             <span className="font-semibold tracking-tight">mapcn</span>
           </Link>
         </div>
-        <div className="flex items-center gap-1.5 h-4">
+        <div className="flex items-center gap-1.5 h-4.5">
           <GitHubButton />
           <Separator orientation="vertical" />
           <ThemeToggle />

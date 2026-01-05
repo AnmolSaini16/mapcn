@@ -16,25 +16,51 @@ export const metadata: Metadata = {
   title: "Advanced Usage",
 };
 
-const useMapCode = `import { Map, useMap } from "@/components/ui/map";
+const refCode = `import { Map } from "@/components/ui/map";
+import { useRef } from "react";
+import type MapLibreGL from "maplibre-gl";
 
-function MyComponent() {
+function MyMapComponent() {
+  const mapRef = useRef<MapLibreGL.Map>(null);
+
+  const handleFlyTo = () => {
+    // Access the MapLibre GL map instance via ref
+    mapRef.current?.flyTo({ center: [-74, 40.7], zoom: 12 });
+  };
+
+  return (
+    <>
+      <button onClick={handleFlyTo}>Fly to NYC</button>
+      <Map ref={mapRef} center={[-74, 40.7]} zoom={10} />
+    </>
+  );
+}`;
+
+const useMapCode = `import { Map, useMap } from "@/components/ui/map";
+import { useEffect } from "react";
+
+// For child components inside Map, use the useMap hook
+function MapEventListener() {
   const { map, isLoaded } = useMap();
 
   useEffect(() => {
     if (!map || !isLoaded) return;
     
-    // Access the underlying MapLibre GL map instance
-    map.on("click", (e) => {
+    const handleClick = (e) => {
       console.log("Clicked at:", e.lngLat);
-    });
+    };
 
-    // Use any MapLibre GL method
-    map.flyTo({ center: [-74, 40.7], zoom: 12 });
+    map.on("click", handleClick);
+    return () => map.off("click", handleClick);
   }, [map, isLoaded]);
 
   return null;
-}`;
+}
+
+// Usage
+<Map center={[-74, 40.7]} zoom={10}>
+  <MapEventListener />
+</Map>`;
 
 export default function AdvancedPage() {
   const advancedSource = getExampleSource("advanced-usage-example.tsx");
@@ -44,13 +70,13 @@ export default function AdvancedPage() {
     <DocsLayout
       title="Advanced Usage"
       description="Access the underlying MapLibre GL instance for advanced customization."
-      prev={{ title: "Circular Area", href: "/docs/circular-area" }}
+      prev={{ title: "Clusters", href: "/docs/clusters" }}
     >
       <DocsSection>
         <p>
-          The <DocsCode>useMap</DocsCode> hook provides direct access to the
-          MapLibre GL map instance, allowing you to use any feature from the
-          MapLibre GL JS API.
+          Access the underlying MapLibre GL map instance to use any feature from
+          the MapLibre GL JS API. You can use either a <DocsCode>ref</DocsCode>{" "}
+          or the <DocsCode>useMap</DocsCode> hook.
         </p>
       </DocsSection>
 
@@ -65,10 +91,20 @@ export default function AdvancedPage() {
         for the full list of available methods and events.
       </DocsNote>
 
+      <DocsSection title="Using a Ref">
+        <p>
+          The simplest way to access the map instance. Use a{" "}
+          <DocsCode>ref</DocsCode> to call map methods from event handlers or
+          effects.
+        </p>
+        <CodeBlock code={refCode} />
+      </DocsSection>
+
       <DocsSection title="Using the Hook">
         <p>
-          Create a child component inside <DocsCode>Map</DocsCode> and use the{" "}
-          <DocsCode>useMap</DocsCode> hook to access the map instance.
+          For child components rendered inside <DocsCode>Map</DocsCode>, use the{" "}
+          <DocsCode>useMap</DocsCode> hook to access the map instance and listen
+          to events.
         </p>
         <CodeBlock code={useMapCode} />
       </DocsSection>
@@ -126,10 +162,6 @@ export default function AdvancedPage() {
           <li>
             <strong>Custom data layers</strong> - Overlay weather, traffic, or
             satellite imagery
-          </li>
-          <li>
-            <strong>Clustering</strong> - Group thousands of markers into
-            clusters for performance
           </li>
         </ul>
       </DocsSection>

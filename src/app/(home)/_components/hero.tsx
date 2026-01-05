@@ -35,34 +35,35 @@ function CopyButton({ text }: { text: string }) {
 export function Hero() {
   return (
     <div className="space-y-8">
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight animate-fade-up">
+      <div className="space-y-4 text-center">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight animate-fade-up text-primary">
           Beautiful maps, made simple.
         </h1>
-        <p className="text-foreground/80 text-lg max-w-xl mx-auto animate-fade-up delay-100">
-          Beautifully designed, Open source map components. Zero config. One
-          command setup.
+        <p className="text-foreground/80 text-lg max-w-xl mx-auto leading-relaxed animate-fade-up delay-100">
+          Beautiful, ready to use, and customizable map components built on
+          MapLibre. Styled with Tailwind. Zero config. One command setup.
         </p>
       </div>
-
-      <div className="flex justify-center animate-fade-up delay-200 w-full px-4">
-        <div className="inline-flex items-center gap-3 bg-secondary/50 border border-border/50 rounded-full px-5 py-2.5 font-mono text-sm max-w-full overflow-x-auto">
-          <span className="text-muted-foreground shrink-0">$</span>
-          <code>{installCommand}</code>
+      <div className="animate-fade-up delay-200 text-center">
+        <div className="inline-flex items-center gap-3 bg-secondary/60 border border-border/40 rounded-full px-4 py-2.5 font-mono text-sm max-w-full overflow-x-auto">
+          <span className="text-muted-foreground/60 shrink-0">$</span>
+          <code className="text-foreground/90 truncate">{installCommand}</code>
           <CopyButton text={installCommand} />
         </div>
       </div>
-
+      {/* CTA Buttons */}
       <div className="flex flex-wrap justify-center items-center gap-3 animate-fade-up delay-300">
         <Button asChild>
           <Link href="/docs">
             Get Started <ArrowRight className="size-4" />
           </Link>
         </Button>
-        <Button variant="outline" size="lg" asChild>
-          <Link href="/docs/basic-map">View Examples</Link>
+        <Button variant="ghost" asChild>
+          <Link href="/docs/basic-map" className="text-muted-foreground">
+            View Examples
+          </Link>
         </Button>
-      </div>
+      </div>{" "}
     </div>
   );
 }

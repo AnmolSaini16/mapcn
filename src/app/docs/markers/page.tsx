@@ -2,6 +2,7 @@ import { DocsLayout, DocsSection, DocsCode } from "../_components/docs";
 import { ComponentPreview } from "../_components/component-preview";
 import { MarkersExample } from "../_components/examples/markers-example";
 import { PopupExample } from "../_components/examples/popup-example";
+import { DraggableMarkerExample } from "../_components/examples/draggable-marker-example";
 import { getExampleSource } from "@/lib/get-example-source";
 import { Metadata } from "next";
 
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 export default function MarkersPage() {
   const markersSource = getExampleSource("markers-example.tsx");
   const popupSource = getExampleSource("popup-example.tsx");
+  const draggableMarkerSource = getExampleSource("draggable-marker-example.tsx");
 
   return (
     <DocsLayout
@@ -47,6 +49,17 @@ export default function MarkersPage() {
 
       <ComponentPreview code={popupSource} className="h-[500px]">
         <PopupExample />
+      </ComponentPreview>
+
+      <DocsSection title="Draggable Marker">
+        <p>
+          Create draggable markers that users can move around the map. Click the
+          marker to see its current coordinates in a popup.
+        </p>
+      </DocsSection>
+
+      <ComponentPreview code={draggableMarkerSource}>
+        <DraggableMarkerExample />
       </ComponentPreview>
     </DocsLayout>
   );

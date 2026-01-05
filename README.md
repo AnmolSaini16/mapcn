@@ -29,6 +29,14 @@
 - 🛤️ **Routes** — Draw routes and paths on your maps
 - 🎮 **Controls** — Zoom, compass, locate, and fullscreen controls
 
+## Basemap Terms of Service
+
+This project uses [CARTO Basemaps](https://docs.carto.com/faqs/carto-basemaps) which are based on OpenStreetMap data.
+
+- **Commercial use**: Requires a CARTO Enterprise license. [Request a demo](https://carto.com/request-live-demo) for pricing details.
+- **Non-commercial use**: Free for CARTO grantees under their [basemap terms](https://carto.com/legal/bmap).
+- **Alternative**: You can switch to [OpenStreetMap](https://www.openstreetmap.org/) tiles or any other MapLibre-compatible tile provider.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

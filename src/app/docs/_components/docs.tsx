@@ -18,7 +18,9 @@ interface DocsHeaderProps {
 export function DocsHeader({ title, description }: DocsHeaderProps) {
   return (
     <div className="space-y-3">
-      <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
+      <h1 className="text-3xl font-semibold tracking-tight text-primary">
+        {title}
+      </h1>
       <p className="text-lg text-muted-foreground leading-relaxed">
         {description}
       </p>
@@ -90,7 +92,9 @@ export function DocsSection({ title, children }: DocsSectionProps) {
   return (
     <section className="space-y-5">
       {title && (
-        <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
+        <h2 className="text-xl font-semibold tracking-tight text-primary">
+          {title}
+        </h2>
       )}
       <div className="text-muted-foreground leading-7 space-y-4 [&>ul]:list-disc [&>ul]:pl-6 [&>ul]:space-y-2">
         {children}
@@ -180,13 +184,13 @@ export function DocsPropTable({ props }: DocsPropTableProps) {
               <TableCell className="px-4 py-3.5 font-mono text-primary align-top">
                 <DocsCode className="text-[13px]">{prop.name}</DocsCode>
               </TableCell>
-              <TableCell className="px-4 py-3.5 font-mono  text-muted-foreground align-top overflow-hidden whitespace-normal">
+              <TableCell className="px-4 py-3.5 font-mono text-muted-foreground align-top overflow-hidden whitespace-normal">
                 <DocsCode className="text-xs">{prop.type}</DocsCode>
               </TableCell>
-              <TableCell className="px-4 py-3.5 font-mono  text-muted-foreground align-top">
+              <TableCell className="px-4 py-3.5 font-mono text-muted-foreground align-top whitespace-normal">
                 <DocsCode className="text-xs">{prop.default ?? "—"}</DocsCode>
               </TableCell>
-              <TableCell className="px-4 py-3.5 text-sm text-muted-foreground whitespace-normal leading-relaxed">
+              <TableCell className="px-4 py-3.5 text-sm text-muted-foreground whitespace-normal min-w-[180px] leading-relaxed">
                 {prop.description}
               </TableCell>
             </TableRow>

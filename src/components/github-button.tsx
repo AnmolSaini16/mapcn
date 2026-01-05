@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export async function GitHubButton() {
   return (
-    <Button variant="ghost" size="sm" className="h-8 px-2 gap-1.5" asChild>
+    <Button variant="ghost" size="sm" className="h-8 px-2 gap-2" asChild>
       <Link
         href="https://github.com/AnmolSaini16/mapcn"
         target="_blank"
@@ -44,7 +44,7 @@ export async function StarCount() {
   return (
     <>
       {formattedCount && (
-        <span className="text-xs text-muted-foreground tabular-nums">
+        <span className="text-sm text-muted-foreground tabular-nums">
           {formattedCount}
         </span>
       )}

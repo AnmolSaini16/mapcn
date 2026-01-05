@@ -1,4 +1,9 @@
-import { DocsLayout, DocsSection, DocsCode } from "../_components/docs";
+import {
+  DocsLayout,
+  DocsSection,
+  DocsCode,
+  DocsLink,
+} from "../_components/docs";
 import { ComponentPreview } from "../_components/component-preview";
 import { RouteExample } from "../_components/examples/route-example";
 import { OsrmRouteExample } from "../_components/examples/osrm-route-example";
@@ -36,14 +41,18 @@ export default function RoutesPage() {
         <RouteExample />
       </ComponentPreview>
 
-      <DocsSection title="Dynamic Route from OSRM">
+      <DocsSection title="Route Planning">
         <p>
-          Fetch real driving directions from the OSRM API and display them on
-          the map.
+          Display multiple route options and let users select between them. This
+          example fetches real driving directions from the{" "}
+          <DocsLink href="https://project-osrm.org/" external>
+            OSRM API
+          </DocsLink>
+          . Click on a route or use the buttons to switch.
         </p>
       </DocsSection>
 
-      <ComponentPreview code={osrmRouteSource}>
+      <ComponentPreview code={osrmRouteSource} className="h-[500px]">
         <OsrmRouteExample />
       </ComponentPreview>
     </DocsLayout>
