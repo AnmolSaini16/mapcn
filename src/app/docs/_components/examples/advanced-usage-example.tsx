@@ -1,17 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Map, useMap } from "@/registry/map";
+import { Map, useMap } from "@/registry/map-gl";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Mountain } from "lucide-react";
 
 function MapController() {
-  const { map, isLoaded } = useMap();
+  const { mapRef, isLoaded } = useMap();
   const [pitch, setPitch] = useState(0);
   const [bearing, setBearing] = useState(0);
 
   useEffect(() => {
-    if (!map || !isLoaded) return;
+    const map = mapRef.current;
+    if (!map) {
+      return;
+    }
 
     const handleMove = () => {
       setPitch(Math.round(map.getPitch()));
@@ -22,10 +25,15 @@ function MapController() {
     return () => {
       map.off("move", handleMove);
     };
-  }, [map, isLoaded]);
+  }, [mapRef]);
 
   const handle3DView = () => {
-    map?.easeTo({
+    const map = mapRef.current;
+    if (!map) {
+      return;
+    }
+
+    map.easeTo({
       pitch: 60,
       bearing: -20,
       duration: 1000,
@@ -33,7 +41,12 @@ function MapController() {
   };
 
   const handleReset = () => {
-    map?.easeTo({
+    const map = mapRef.current;
+    if (!map) {
+      return;
+    }
+
+    map.easeTo({
       pitch: 0,
       bearing: 0,
       duration: 1000,
@@ -65,7 +78,9 @@ function MapController() {
 export function AdvancedUsageExample() {
   return (
     <div className="h-[400px] w-full">
-      <Map center={[-73.9857, 40.7484]} zoom={15}>
+      <Map
+        initialViewState={{ longitude: -73.9857, latitude: 40.7484, zoom: 15 }}
+      >
         <MapController />
       </Map>
     </div>

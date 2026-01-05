@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Map, MapPopup } from "@/registry/map";
+import { Map, MapPopup } from "@/registry/map-gl";
 import { Button } from "@/components/ui/button";
 
 export function StandalonePopupExample() {
@@ -9,7 +9,9 @@ export function StandalonePopupExample() {
 
   return (
     <div className="h-[400px] w-full relative">
-      <Map center={[-74.006, 40.7128]} zoom={13}>
+      <Map
+        initialViewState={{ longitude: -74.006, latitude: 40.7128, zoom: 13 }}
+      >
         {showPopup && (
           <MapPopup
             longitude={-74.006}

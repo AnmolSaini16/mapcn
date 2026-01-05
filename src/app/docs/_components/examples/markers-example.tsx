@@ -4,7 +4,7 @@ import {
   MarkerContent,
   MarkerPopup,
   MarkerTooltip,
-} from "@/registry/map";
+} from "@/registry/map-gl";
 
 const locations = [
   {
@@ -25,7 +25,7 @@ const locations = [
 export function MarkersExample() {
   return (
     <div className="h-[400px] w-full">
-      <Map center={[-73.98, 40.76]} zoom={12}>
+      <Map initialViewState={{ longitude: -73.98, latitude: 40.76, zoom: 12 }}>
         {locations.map((location) => (
           <MapMarker
             key={location.id}
