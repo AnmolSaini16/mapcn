@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Map, MapClusterLayer, MapPopup, MapControls } from "@/registry/map";
+import { PinIcon } from "lucide-react";
 
 interface EarthquakeProperties {
   mag: number;
@@ -29,6 +30,14 @@ export default function ClusterExample() {
               coordinates,
               properties: feature.properties,
             });
+          }}
+          renderPoint={(props) => {
+            console.log(props);
+            return (
+              <>
+                <PinIcon className="h-4 w-4" />
+              </>
+            );
           }}
         />
 
