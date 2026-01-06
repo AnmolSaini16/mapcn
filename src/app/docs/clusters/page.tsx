@@ -16,7 +16,7 @@ export default function ClustersPage() {
       title="Clusters"
       description="Visualize large datasets with automatic point clustering."
       prev={{ title: "Routes", href: "/docs/routes" }}
-      next={{ title: "Advanced Usage", href: "/docs/advanced-usage" }}
+      next={{ title: "GeoJSON", href: "/docs/geojson" }}
     >
       <DocsSection>
         <p>

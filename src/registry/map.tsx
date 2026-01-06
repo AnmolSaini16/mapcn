@@ -1270,6 +1270,413 @@ function MapClusterLayer<
   return null;
 }
 
+type MapGeoJSONProps = {
+  /** GeoJSON data as a string or parsed object */
+  data: string | GeoJSON.GeoJSON;
+  /** Optional unique identifier for the GeoJSON layer */
+  id?: string;
+  /** Styling options for point geometries */
+  pointStyle?: {
+    /** Circle color (default: "#3b82f6") */
+    color?: string;
+    /** Circle radius in pixels (default: 6) */
+    radius?: number;
+    /** Circle opacity from 0 to 1 (default: 1) */
+    opacity?: number;
+  };
+  /** Styling options for line geometries */
+  lineStyle?: {
+    /** Line color (default: "#4285F4") */
+    color?: string;
+    /** Line width in pixels (default: 3) */
+    width?: number;
+    /** Line opacity from 0 to 1 (default: 0.8) */
+    opacity?: number;
+    /** Dash pattern [dash length, gap length] for dashed lines */
+    dashArray?: [number, number];
+  };
+  /** Styling options for polygon geometries */
+  polygonStyle?: {
+    /** Fill color (default: "#4285F4") */
+    fillColor?: string;
+    /** Fill opacity from 0 to 1 (default: 0.3) */
+    fillOpacity?: number;
+    /** Outline color (default: "#4285F4") */
+    outlineColor?: string;
+    /** Outline width in pixels (default: 2) */
+    outlineWidth?: number;
+    /** Outline opacity from 0 to 1 (default: 1) */
+    outlineOpacity?: number;
+  };
+  /** Callback when a feature is clicked */
+  onClick?: (
+    feature: GeoJSON.Feature,
+    coordinates: [number, number]
+  ) => void;
+  /** Callback when mouse enters a feature */
+  onMouseEnter?: (feature: GeoJSON.Feature) => void;
+  /** Callback when mouse leaves a feature */
+  onMouseLeave?: () => void;
+  /** Whether the GeoJSON is interactive - shows pointer cursor on hover (default: true) */
+  interactive?: boolean;
+};
+
+function MapGeoJSON({
+  data,
+  id,
+  pointStyle = {},
+  lineStyle = {},
+  polygonStyle = {},
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
+  interactive = true,
+}: MapGeoJSONProps) {
+  const { map, isLoaded } = useMap();
+  const autoId = useId();
+  const sourceId = id ?? `geojson-source-${autoId}`;
+  const pointLayerId = id ? `${id}-points` : `geojson-points-${autoId}`;
+  const lineLayerId = id ? `${id}-lines` : `geojson-lines-${autoId}`;
+  const polygonFillLayerId = id
+    ? `${id}-polygon-fill`
+    : `geojson-polygon-fill-${autoId}`;
+  const polygonOutlineLayerId = id
+    ? `${id}-polygon-outline`
+    : `geojson-polygon-outline-${autoId}`;
+
+  // Parse GeoJSON if it's a string
+  const parsedData = useMemo(() => {
+    if (typeof data === "string") {
+      try {
+        return JSON.parse(data) as GeoJSON.GeoJSON;
+      } catch (error) {
+        console.error("Failed to parse GeoJSON string:", error);
+        return null;
+      }
+    }
+    return data;
+  }, [data]);
+
+  // Determine geometry types present in the GeoJSON
+  const geometryTypes = useMemo(() => {
+    if (!parsedData) return new Set<string>();
+
+    const types = new Set<string>();
+
+    function extractTypes(geojson: GeoJSON.GeoJSON) {
+      if (geojson.type === "FeatureCollection") {
+        geojson.features.forEach((feature) => {
+          types.add(feature.geometry.type);
+        });
+      } else if (geojson.type === "Feature") {
+        types.add(geojson.geometry.type);
+      } else if (
+        geojson.type === "Point" ||
+        geojson.type === "LineString" ||
+        geojson.type === "Polygon" ||
+        geojson.type === "MultiPoint" ||
+        geojson.type === "MultiLineString" ||
+        geojson.type === "MultiPolygon"
+      ) {
+        types.add(geojson.type);
+      }
+    }
+
+    extractTypes(parsedData);
+    return types;
+  }, [parsedData]);
+
+  const hasPoints =
+    geometryTypes.has("Point") || geometryTypes.has("MultiPoint");
+  const hasLines =
+    geometryTypes.has("LineString") ||
+    geometryTypes.has("MultiLineString");
+  const hasPolygons =
+    geometryTypes.has("Polygon") || geometryTypes.has("MultiPolygon");
+
+  // Add source and layers on mount
+  useEffect(() => {
+    if (!isLoaded || !map || !parsedData) return;
+
+    // Add GeoJSON source
+    map.addSource(sourceId, {
+      type: "geojson",
+      data: parsedData,
+    });
+
+    // Add point layer
+    if (hasPoints) {
+      map.addLayer({
+        id: pointLayerId,
+        type: "circle",
+        source: sourceId,
+        filter: [
+          "any",
+          ["==", ["geometry-type"], "Point"],
+          ["==", ["geometry-type"], "MultiPoint"],
+        ],
+        paint: {
+          "circle-color": pointStyle.color ?? "#3b82f6",
+          "circle-radius": pointStyle.radius ?? 6,
+          "circle-opacity": pointStyle.opacity ?? 1,
+        },
+      });
+    }
+
+    // Add line layer
+    if (hasLines) {
+      map.addLayer({
+        id: lineLayerId,
+        type: "line",
+        source: sourceId,
+        filter: [
+          "any",
+          ["==", ["geometry-type"], "LineString"],
+          ["==", ["geometry-type"], "MultiLineString"],
+        ],
+        layout: { "line-join": "round", "line-cap": "round" },
+        paint: {
+          "line-color": lineStyle.color ?? "#4285F4",
+          "line-width": lineStyle.width ?? 3,
+          "line-opacity": lineStyle.opacity ?? 0.8,
+          ...(lineStyle.dashArray && {
+            "line-dasharray": lineStyle.dashArray,
+          }),
+        },
+      });
+    }
+
+    // Add polygon fill layer
+    if (hasPolygons) {
+      map.addLayer({
+        id: polygonFillLayerId,
+        type: "fill",
+        source: sourceId,
+        filter: [
+          "any",
+          ["==", ["geometry-type"], "Polygon"],
+          ["==", ["geometry-type"], "MultiPolygon"],
+        ],
+        paint: {
+          "fill-color": polygonStyle.fillColor ?? "#4285F4",
+          "fill-opacity": polygonStyle.fillOpacity ?? 0.3,
+        },
+      });
+
+      // Add polygon outline layer
+      map.addLayer({
+        id: polygonOutlineLayerId,
+        type: "line",
+        source: sourceId,
+        filter: [
+          "any",
+          ["==", ["geometry-type"], "Polygon"],
+          ["==", ["geometry-type"], "MultiPolygon"],
+        ],
+        layout: { "line-join": "round", "line-cap": "round" },
+        paint: {
+          "line-color": polygonStyle.outlineColor ?? "#4285F4",
+          "line-width": polygonStyle.outlineWidth ?? 2,
+          "line-opacity": polygonStyle.outlineOpacity ?? 1,
+        },
+      });
+    }
+
+    return () => {
+      try {
+        if (hasPolygons) {
+          if (map.getLayer(polygonOutlineLayerId))
+            map.removeLayer(polygonOutlineLayerId);
+          if (map.getLayer(polygonFillLayerId))
+            map.removeLayer(polygonFillLayerId);
+        }
+        if (hasLines && map.getLayer(lineLayerId)) map.removeLayer(lineLayerId);
+        if (hasPoints && map.getLayer(pointLayerId))
+          map.removeLayer(pointLayerId);
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+      } catch {
+        // ignore
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, map, sourceId]);
+
+  // Update source data when GeoJSON changes
+  useEffect(() => {
+    if (!isLoaded || !map || !parsedData) return;
+
+    const source = map.getSource(sourceId) as MapLibreGL.GeoJSONSource;
+    if (source) {
+      source.setData(parsedData);
+    }
+  }, [isLoaded, map, parsedData, sourceId]);
+
+  // Update layer styles when props change
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+
+    if (hasPoints && map.getLayer(pointLayerId)) {
+      map.setPaintProperty(
+        pointLayerId,
+        "circle-color",
+        pointStyle.color ?? "#3b82f6"
+      );
+      map.setPaintProperty(
+        pointLayerId,
+        "circle-radius",
+        pointStyle.radius ?? 6
+      );
+      map.setPaintProperty(
+        pointLayerId,
+        "circle-opacity",
+        pointStyle.opacity ?? 1
+      );
+    }
+
+    if (hasLines && map.getLayer(lineLayerId)) {
+      map.setPaintProperty(
+        lineLayerId,
+        "line-color",
+        lineStyle.color ?? "#4285F4"
+      );
+      map.setPaintProperty(lineLayerId, "line-width", lineStyle.width ?? 3);
+      map.setPaintProperty(
+        lineLayerId,
+        "line-opacity",
+        lineStyle.opacity ?? 0.8
+      );
+      if (lineStyle.dashArray) {
+        map.setPaintProperty(lineLayerId, "line-dasharray", lineStyle.dashArray);
+      }
+    }
+
+    if (hasPolygons) {
+      if (map.getLayer(polygonFillLayerId)) {
+        map.setPaintProperty(
+          polygonFillLayerId,
+          "fill-color",
+          polygonStyle.fillColor ?? "#4285F4"
+        );
+        map.setPaintProperty(
+          polygonFillLayerId,
+          "fill-opacity",
+          polygonStyle.fillOpacity ?? 0.3
+        );
+      }
+      if (map.getLayer(polygonOutlineLayerId)) {
+        map.setPaintProperty(
+          polygonOutlineLayerId,
+          "line-color",
+          polygonStyle.outlineColor ?? "#4285F4"
+        );
+        map.setPaintProperty(
+          polygonOutlineLayerId,
+          "line-width",
+          polygonStyle.outlineWidth ?? 2
+        );
+        map.setPaintProperty(
+          polygonOutlineLayerId,
+          "line-opacity",
+          polygonStyle.outlineOpacity ?? 1
+        );
+      }
+    }
+  }, [
+    isLoaded,
+    map,
+    pointLayerId,
+    lineLayerId,
+    polygonFillLayerId,
+    polygonOutlineLayerId,
+    hasPoints,
+    hasLines,
+    hasPolygons,
+    pointStyle,
+    lineStyle,
+    polygonStyle,
+  ]);
+
+  // Handle click and hover events
+  useEffect(() => {
+    if (!isLoaded || !map || !interactive) return;
+
+    const layers: string[] = [];
+    if (hasPoints) layers.push(pointLayerId);
+    if (hasLines) layers.push(lineLayerId);
+    if (hasPolygons) {
+      layers.push(polygonFillLayerId);
+      layers.push(polygonOutlineLayerId);
+    }
+
+    const handleClick = (
+      e: MapLibreGL.MapMouseEvent & {
+        features?: MapLibreGL.MapGeoJSONFeature[];
+      }
+    ) => {
+      if (!onClick || !e.features?.length) return;
+
+      const feature = e.features[0];
+      const geometry = feature.geometry as GeoJSON.Point;
+      const coordinates = geometry.coordinates.slice() as [number, number];
+
+      // Handle world copies
+      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+      }
+
+      onClick(feature as unknown as GeoJSON.Feature, coordinates);
+    };
+
+    const handleMouseEnter = (
+      e: MapLibreGL.MapMouseEvent & {
+        features?: MapLibreGL.MapGeoJSONFeature[];
+      }
+    ) => {
+      map.getCanvas().style.cursor = "pointer";
+      if (onMouseEnter && e.features?.length) {
+        onMouseEnter(e.features[0] as unknown as GeoJSON.Feature);
+      }
+    };
+
+    const handleMouseLeave = () => {
+      map.getCanvas().style.cursor = "";
+      onMouseLeave?.();
+    };
+
+    layers.forEach((layerId) => {
+      map.on("click", layerId, handleClick);
+      if (onMouseEnter || onMouseLeave) {
+        map.on("mouseenter", layerId, handleMouseEnter);
+        map.on("mouseleave", layerId, handleMouseLeave);
+      }
+    });
+
+    return () => {
+      layers.forEach((layerId) => {
+        map.off("click", layerId, handleClick);
+        map.off("mouseenter", layerId, handleMouseEnter);
+        map.off("mouseleave", layerId, handleMouseLeave);
+      });
+    };
+  }, [
+    isLoaded,
+    map,
+    pointLayerId,
+    lineLayerId,
+    polygonFillLayerId,
+    polygonOutlineLayerId,
+    hasPoints,
+    hasLines,
+    hasPolygons,
+    onClick,
+    onMouseEnter,
+    onMouseLeave,
+    interactive,
+  ]);
+
+  return null;
+}
+
 export {
   Map,
   useMap,
@@ -1282,4 +1689,5 @@ export {
   MapControls,
   MapRoute,
   MapClusterLayer,
+  MapGeoJSON,
 };

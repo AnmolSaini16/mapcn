@@ -70,7 +70,7 @@ export default function AdvancedPage() {
     <DocsLayout
       title="Advanced Usage"
       description="Access the underlying MapLibre GL instance for advanced customization."
-      prev={{ title: "Clusters", href: "/docs/clusters" }}
+      prev={{ title: "GeoJSON", href: "/docs/geojson" }}
     >
       <DocsSection>
         <p>
