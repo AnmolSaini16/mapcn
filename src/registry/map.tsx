@@ -22,6 +22,14 @@ import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React from "react";
 
+// Enable RTL text rendering for Arabic, Hebrew, and other RTL languages
+if (typeof window !== "undefined") {
+  MapLibreGL.setRTLTextPlugin(
+    "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js",
+    true // lazy load - only downloads when RTL text is encountered
+  );
+}
+
 type MapContextValue = {
   map: MapLibreGL.Map | null;
   isLoaded: boolean;
