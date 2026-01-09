@@ -26,6 +26,7 @@ const anatomyCode = `<Map>
   <MapControls />
   <MapRoute coordinates={...} />
   <MapClusterLayer data={...} />
+  <MapGeoJSON data={...} />
 </Map>`;
 
 const useMapCode = `const { map, isLoaded } = useMap();`;
@@ -570,6 +571,73 @@ export default function ApiReferencePage() {
               type: "(clusterId: number, coordinates: [number, number], pointCount: number) => void",
               description:
                 "Callback when a cluster is clicked. If not provided, zooms into the cluster.",
+            },
+          ]}
+        />
+      </DocsSection>
+
+      {/* MapGeoJSON */}
+      <DocsSection title="MapGeoJSON">
+        <p>
+          Parses and displays GeoJSON data (as a string or parsed object) on the
+          map. Automatically detects geometry types and applies appropriate
+          styling. Supports all GeoJSON geometry types: Point, LineString,
+          Polygon, and their Multi- variants. Must be used inside{" "}
+          <DocsCode>Map</DocsCode>.
+        </p>
+        <DocsPropTable
+          props={[
+            {
+              name: "data",
+              type: "string | GeoJSON.GeoJSON",
+              description:
+                "GeoJSON data as a string or parsed object. Supports Feature, FeatureCollection, and all geometry types.",
+            },
+            {
+              name: "id",
+              type: "string",
+              description:
+                "Optional unique identifier for the GeoJSON layer. Useful when using multiple GeoJSON layers.",
+            },
+            {
+              name: "pointStyle",
+              type: "{ color?: string; radius?: number; opacity?: number }",
+              default: '{ color: "#3b82f6", radius: 6, opacity: 1 }',
+              description: "Styling options for point geometries.",
+            },
+            {
+              name: "lineStyle",
+              type: "{ color?: string; width?: number; opacity?: number; dashArray?: [number, number] }",
+              default: '{ color: "#4285F4", width: 3, opacity: 0.8 }',
+              description: "Styling options for line geometries.",
+            },
+            {
+              name: "polygonStyle",
+              type: "{ fillColor?: string; fillOpacity?: number; outlineColor?: string; outlineWidth?: number; outlineOpacity?: number }",
+              default: '{ fillColor: "#4285F4", fillOpacity: 0.3, outlineColor: "#4285F4", outlineWidth: 2, outlineOpacity: 1 }',
+              description: "Styling options for polygon geometries.",
+            },
+            {
+              name: "onClick",
+              type: "(feature: GeoJSON.Feature, coordinates: [number, number]) => void",
+              description: "Callback when a feature is clicked.",
+            },
+            {
+              name: "onMouseEnter",
+              type: "(feature: GeoJSON.Feature) => void",
+              description: "Callback when mouse enters a feature.",
+            },
+            {
+              name: "onMouseLeave",
+              type: "() => void",
+              description: "Callback when mouse leaves a feature.",
+            },
+            {
+              name: "interactive",
+              type: "boolean",
+              default: "true",
+              description:
+                "Whether the GeoJSON is interactive - shows pointer cursor on hover.",
             },
           ]}
         />

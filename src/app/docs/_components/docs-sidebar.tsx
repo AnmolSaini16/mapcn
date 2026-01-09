@@ -50,6 +50,7 @@ const navigation = [
       { title: "Popups", href: "/docs/popups", icon: MessageSquare },
       { title: "Routes", href: "/docs/routes", icon: Route },
       { title: "Clusters", href: "/docs/clusters", icon: Layers },
+      { title: "GeoJSON", href: "/docs/geojson", icon: Braces },
       { title: "Advanced Usage", href: "/docs/advanced-usage", icon: Wrench },
     ],
   },
