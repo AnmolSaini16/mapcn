@@ -17,7 +17,7 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
-import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
+import { X, Minus, Plus, Locate, Maximize, Loader2, Globe, Map as MapIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import React from "react";
@@ -51,6 +51,8 @@ type MapProps = {
     light?: MapStyleOption;
     dark?: MapStyleOption;
   };
+  /** Map projection type. Use "mercator" for flat map (default) or "globe" for 3D globe view. */
+  projection?: "globe" | "mercator";
 } & Omit<MapLibreGL.MapOptions, "container" | "style">;
 
 type MapRef = MapLibreGL.Map;
@@ -66,7 +68,7 @@ const DefaultLoader = () => (
 );
 
 const Map = forwardRef<MapRef, MapProps>(function Map(
-  { children, styles, ...props },
+  { children, styles, projection, ...props },
   ref
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -75,6 +77,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
   const [isStyleLoaded, setIsStyleLoaded] = useState(false);
   const { resolvedTheme } = useTheme();
   const currentStyleRef = useRef<MapStyleOption | null>(null);
+  const currentProjectionRef = useRef<string | null>(null);
 
   const mapStyles = useMemo(
     () => ({
@@ -117,6 +120,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
       setIsLoaded(false);
       setIsStyleLoaded(false);
       setMapInstance(null);
+      currentProjectionRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -138,6 +142,39 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
 
     return () => cancelAnimationFrame(frameId);
   }, [mapInstance, resolvedTheme, mapStyles]);
+
+  // Handle projection changes (only when explicitly provided)
+  useEffect(() => {
+    if (!mapInstance || projection === undefined) return;
+
+    const updateProjection = () => {
+      // Only update if projection has actually changed
+      if (currentProjectionRef.current === projection) return;
+
+      // Safety check: ensure style is loaded before setting projection
+      if (!mapInstance.style?._loaded) return;
+
+      currentProjectionRef.current = projection;
+      mapInstance.setProjection({ type: projection });
+    };
+
+    // Try to update immediately if style is already loaded
+    updateProjection();
+
+    // Also listen for style.load to reapply projection when style changes
+    // (style changes wipe out projection settings)
+    const styleLoadHandler = () => {
+      // Reset cache since style change may have wiped the projection
+      currentProjectionRef.current = null;
+      updateProjection();
+    };
+
+    mapInstance.on("style.load", styleLoadHandler);
+
+    return () => {
+      mapInstance.off("style.load", styleLoadHandler);
+    };
+  }, [mapInstance, projection]);
 
   const isLoading = !isLoaded || !isStyleLoaded;
 
@@ -526,6 +563,8 @@ type MapControlsProps = {
   showLocate?: boolean;
   /** Show fullscreen toggle button (default: false) */
   showFullscreen?: boolean;
+  /** Show projection toggle button (default: false) */
+  showProjection?: boolean;
   /** Additional CSS classes for the controls container */
   className?: string;
   /** Callback with user coordinates when located */
@@ -580,11 +619,33 @@ function MapControls({
   showCompass = false,
   showLocate = false,
   showFullscreen = false,
+  showProjection = false,
   className,
   onLocate,
 }: MapControlsProps) {
   const { map, isLoaded } = useMap();
   const [waitingForLocation, setWaitingForLocation] = useState(false);
+  const [currentProjection, setCurrentProjection] = useState<"globe" | "mercator">("mercator");
+
+  // Sync with map's projection state
+  useEffect(() => {
+    if (!map || !isLoaded) return;
+
+    const updateProjectionState = () => {
+      const proj = map.getProjection();
+      const type = proj?.type ?? "mercator";
+      setCurrentProjection(type === "globe" ? "globe" : "mercator");
+    };
+
+    updateProjectionState();
+
+    // Listen for projection changes
+    map.on("projectiontransition", updateProjectionState);
+
+    return () => {
+      map.off("projectiontransition", updateProjectionState);
+    };
+  }, [map, isLoaded]);
 
   const handleZoomIn = useCallback(() => {
     map?.zoomTo(map.getZoom() + 1, { duration: 300 });
@@ -633,6 +694,13 @@ function MapControls({
     }
   }, [map]);
 
+  const handleProjectionToggle = useCallback(() => {
+    if (!map) return;
+    const newProjection = currentProjection === "globe" ? "mercator" : "globe";
+    map.setProjection({ type: newProjection });
+    setCurrentProjection(newProjection);
+  }, [map, currentProjection]);
+
   if (!isLoaded) return null;
 
   return (
@@ -677,6 +745,20 @@ function MapControls({
         <ControlGroup>
           <ControlButton onClick={handleFullscreen} label="Toggle fullscreen">
             <Maximize className="size-4" />
+          </ControlButton>
+        </ControlGroup>
+      )}
+      {showProjection && (
+        <ControlGroup>
+          <ControlButton
+            onClick={handleProjectionToggle}
+            label={`Switch to ${currentProjection === "globe" ? "mercator" : "globe"} projection`}
+          >
+            {currentProjection === "globe" ? (
+              <MapIcon className="size-4" />
+            ) : (
+              <Globe className="size-4" />
+            )}
           </ControlButton>
         </ControlGroup>
       )}

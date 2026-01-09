@@ -93,6 +93,12 @@ export default function ApiReferencePage() {
               description:
                 "Custom map styles for light and dark themes. Overrides the default Carto base map tiles.",
             },
+            {
+              name: "projection",
+              type: '"globe" | "mercator"',
+              description:
+                "Map projection type. Use 'mercator' for a flat map or 'globe' for a 3D spherical view. Optional. When provided, the map will enforce this projection. When omitted, MapControls can manage projection independently.",
+            },
           ]}
         />
       </DocsSection>
@@ -154,6 +160,12 @@ export default function ApiReferencePage() {
               type: "boolean",
               default: "false",
               description: "Show fullscreen toggle button.",
+            },
+            {
+              name: "showProjection",
+              type: "boolean",
+              default: "false",
+              description: "Show projection toggle button. Toggles between globe and mercator projections.",
             },
             {
               name: "className",
