@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { Map, MapControls, useMap } from "@/registry/map";
 import { Button } from "@/components/ui/button";
+import { Map, MapControls, useMap } from "@/registry/map-gl";
 import { Layers, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Layer, Source } from "react-map-gl/maplibre";
 
 const geojsonData = {
   type: "FeatureCollection" as const,
@@ -44,58 +45,19 @@ const geojsonData = {
 };
 
 function CustomLayer() {
-  const { map, isLoaded } = useMap();
+  const { mapRef } = useMap();
   const [isLayerVisible, setIsLayerVisible] = useState(false);
   const [hoveredPark, setHoveredPark] = useState<string | null>(null);
 
-  const addLayers = useCallback(() => {
-    if (!map) return;
-    // Add source if it doesn't exist
-    if (!map.getSource("parks")) {
-      map.addSource("parks", {
-        type: "geojson",
-        data: geojsonData,
-      });
-    }
-
-    // Add fill layer if it doesn't exist
-    if (!map.getLayer("parks-fill")) {
-      map.addLayer({
-        id: "parks-fill",
-        type: "fill",
-        source: "parks",
-        paint: {
-          "fill-color": "#22c55e",
-          "fill-opacity": 0.4,
-        },
-        layout: {
-          visibility: isLayerVisible ? "visible" : "none",
-        },
-      });
-    }
-
-    // Add outline layer if it doesn't exist
-    if (!map.getLayer("parks-outline")) {
-      map.addLayer({
-        id: "parks-outline",
-        type: "line",
-        source: "parks",
-        paint: {
-          "line-color": "#16a34a",
-          "line-width": 2,
-        },
-        layout: {
-          visibility: isLayerVisible ? "visible" : "none",
-        },
-      });
-    }
-  }, [map, isLayerVisible]);
+  const parksSourceId = "parks";
+  const parksFillLayerId = "parks-fill";
+  const parksOutlineLayerId = "parks-outline";
 
   useEffect(() => {
-    if (!map || !isLoaded) return;
-
-    // Add layers on mount
-    addLayers();
+    const map = mapRef.current;
+    if (!map) {
+      return;
+    }
 
     // Hover effect
     const handleMouseEnter = () => {
@@ -109,35 +71,53 @@ function CustomLayer() {
 
     const handleMouseMove = (e: maplibregl.MapMouseEvent) => {
       const features = map.queryRenderedFeatures(e.point, {
-        layers: ["parks-fill"],
+        layers: [parksFillLayerId],
       });
       if (features.length > 0) {
         setHoveredPark(features[0].properties?.name || null);
       }
     };
 
-    map.on("mouseenter", "parks-fill", handleMouseEnter);
-    map.on("mouseleave", "parks-fill", handleMouseLeave);
-    map.on("mousemove", "parks-fill", handleMouseMove);
+    map.on("mouseenter", parksFillLayerId, handleMouseEnter);
+    map.on("mouseleave", parksFillLayerId, handleMouseLeave);
+    map.on("mousemove", parksFillLayerId, handleMouseMove);
 
     return () => {
-      map.off("mouseenter", "parks-fill", handleMouseEnter);
-      map.off("mouseleave", "parks-fill", handleMouseLeave);
-      map.off("mousemove", "parks-fill", handleMouseMove);
+      map.off("mouseenter", parksFillLayerId, handleMouseEnter);
+      map.off("mouseleave", parksFillLayerId, handleMouseLeave);
+      map.off("mousemove", parksFillLayerId, handleMouseMove);
     };
-  }, [map, isLoaded, isLayerVisible]);
+  }, [mapRef]);
 
-  const toggleLayer = () => {
-    if (!map) return;
-
-    const visibility = isLayerVisible ? "none" : "visible";
-    map.setLayoutProperty("parks-fill", "visibility", visibility);
-    map.setLayoutProperty("parks-outline", "visibility", visibility);
-    setIsLayerVisible(!isLayerVisible);
-  };
+  const toggleLayer = () =>
+    setIsLayerVisible((prevIsLayerVisible) => !prevIsLayerVisible);
 
   return (
     <>
+      <Source id={parksSourceId} type="geojson" data={geojsonData}>
+        <Layer
+          id={parksFillLayerId}
+          type="fill"
+          paint={{
+            "fill-color": "#22c55e",
+            "fill-opacity": 0.4,
+          }}
+          layout={{
+            visibility: isLayerVisible ? "visible" : "none",
+          }}
+        />
+        <Layer
+          id={parksOutlineLayerId}
+          type="line"
+          paint={{
+            "line-color": "#16a34a",
+            "line-width": 2,
+          }}
+          layout={{
+            visibility: isLayerVisible ? "visible" : "none",
+          }}
+        />
+      </Source>
       <div className="absolute top-3 left-3 z-10">
         <Button
           size="sm"
@@ -165,7 +145,9 @@ function CustomLayer() {
 export function CustomLayerExample() {
   return (
     <div className="h-[400px] w-full">
-      <Map center={[-73.97, 40.78]} zoom={11.8}>
+      <Map
+        initialViewState={{ longitude: -73.97, latitude: 40.78, zoom: 11.8 }}
+      >
         <MapControls />
         <CustomLayer />
       </Map>

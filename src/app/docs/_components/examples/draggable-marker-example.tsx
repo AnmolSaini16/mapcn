@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Map, MapMarker, MarkerContent, MarkerPopup } from "@/registry/map";
+import { Map, MapMarker, MarkerContent, MarkerPopup } from "@/registry/map-gl";
 import { MapPin } from "lucide-react";
 
 export function DraggableMarkerExample() {
@@ -12,12 +12,12 @@ export function DraggableMarkerExample() {
 
   return (
     <div className="h-[400px] w-full">
-      <Map center={[-73.98, 40.75]} zoom={12}>
+      <Map initialViewState={{ longitude: -73.98, latitude: 40.75, zoom: 12 }}>
         <MapMarker
           draggable
           longitude={draggableMarker.lng}
           latitude={draggableMarker.lat}
-          onDragEnd={(lngLat) => {
+          onDragEnd={({ lngLat }) => {
             setDraggableMarker({ lng: lngLat.lng, lat: lngLat.lat });
           }}
         >

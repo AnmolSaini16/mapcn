@@ -8,7 +8,7 @@ import {
 import { CodeBlock } from "../_components/code-block";
 import { Metadata } from "next";
 import { Card } from "@/components/ui/card";
-import { Map, MapControls } from "@/registry/map";
+import { Map, MapControls } from "@/registry/map-gl";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "site-url-here";
 
@@ -20,7 +20,7 @@ import { Card } from "@/components/ui/card";
 export function MyMap() {
   return (
     <Card className="h-[300px] p-0 overflow-hidden">
-      <Map center={[-74.006, 40.7128]} zoom={11}>
+      <Map initialViewState={{ longitude: -74.006, latitude: 40.7128, zoom: 11 }}>
         <MapControls />
       </Map>
     </Card>
@@ -71,7 +71,13 @@ export default function InstallationPage() {
         <p>Import and use the map component:</p>
         <CodeBlock code={usageCode} />
         <Card className="h-[300px] p-0 overflow-hidden rounded-lg">
-          <Map center={[-74.006, 40.7128]} zoom={11}>
+          <Map
+            initialViewState={{
+              longitude: -74.006,
+              latitude: 40.7128,
+              zoom: 11,
+            }}
+          >
             <MapControls />
           </Map>
         </Card>

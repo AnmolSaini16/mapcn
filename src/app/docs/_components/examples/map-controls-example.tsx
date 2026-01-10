@@ -1,9 +1,11 @@
-import { Map, MapControls } from "@/registry/map";
+import { Map, MapControls } from "@/registry/map-gl";
 
 export function MapControlsExample() {
   return (
     <div className="h-[400px] w-full">
-      <Map center={[2.3522, 48.8566]} zoom={11}>
+      <Map
+        initialViewState={{ longitude: 2.3522, latitude: 48.8566, zoom: 11 }}
+      >
         <MapControls
           position="bottom-right"
           showZoom
