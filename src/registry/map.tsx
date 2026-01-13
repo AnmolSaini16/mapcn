@@ -647,12 +647,13 @@ function MapControls({
     }
   }, [map, onLocate]);
 
-  const handlePitchUp = () => {
+  const handlePitchUp = useCallback(() => {
     map?.setPitch(map.getPitch() + 1)
-  }
-  const handlePitchDown = () => {
+  }, [map])
+
+  const handlePitchDown = useCallback(() => {
     map?.setPitch(map.getPitch() - 1)
-  }
+  }, [map])
 
   const handleFullscreen = useCallback(() => {
     const container = map?.getContainer();
