@@ -28,7 +28,7 @@ const anatomyCode = `<Map>
   <MapClusterLayer data={...} />
 </Map>`;
 
-const useMapCode = `const { map, isLoaded } = useMap();`;
+const useMapCode = `const { current: map } = useMap();`;
 
 export default function ApiReferencePage() {
   return (
@@ -138,8 +138,7 @@ export default function ApiReferencePage() {
           >
             MapLibre.Map
           </DocsLink>
-          ) and <DocsCode>isLoaded</DocsCode> (boolean) tells you if the map is
-          loaded and ready to use.
+          ).
         </p>
       </DocsSection>
 

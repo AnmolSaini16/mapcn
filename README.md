@@ -4,7 +4,7 @@
   <br>
   <p>
     Free & open source map components. Zero config, one command setup.<br/>
-    Built on <a href="https://maplibre.org/">MapLibre GL</a>, styled with <a href="https://tailwindcss.com/">Tailwind</a>, works seamlessly with <a href="https://ui.shadcn.com/">shadcn/ui</a>.
+    Built on <a href="https://visgl.github.io/react-map-gl/">react-map-gl</a> and <a href="https://maplibre.org/">MapLibre GL</a>, styled with <a href="https://tailwindcss.com/">Tailwind</a>, works seamlessly with <a href="https://ui.shadcn.com/">shadcn/ui</a>.
   </p>
   
   <p>

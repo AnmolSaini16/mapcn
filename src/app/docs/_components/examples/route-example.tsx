@@ -4,7 +4,7 @@ import {
   MarkerContent,
   MarkerTooltip,
   MapRoute,
-} from "@/registry/map";
+} from "@/registry/map-gl";
 
 const route = [
   [-74.006, 40.7128], // NYC City Hall
@@ -23,7 +23,9 @@ const stops = [
 export function RouteExample() {
   return (
     <div className="h-[400px] w-full">
-      <Map center={[-73.98, 40.75]} zoom={11.2}>
+      <Map
+        initialViewState={{ longitude: -73.98, latitude: 40.75, zoom: 11.2 }}
+      >
         <MapRoute coordinates={route} color="#3b82f6" width={4} opacity={0.8} />
 
         {stops.map((stop, index) => (

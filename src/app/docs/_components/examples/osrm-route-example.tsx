@@ -7,7 +7,7 @@ import {
   MarkerContent,
   MapRoute,
   MarkerLabel,
-} from "@/registry/map";
+} from "@/registry/map-gl";
 import { Loader2, Clock, Route } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -81,7 +81,7 @@ export function OsrmRouteExample() {
 
   return (
     <div className="h-[500px] w-full relative">
-      <Map center={[4.69, 52.14]} zoom={8.5}>
+      <Map initialViewState={{ longitude: 4.69, latitude: 52.14, zoom: 8.5 }}>
         {sortedRoutes.map(({ route, index }) => {
           const isSelected = index === selectedIndex;
           return (
