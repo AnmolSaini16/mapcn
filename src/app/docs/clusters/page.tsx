@@ -30,7 +30,7 @@ export default function ClustersPage() {
       <DocsSection title="Basic Example">
         <p>
           Click on clusters to zoom in. Click individual points to see details
-          in a popup.
+          in a popup. You can also provide a custom renderer to the <DocsCode>MapClusterLayer</DocsCode> component to render a custom icon for each point.
         </p>
       </DocsSection>
 
