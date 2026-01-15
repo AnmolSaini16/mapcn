@@ -16,7 +16,7 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
-import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
+import { X, Minus, Plus, Locate, Maximize, Loader2, Play, Pause, RotateCcw } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -1346,6 +1346,279 @@ function MapClusterLayer<
   return null;
 }
 
+type AnimatedRoutePlaybackProps = {
+    coordinates: [number, number][];
+    routeColor?: string;
+    routeWidth?: number;
+    routeOpacity?: number;
+    routeDashArray?: [number, number];
+    markerColor?: string;
+    speed?: number;
+    autoStart?: boolean;
+    loop?: boolean;
+    showControls?: boolean;
+    onProgress?: (progress: number, currentIndex: number) => void;
+    onComplete?: () => void;
+    children?: ReactNode;
+};
+
+function AnimatedRoutePlayback({
+    coordinates,
+    routeColor = "#4285F4",
+    routeWidth = 3,
+    routeOpacity = 0.8,
+    routeDashArray,
+    markerColor = "#4285F4",
+    speed = 1,
+    autoStart = true,
+    loop = true,
+    showControls = false,
+
+    onProgress,
+    onComplete,
+    children,
+}: AnimatedRoutePlaybackProps) {
+    const { map, isLoaded } = useMap();
+    const [isPlaying, setIsPlaying] = useState(autoStart);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [currentPosition, setCurrentPosition] = useState<[number, number]>(
+        coordinates[0],
+    );
+    const [playbackSpeed, setPlaybackSpeed] = useState(speed);
+    const animationFrameRef = useRef<number | null>(null);
+    const lastTimeRef = useRef<number>(0);
+    const progressRef = useRef<number>(0);
+
+    const totalDistance = useMemo(() => {
+        let distance = 0;
+        for (let i = 0; i < coordinates.length - 1; i++) {
+            const [lng1, lat1] = coordinates[i];
+            const [lng2, lat2] = coordinates[i + 1];
+            distance += Math.sqrt(
+                Math.pow(lng2 - lng1, 2) + Math.pow(lat2 - lat1, 2),
+            );
+        }
+        return distance;
+    }, [coordinates]);
+
+    const interpolatePosition = useCallback(
+        (index: number, progress: number): [number, number] => {
+            if (index >= coordinates.length - 1) {
+                return coordinates[coordinates.length - 1];
+            }
+
+            const [lng1, lat1] = coordinates[index];
+            const [lng2, lat2] = coordinates[index + 1];
+
+            const lng = lng1 + (lng2 - lng1) * progress;
+            const lat = lat1 + (lat2 - lat1) * progress;
+
+            return [lng, lat];
+        },
+        [coordinates],
+    );
+
+    const animate = useCallback(
+        (timestamp: number) => {
+            if (!isPlaying) return;
+
+            if (lastTimeRef.current === 0) {
+                lastTimeRef.current = timestamp;
+            }
+
+            const deltaTime = timestamp - lastTimeRef.current;
+            lastTimeRef.current = timestamp;
+
+            const speedFactor = (playbackSpeed * deltaTime) / 1000;
+            progressRef.current += speedFactor;
+
+            const segmentProgress = progressRef.current % 1;
+            const segmentIndex = Math.floor(progressRef.current);
+
+            if (segmentIndex >= coordinates.length - 1) {
+                if (loop) {
+                    progressRef.current = 0;
+                    setCurrentIndex(0);
+                    lastTimeRef.current = timestamp;
+                } else {
+                    setIsPlaying(false);
+                    setCurrentIndex(coordinates.length - 1);
+                    setCurrentPosition(coordinates[coordinates.length - 1]);
+                    onComplete?.();
+                    return;
+                }
+            } else {
+                setCurrentIndex(segmentIndex);
+                const newPosition = interpolatePosition(
+                    segmentIndex,
+                    segmentProgress,
+                );
+                setCurrentPosition(newPosition);
+                onProgress?.(
+                    progressRef.current / (coordinates.length - 1),
+                    segmentIndex,
+                );
+            }
+
+            animationFrameRef.current = requestAnimationFrame(animate);
+        },
+        [
+            isPlaying,
+            playbackSpeed,
+            coordinates,
+            interpolatePosition,
+            loop,
+            onProgress,
+            onComplete,
+        ],
+    );
+
+    useEffect(() => {
+        if (isPlaying) {
+            lastTimeRef.current = 0;
+            animationFrameRef.current = requestAnimationFrame(animate);
+        } else {
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+                animationFrameRef.current = null;
+            }
+        }
+
+        return () => {
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
+        };
+    }, [isPlaying, animate]);
+
+    useEffect(() => {
+        if (isLoaded && map && autoStart && currentPosition) {
+            map.flyTo({
+                center: currentPosition,
+                zoom: 14,
+                duration: 1000,
+            });
+        }
+    }, [isLoaded, map, autoStart]);
+
+    const handlePlayPause = useCallback(() => {
+        setIsPlaying((prev) => !prev);
+    }, []);
+
+    const handleReset = useCallback(() => {
+        setIsPlaying(false);
+        setCurrentIndex(0);
+        progressRef.current = 0;
+        setCurrentPosition(coordinates[0]);
+        lastTimeRef.current = 0;
+    }, [coordinates]);
+
+    const handleSpeedChange = useCallback((newSpeed: number) => {
+        setPlaybackSpeed(newSpeed);
+    }, []);
+
+    const speedOptions = [0.5, 1, 2, 5, 10];
+
+    return (
+        <>
+            <MapRoute
+                coordinates={coordinates}
+                color={routeColor}
+                width={routeWidth}
+                opacity={routeOpacity}
+                dashArray={routeDashArray}
+            />
+
+            <MapMarker
+                longitude={currentPosition[0]}
+                latitude={currentPosition[1]}
+            >
+                <MarkerContent>
+                    {children || (
+                        <div
+                            className="relative h-6 w-6 rounded-full border-3 border-white shadow-lg animate-pulse"
+                            style={{ backgroundColor: markerColor }}
+                        />
+                    )}
+                </MarkerContent>
+            </MapMarker>
+
+            {showControls == true ? (
+                <div
+                    className={cn(
+                        "absolute z-10 flex flex-col gap-2 bg-background/95 backdrop-blur-sm p-3 rounded-lg border shadow-lg top-left m-2",
+                    )}
+                >
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={handlePlayPause}
+                            className="p-2 rounded-md hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            aria-label={isPlaying ? "Pause" : "Play"}
+                        >
+                            {isPlaying ? (
+                                <Pause className="size-4" />
+                            ) : (
+                                <Play className="size-4" />
+                            )}
+                        </button>
+                        <button
+                            onClick={handleReset}
+                            disabled={currentIndex === 0 && !isPlaying}
+                            className="p-2 rounded-md hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+                            aria-label="Reset"
+                        >
+                            <RotateCcw className="size-4" />
+                        </button>
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                        <span className="text-xs text-muted-foreground">
+                            Speed
+                        </span>
+                        <div className="flex gap-1">
+                            {speedOptions.map((speedOption) => (
+                                <button
+
+                                    key={speedOption}
+                                    onClick={() =>
+                                        handleSpeedChange(speedOption)
+                                    }
+                                    className={cn(
+                                        "px-2 py-1 text-xs rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                                        playbackSpeed === speedOption
+                                            ? "bg-primary text-primary-foreground"
+                                            : "bg-secondary hover:bg-secondary/80",
+                                    )}
+                                >
+                                    {speedOption}x
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                        <span className="text-xs text-muted-foreground">
+                            Progress:{" "}
+                            {Math.round(
+                                (currentIndex / (coordinates.length - 1)) * 100,
+                            )}
+                            %
+                        </span>
+                        <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+                            <div
+                                className="h-full bg-primary transition-all duration-100"
+                                style={{
+                                    width: `${(currentIndex / (coordinates.length - 1)) * 100}%`,
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+            ) : null}
+        </>
+    );
+}
+
 export {
   Map,
   useMap,
@@ -1358,6 +1631,7 @@ export {
   MapControls,
   MapRoute,
   MapClusterLayer,
+  AnimatedRoutePlayback
 };
 
 export type { MapRef };
