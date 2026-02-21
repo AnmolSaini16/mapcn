@@ -17,7 +17,7 @@ export async function CodeBlock({
   return (
     <div className="w-full rounded-lg border overflow-hidden">
       {showCopyButton && (
-        <div className="flex items-center justify-end border-b bg-muted/30 px-2 h-9">
+        <div className="flex items-center justify-end border-b bg-muted/30 px-2 h-10">
           <CopyButton text={code} />
         </div>
       )}

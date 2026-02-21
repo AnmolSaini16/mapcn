@@ -6,36 +6,37 @@ import { usePathname } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { docsNavigation } from "@/lib/docs-navigation";
+import { Logo } from "@/components/logo";
+import { CommandSearch } from "@/components/command-search";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { GitHubButton } from "@/components/github-button";
 
 export function DocsSidebar() {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
 
   return (
-    <Sidebar
-      className="sticky top-16 h-[calc(100svh-9.5rem)] border-none bg-transparent **:data-[sidebar=sidebar]:bg-transparent"
-      style={
-        {
-          "--sidebar-width": "12rem",
-        } as React.CSSProperties
-      }
-    >
-      <SidebarContent className="pt-8 no-scrollbar overflow-x-hidden">
+    <Sidebar>
+      <SidebarHeader className="p-4 gap-4 pb-2">
+        <Logo />
+        <CommandSearch className="w-full flex" />
+      </SidebarHeader>
+
+      <SidebarContent>
         {docsNavigation.map((group) => (
-          <SidebarGroup key={group.title} className="px-1">
-            <SidebarGroupLabel className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/80">
-              {group.title}
-            </SidebarGroupLabel>
+          <SidebarGroup key={group.title}>
+            <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {group.items.map((item) => (
@@ -43,7 +44,7 @@ export function DocsSidebar() {
                     <SidebarMenuButton
                       asChild
                       isActive={pathname === item.href}
-                      className="data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] overflow-visible border border-transparent text-[0.8rem] text-muted-foreground font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md"
+                      className="font-medium text-muted-foreground"
                     >
                       <Link
                         href={item.href}
@@ -60,14 +61,14 @@ export function DocsSidebar() {
           </SidebarGroup>
         ))}
       </SidebarContent>
-    </Sidebar>
-  );
-}
 
-export function MobileSidebarTrigger() {
-  return (
-    <div className="md:hidden">
-      <SidebarTrigger />
-    </div>
+      <SidebarFooter className="border-t">
+        <div className="flex justify-between">
+          <GitHubButton withCount={false} />
+
+          <ThemeToggle />
+        </div>
+      </SidebarFooter>
+    </Sidebar>
   );
 }

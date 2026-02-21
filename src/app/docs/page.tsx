@@ -56,9 +56,8 @@ export default function IntroductionPage() {
     >
       <DocsSection>
         <p>
-          <strong className="text-foreground">mapcn</strong> provides
-          beautifully designed, accessible, and customizable map components.
-          Built on{" "}
+          <strong>mapcn</strong> provides beautifully designed, accessible, and
+          customizable map components. Built on{" "}
           <DocsLink href="https://maplibre.org" external>
             MapLibre GL
           </DocsLink>

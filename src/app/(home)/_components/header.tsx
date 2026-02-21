@@ -1,6 +1,6 @@
-import { Heart, MapPin } from "lucide-react";
-import Link from "next/link";
+import { Heart } from "lucide-react";
 
+import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -13,25 +13,12 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { CommandSearch } from "@/components/command-search";
 import { cn } from "@/lib/utils";
 
-interface HeaderProps {
-  className?: string;
-  leftContent?: React.ReactNode;
-}
-
-export function Header({ className, leftContent }: HeaderProps) {
+export function Header({ className }: { className?: string }) {
   return (
-    <header className={cn("w-full h-16", className)}>
-      <nav className="flex size-full items-center justify-between container">
-        <div className="flex items-center gap-4">
-          {leftContent}
-          <Link
-            href="/"
-            className="flex items-center gap-1.5 hover:opacity-80 transition-opacity"
-          >
-            <MapPin className="size-4" />
-            <span className="font-semibold tracking-tight">mapcn</span>
-          </Link>
-        </div>
+    <header className={cn("w-full p-4 container", className)}>
+      <nav className="flex size-full items-center justify-between">
+        <Logo />
+
         <div className="flex items-center gap-2 h-4.5">
           <CommandSearch />
           <Separator orientation="vertical" className="hidden md:block" />
@@ -44,7 +31,7 @@ export function Header({ className, leftContent }: HeaderProps) {
                   rel="noopener noreferrer"
                 >
                   <Heart className="size-4 text-pink-500" />
-                  <span className="hidden md:inline font-normal">Sponsor</span>
+                  <span className="hidden md:inline">Sponsor</span>
                 </a>
               </Button>
             </TooltipTrigger>

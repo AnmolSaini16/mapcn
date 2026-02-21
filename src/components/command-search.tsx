@@ -18,11 +18,12 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Kbd } from "@/components/ui/kbd";
+import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { docsNavigation } from "@/lib/docs-navigation";
 import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
-export function CommandSearch() {
+export function CommandSearch({ className }: { className?: string }) {
   const [open, setOpen] = React.useState(false);
   const router = useRouter();
 
@@ -50,11 +51,17 @@ export function CommandSearch() {
         size="sm"
         onClick={() => setOpen(true)}
         aria-label="Search documentation"
-        className="hidden group md:flex items-center w-[180px] dark:border-border/50 border-border/70 rounded-lg text-sm font-normal text-muted-foreground"
+        className={cn(
+          "hidden group md:flex items-center w-[200px] dark:border-border/60 border-border/80 text-muted-foreground",
+          className
+        )}
       >
         <SearchIcon className="size-3.5 shrink-0" />
         <span>Search docs...</span>
-        <Kbd className="ml-auto">⌘K</Kbd>
+        <KbdGroup className="ml-auto">
+          <Kbd>⌘</Kbd>
+          <Kbd>K</Kbd>
+        </KbdGroup>
       </Button>
       <CommandDialog
         open={open}
@@ -81,6 +88,7 @@ export function CommandSearch() {
                   key={item.href}
                   value={item.title}
                   onSelect={() => handleSelect(item.href)}
+                  className="p-0"
                 >
                   <item.icon />
                   <span>{item.title}</span>

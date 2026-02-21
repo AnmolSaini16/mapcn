@@ -1,20 +1,28 @@
-<div align="center">
-  <img src="public/banner.png" alt="mapcn banner" />
-  <br>
-  <br>
-  <p>
-    Free & open source map components. Zero config, one command setup.<br/>
-    Built on <a href="https://maplibre.org/">MapLibre GL</a>, styled with <a href="https://tailwindcss.com/">Tailwind</a>, works seamlessly with <a href="https://ui.shadcn.com/">shadcn/ui</a>.
-  </p>
-  
-  <p>
-    <a href="https://mapcn.dev/docs">Get Started</a> •
-    <a href="https://mapcn.dev/docs/installation">Installation</a> •
-    <a href="https://mapcn.dev/docs/basic-map">Examples</a>
-  </p>
-</div>
+<h1 align="center">mapcn</h1>
 
----
+<p align="center">
+  Free & open-source, ready-to-use, customizable map components for React.<br/>
+  Zero config. One command setup. Built on <a href="https://maplibre.org/">MapLibre GL</a>, styled with <a href="https://tailwindcss.com/">Tailwind</a>, works seamlessly with <a href="https://ui.shadcn.com/">shadcn/ui</a>.
+</p>
+
+<p align="center">
+  <a href="https://mapcn.dev/docs">Get Started</a> ·
+  <a href="https://mapcn.dev/docs/installation">Installation</a> ·
+  <a href="https://mapcn.dev/docs/basic-map">Components</a>
+</p>
+
+<br />
+
+<p align="center">
+  <a href="https://vercel.com/oss">
+    <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" />
+  </a>
+</p>
+
+<p align="center">
+  <img src="public/banner.png" alt="mapcn banner" />
+</p>
+
 
 ## Features
 

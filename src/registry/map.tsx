@@ -20,6 +20,13 @@ import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
+const defaultStyles = {
+  dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+  light: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+};
+
+type Theme = "light" | "dark";
+
 // Check document class for theme (works with next-themes, etc.)
 function getDocumentTheme(): Theme | null {
   if (typeof document === "undefined") return null;
@@ -36,8 +43,8 @@ function getSystemTheme(): Theme {
     : "light";
 }
 
-function useResolvedTheme(themeProp?: "light" | "dark"): "light" | "dark" {
-  const [detectedTheme, setDetectedTheme] = useState<"light" | "dark">(
+function useResolvedTheme(themeProp?: "light" | "dark"): Theme {
+  const [detectedTheme, setDetectedTheme] = useState<Theme>(
     () => getDocumentTheme() ?? getSystemTheme()
   );
 
@@ -82,16 +89,6 @@ type MapContextValue = {
 
 const MapContext = createContext<MapContextValue | null>(null);
 
-function getViewport(map: MapLibreGL.Map): MapViewport {
-  const center = map.getCenter();
-  return {
-    center: [center.lng, center.lat],
-    zoom: map.getZoom(),
-    bearing: map.getBearing(),
-    pitch: map.getPitch(),
-  };
-}
-
 function useMap() {
   const context = useContext(MapContext);
   if (!context) {
@@ -99,15 +96,6 @@ function useMap() {
   }
   return context;
 }
-
-const defaultStyles = {
-  dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
-  light: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-};
-
-type MapStyleOption = string | MapLibreGL.StyleSpecification;
-
-type Theme = "light" | "dark";
 
 /** Map viewport state */
 type MapViewport = {
@@ -120,6 +108,10 @@ type MapViewport = {
   /** Pitch (tilt) in degrees */
   pitch: number;
 };
+
+type MapStyleOption = string | MapLibreGL.StyleSpecification;
+
+type MapRef = MapLibreGL.Map;
 
 type MapProps = {
   children?: ReactNode;
@@ -150,17 +142,27 @@ type MapProps = {
   onViewportChange?: (viewport: MapViewport) => void;
 } & Omit<MapLibreGL.MapOptions, "container" | "style">;
 
-type MapRef = MapLibreGL.Map;
-
-const DefaultLoader = () => (
-  <div className="absolute inset-0 flex items-center justify-center">
-    <div className="flex gap-1">
-      <span className="size-1.5 rounded-full bg-muted-foreground/60 animate-pulse" />
-      <span className="size-1.5 rounded-full bg-muted-foreground/60 animate-pulse [animation-delay:150ms]" />
-      <span className="size-1.5 rounded-full bg-muted-foreground/60 animate-pulse [animation-delay:300ms]" />
+function DefaultLoader() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="flex gap-1">
+        <span className="size-1.5 rounded-full bg-muted-foreground/60 animate-pulse" />
+        <span className="size-1.5 rounded-full bg-muted-foreground/60 animate-pulse [animation-delay:150ms]" />
+        <span className="size-1.5 rounded-full bg-muted-foreground/60 animate-pulse [animation-delay:300ms]" />
+      </div>
     </div>
-  </div>
-);
+  );
+}
+
+function getViewport(map: MapLibreGL.Map): MapViewport {
+  const center = map.getCenter();
+  return {
+    center: [center.lng, center.lat],
+    zoom: map.getZoom(),
+    bearing: map.getBearing(),
+    pitch: map.getPitch(),
+  };
+}
 
 const Map = forwardRef<MapRef, MapProps>(function Map(
   {
@@ -1268,6 +1270,7 @@ function MapClusterLayer<
       filter: ["has", "point_count"],
       layout: {
         "text-field": "{point_count_abbreviated}",
+        "text-font": ["Open Sans"],
         "text-size": 12,
       },
       paint: {

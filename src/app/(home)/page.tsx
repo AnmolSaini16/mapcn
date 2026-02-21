@@ -1,13 +1,14 @@
-import { Header } from "@/components/header";
 import { Hero } from "./_components/hero";
 import { ExamplesGrid } from "./_components/examples-grid";
+import { Footer } from "./_components/footer";
+import { Header } from "./_components/header";
 
 export default function Page() {
   return (
-    <div className="flex flex-col pb-32">
-      <Header className="border-b border-transparent" />
+    <div className="flex flex-col">
+      <Header />
 
-      <main className="flex-1">
+      <main className="flex-1 pb-32">
         <section className="relative w-full py-24">
           <Hero />
         </section>
@@ -16,6 +17,8 @@ export default function Page() {
           <ExamplesGrid />
         </section>
       </main>
+
+      <Footer />
     </div>
   );
 }

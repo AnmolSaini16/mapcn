@@ -58,7 +58,9 @@ export function DocsToc({ items, className }: DocsTocProps) {
 
   return (
     <div className={cn("flex flex-col gap-1", className)}>
-      <p className="text-foreground text-xs font-medium mb-2">On This Page</p>
+      <p className="text-foreground text-[13px] font-medium mb-2">
+        On This Page
+      </p>
       <div className="relative">
         <div className="absolute left-0 top-1 bottom-1 w-px bg-border" />
         <div className="flex flex-col gap-1">

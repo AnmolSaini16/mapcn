@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { DocsToc } from "./docs-toc";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function slugify(text: string): string {
   return text
@@ -23,12 +25,12 @@ interface TocItem {
 }
 
 // DocsHeader - Page title and description
-interface DocsHeaderProps {
+interface DocsTitleProps {
   title: string;
   description: string;
 }
 
-export function DocsHeader({ title, description }: DocsHeaderProps) {
+function DocsTitle({ title, description }: DocsTitleProps) {
   return (
     <div className="space-y-3">
       <h1 className="text-3xl font-semibold tracking-tight text-foreground">
@@ -61,43 +63,45 @@ export function DocsLayout({
 }: DocsLayoutProps) {
   return (
     <div className="flex gap-8">
-      <div className="flex-1 min-w-0 max-w-[720px] mx-auto pt-10 pb-20">
-        <DocsHeader title={title} description={description} />
+      <div className="flex-1 min-w-0 max-w-3xl mx-auto pt-10 pb-20">
+        <DocsTitle title={title} description={description} />
 
         <div className="mt-12 space-y-12">{children}</div>
 
         {(prev || next) && (
           <div className="flex items-center justify-between gap-4 mt-16">
             {prev ? (
-              <Link
-                href={prev.href}
-                className="group flex flex-col items-start gap-1.5"
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className="h-auto py-2 -ml-2"
               >
-                <span className="text-xs text-muted-foreground">Previous</span>
-                <span className="text-sm font-medium group-hover:underline underline-offset-4">
-                  {prev.title}
-                </span>
-              </Link>
+                <Link href={prev.href}>
+                  <ChevronLeft /> {prev.title}
+                </Link>
+              </Button>
             ) : (
               <div />
             )}
             {next && (
-              <Link
-                href={next.href}
-                className="group flex flex-col items-end gap-1.5"
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className="h-auto py-2 -mr-2"
               >
-                <span className="text-xs text-muted-foreground">Next</span>
-                <span className="text-sm font-medium group-hover:underline underline-offset-4">
-                  {next.title}
-                </span>
-              </Link>
+                <Link href={next.href}>
+                  {next.title} <ChevronRight />
+                </Link>
+              </Button>
             )}
           </div>
         )}
       </div>
 
-      <aside className="hidden xl:block w-48 shrink-0">
-        <nav className="sticky top-28">
+      <aside className="hidden xl:block w-44 shrink-0">
+        <nav className="sticky top-24">
           {toc.length > 0 && <DocsToc items={toc} />}
         </nav>
       </aside>
@@ -120,7 +124,7 @@ export function DocsSection({ title, children }: DocsSectionProps) {
           {title}
         </h2>
       )}
-      <div className="text-foreground/80 text-[15px] leading-7 space-y-4 [&_p]:leading-7 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-2 [&_li]:leading-7 [&_strong]:text-foreground [&_strong]:font-medium [&_em]:text-muted-foreground">
+      <div className="text-base text-foreground/80 leading-7 space-y-4 [&_p]:leading-7 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:space-y-2 [&_li]:leading-7 [&_strong]:text-foreground [&_strong]:font-medium [&_em]:text-muted-foreground">
         {children}
       </div>
     </section>
@@ -153,7 +157,7 @@ export function DocsLink({ href, children, external }: DocsLinkProps) {
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
-      className="font-medium text-foreground underline underline-offset-4 hover:text-primary transition-colors"
+      className="font-medium text-foreground underline underline-offset-4 transition-colors"
     >
       {children}
     </Link>

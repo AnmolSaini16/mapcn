@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export async function GitHubButton() {
+export function GitHubButton({ withCount = true }: { withCount?: boolean }) {
   return (
     <Button variant="ghost" size="sm" asChild>
       <Link
@@ -20,9 +20,11 @@ export async function GitHubButton() {
             fill="currentColor"
           />
         </svg>
-        <Suspense fallback={<Skeleton className="w-8 h-4 rounded" />}>
-          <StarCount />
-        </Suspense>
+        {withCount && (
+          <Suspense fallback={<Skeleton className="w-6 h-4 rounded" />}>
+            <StarCount />
+          </Suspense>
+        )}
       </Link>
     </Button>
   );

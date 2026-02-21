@@ -4,7 +4,6 @@ import { Analytics } from "@vercel/analytics/next";
 
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
-import { Footer } from "@/components/footer";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -104,7 +103,6 @@ export default function RootLayout({
       <body className="font-sans antialiased min-h-screen flex flex-col">
         <ThemeProvider>
           <div className="flex-1">{children}</div>
-          <Footer />
           <Analytics />
         </ThemeProvider>
       </body>
