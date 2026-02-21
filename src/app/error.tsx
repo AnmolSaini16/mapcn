@@ -4,16 +4,12 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, ArrowLeft, RefreshCw } from "lucide-react";
-import { useRouter } from "next/navigation";
 
-export default function Error({
-  error,
-  reset,
-}: {
+interface ErrorProps {
   error: Error & { digest?: string };
   reset: () => void;
-}) {
-  const router = useRouter();
+}
+export default function ErrorPage({ error, reset }: ErrorProps) {
   useEffect(() => {
     // Log the error to an error reporting service
     console.error(error);
@@ -30,13 +26,9 @@ export default function Error({
         home page.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-        <Button
-          onClick={() => (reset ? reset() : router.refresh())}
-          variant="outline"
-          className="w-full md:w-auto"
-        >
+        <Button onClick={reset} variant="outline" className="w-full md:w-auto">
           <span className="flex flex-row items-center gap-2">
-            <RefreshCw className="mr-2 h-4 w-4" />
+            <RefreshCw className="h-4 w-4" />
             Try again
           </span>
         </Button>
