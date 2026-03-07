@@ -10,6 +10,7 @@ export function MapControlsExample() {
           showCompass
           showLocate
           showFullscreen
+          showReset
         />
       </Map>
     </div>
