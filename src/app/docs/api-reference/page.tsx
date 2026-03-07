@@ -199,6 +199,12 @@ export default function ApiReferencePage() {
               description: "Show fullscreen toggle button.",
             },
             {
+              name: "showReset",
+              type: "boolean",
+              default: "false",
+              description: "Show reset button to return to initial viewport.",
+            },
+            {
               name: "className",
               type: "string",
               description: "Additional CSS classes for the controls container.",

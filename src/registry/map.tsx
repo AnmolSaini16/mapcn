@@ -16,7 +16,7 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
-import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
+import { X, Minus, Plus, Locate, Maximize, Loader2, RotateCcw } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -717,6 +717,8 @@ type MapControlsProps = {
   showLocate?: boolean;
   /** Show fullscreen toggle button (default: false) */
   showFullscreen?: boolean;
+  /** Show reset button to return to initial viewport (default: false) */
+  showReset?: boolean;
   /** Additional CSS classes for the controls container */
   className?: string;
   /** Callback with user coordinates when located */
@@ -771,11 +773,19 @@ function MapControls({
   showCompass = false,
   showLocate = false,
   showFullscreen = false,
+  showReset = false,
   className,
   onLocate,
 }: MapControlsProps) {
   const { map } = useMap();
   const [waitingForLocation, setWaitingForLocation] = useState(false);
+  const initialViewportRef = useRef<MapViewport | null>(null);
+
+  useEffect(() => {
+    if (map && !initialViewportRef.current) {
+      initialViewportRef.current = getViewport(map);
+    }
+  }, [map]);
 
   const handleZoomIn = useCallback(() => {
     map?.zoomTo(map.getZoom() + 1, { duration: 300 });
@@ -824,6 +834,18 @@ function MapControls({
     }
   }, [map]);
 
+  const handleReset = useCallback(() => {
+    if (map && initialViewportRef.current) {
+      map.flyTo({
+        center: initialViewportRef.current.center,
+        zoom: initialViewportRef.current.zoom,
+        bearing: initialViewportRef.current.bearing,
+        pitch: initialViewportRef.current.pitch,
+        duration: 1000,
+      });
+    }
+  }, [map]);
+
   return (
     <div
       className={cn(
@@ -866,6 +888,13 @@ function MapControls({
         <ControlGroup>
           <ControlButton onClick={handleFullscreen} label="Toggle fullscreen">
             <Maximize className="size-4" />
+          </ControlButton>
+        </ControlGroup>
+      )}
+      {showReset && (
+        <ControlGroup>
+          <ControlButton onClick={handleReset} label="Reset to initial view">
+            <RotateCcw className="size-4" />
           </ControlButton>
         </ControlGroup>
       )}
