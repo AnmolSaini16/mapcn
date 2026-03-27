@@ -57,11 +57,11 @@ export default function BasicMapPage() {
       <DocsSection title="Custom Styles">
         <p>
           Use the <DocsCode>styles</DocsCode> prop to provide custom map styles.
-          This example uses free vector tiles from{" "}
-          <DocsLink href="https://openfreemap.org" external>
-            OpenFreeMap
-          </DocsLink>
-          , an open-source project, the data comes from OpenStreetMap.
+          This example shows additional{" "}
+          <DocsLink href="https://maps.guru" external>
+            maps.guru
+          </DocsLink>{" "}
+          style variants beyond the default light/dark themes.
         </p>
         <ComponentPreview code={customStyleSource}>
           <CustomStyleExample />

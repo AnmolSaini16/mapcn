@@ -34,13 +34,20 @@
 - 🛤️ **Routes** — Draw routes and paths on your maps
 - 🎮 **Controls** — Zoom, compass, locate, and fullscreen controls
 
-## Basemap Terms of Service
+## Basemap
 
-This project uses [CARTO Basemaps](https://docs.carto.com/faqs/carto-basemaps) which are based on OpenStreetMap data.
+This project uses [maps.guru](https://maps.guru) vector tiles by default, which provide India-compliant boundaries per Survey of India guidelines.
 
-- **Commercial use**: Requires a CARTO Enterprise license. [Request a demo](https://carto.com/request-live-demo) for pricing details.
-- **Non-commercial use**: Free for CARTO grantees under their [basemap terms](https://carto.com/legal/bmap).
-- **Alternative**: You can switch to [OpenStreetMap](https://www.openstreetmap.org/) tiles or any other MapLibre-compatible tile provider (MapTiler, Stadia Maps, etc).
+To use the default basemap, set the `NEXT_PUBLIC_MAPSGURU_API_KEY` environment variable:
+
+```bash
+# .env.local
+NEXT_PUBLIC_MAPSGURU_API_KEY=your_api_key_here
+```
+
+Get your API key at [maps.guru](https://maps.guru).
+
+You can also switch to any other [MapLibre-compatible](https://maplibre.org/) tile provider (MapTiler, Stadia Maps, OpenStreetMap, etc.) by passing custom `styles` to the `<Map>` component.
 
 ## Contributing
 

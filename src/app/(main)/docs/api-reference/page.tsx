@@ -116,7 +116,7 @@ export default function ApiReferencePage() {
               name: "styles",
               type: "{ light?: string | StyleSpecification; dark?: string | StyleSpecification }",
               description:
-                "Custom map styles for light and dark themes. Overrides the default Carto base map tiles.",
+                "Custom map styles for light and dark themes. Overrides the default maps.guru tiles.",
             },
             {
               name: "projection",

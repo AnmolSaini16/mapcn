@@ -190,10 +190,7 @@ export default function Page() {
             zoom={12}
             minZoom={10}
             maxZoom={16}
-            styles={{
-              light: "https://tiles.openfreemap.org/styles/bright",
-              dark: "https://tiles.openfreemap.org/styles/dark",
-            }}
+            styles={undefined}
           >
             <MapRoute
               id="delivery-full-route"

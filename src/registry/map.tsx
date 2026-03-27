@@ -20,9 +20,12 @@ import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
+const MAPSGURU_API_KEY =
+  process.env.NEXT_PUBLIC_MAPSGURU_API_KEY ?? "";
+
 const defaultStyles = {
-  dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
-  light: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+  dark: `https://maps.guru/api/v1/styles/standard/dark/style.json?key=${MAPSGURU_API_KEY}`,
+  light: `https://maps.guru/api/v1/styles/standard/light/style.json?key=${MAPSGURU_API_KEY}`,
 };
 
 type Theme = "light" | "dark";
@@ -122,7 +125,7 @@ type MapProps = {
    * Pass your theme value here.
    */
   theme?: Theme;
-  /** Custom map styles for light and dark themes. Overrides the default Carto styles. */
+  /** Custom map styles for light and dark themes. Overrides the default maps.guru styles. */
   styles?: {
     light?: MapStyleOption;
     dark?: MapStyleOption;

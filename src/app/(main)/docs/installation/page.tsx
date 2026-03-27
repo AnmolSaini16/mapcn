@@ -76,9 +76,13 @@ export default function InstallationPage() {
       </DocsSection>
 
       <DocsNote>
-        <strong>Note:</strong> The map uses free CARTO basemap tiles by default.
-        No API key required. Tiles automatically switch between light and dark
-        themes.
+        <strong>Note:</strong> The map uses{" "}
+        <a href="https://maps.guru" className="underline" target="_blank" rel="noopener noreferrer">
+          maps.guru
+        </a>{" "}
+        basemap tiles by default. Set the{" "}
+        <code>NEXT_PUBLIC_MAPSGURU_API_KEY</code> environment variable with your
+        API key. Tiles automatically switch between light and dark themes.
       </DocsNote>
     </DocsLayout>
   );

@@ -33,7 +33,7 @@ const features = [
     icon: Layers,
     title: "Any Map Style",
     description:
-      "Use any MapLibre-compatible tiles: MapTiler, Carto, OpenStreetMap, and more.",
+      "Use any MapLibre-compatible tiles: maps.guru, MapTiler, OpenStreetMap, and more.",
   },
 ];
 
@@ -98,7 +98,7 @@ export default function IntroductionPage() {
           </li>
           <li>
             <strong className="text-foreground">Works Anywhere:</strong> Bring
-            your own tiles — MapTiler, Carto, OSM, or any MapLibre-compatible
+             your own tiles — maps.guru, MapTiler, OSM, or any MapLibre-compatible
             source.
           </li>
         </ul>
@@ -141,10 +141,11 @@ export default function IntroductionPage() {
             - Beautiful vector tiles with extensive customization options
           </li>
           <li>
-            <DocsLink href="https://carto.com/basemaps" external>
-              Carto
+            <DocsLink href="https://maps.guru" external>
+              maps.guru
             </DocsLink>{" "}
-            - Clean, minimal basemaps perfect for data visualization
+            - India-compliant vector tiles with multiple styles (default
+            provider)
           </li>
           <li>
             <DocsLink href="https://www.openstreetmap.org" external>
