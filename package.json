@@ -23,7 +23,8 @@
     "react-dom": "19.2.3",
     "recharts": "^2.15.4",
     "shiki": "^3.20.0",
-    "tailwind-merge": "^2.6.0"
+    "tailwind-merge": "^2.6.0",
+    "turndown": "^7.2.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
