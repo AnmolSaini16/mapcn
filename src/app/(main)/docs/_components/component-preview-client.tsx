@@ -28,6 +28,7 @@ export function ComponentPreviewClient({
           "h-[420px]",
           className,
         )}
+        data-docs-live-preview
       >
         {children}
       </div>
@@ -49,6 +50,7 @@ export function ComponentPreviewClient({
             !expanded &&
               "from-background to-background/0 bg-linear-to-t pt-12 pb-6",
           )}
+          data-docs-copy-strip
         >
           {!expanded && (
             <Button

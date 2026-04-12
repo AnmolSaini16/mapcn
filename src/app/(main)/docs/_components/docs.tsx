@@ -63,9 +63,11 @@ export function DocsLayout({
 }: DocsLayoutProps) {
   return (
     <div className="flex size-full">
-      <div className="mx-auto flex max-w-[52rem] min-w-0 flex-1 flex-col pt-10 pb-20 lg:px-4">
-        <DocsTitle title={title} description={description} />
-        <div className="mt-12 mb-12 space-y-12">{children}</div>
+      <div className="relative mx-auto flex max-w-[52rem] min-w-0 flex-1 flex-col pt-10 pb-20 lg:px-4">
+        <div className="min-w-0">
+          <DocsTitle title={title} description={description} />
+          <div className="mt-12 mb-12 space-y-12">{children}</div>
+        </div>
         {(prev || next) && (
           <div className="mt-auto flex items-center justify-between gap-4">
             {prev ? (
@@ -98,7 +100,10 @@ export function DocsLayout({
         )}
       </div>
 
-      <aside className="hidden w-42 shrink-0 xl:block">
+      <aside
+        className="hidden w-42 shrink-0 xl:block"
+        data-page-markdown-exclude
+      >
         <nav className="sticky top-24 max-h-[calc(100svh-7rem)] overflow-y-auto pr-1">
           {toc.length > 0 && <DocsToc items={toc} />}
         </nav>
