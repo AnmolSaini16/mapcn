@@ -1,10 +1,11 @@
 /**
- * Converts the docs page DOM subtree to Markdown for copying to LLMs.
- * Tailored to DocsLayout structure (sections, previews, Shiki code, tables).
+ * Converts a page DOM subtree to Markdown for copying to LLMs.
+ * Tailored to site docs (sections, previews, Shiki code, tables) and general pages.
  */
 
 function stripForMarkdownCopy(root: HTMLElement): HTMLElement {
   const clone = root.cloneNode(true) as HTMLElement;
+  clone.querySelectorAll("[data-page-markdown-exclude]").forEach((el) => el.remove());
   clone.querySelectorAll("button").forEach((b) => b.remove());
   clone.querySelectorAll("[data-docs-copy-strip]").forEach((el) => el.remove());
   clone.querySelectorAll("[data-docs-live-preview]").forEach((el) => {

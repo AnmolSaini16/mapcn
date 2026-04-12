@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { docsPageElementToMarkdown } from "@/lib/docs-dom-to-markdown";
-import { DOCS_PAGE_MARKDOWN_ROOT_ID } from "@/lib/docs-markdown-ids";
+import { PAGE_MARKDOWN_ROOT_ID } from "@/lib/page-markdown-ids";
 import { cn } from "@/lib/utils";
 
 interface CopyPageAsMarkdownButtonProps {
@@ -17,7 +17,7 @@ export function CopyPageAsMarkdownButton({
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(async () => {
-    const el = document.getElementById(DOCS_PAGE_MARKDOWN_ROOT_ID);
+    const el = document.getElementById(PAGE_MARKDOWN_ROOT_ID);
     if (!el) return;
     const md = docsPageElementToMarkdown(el);
     await navigator.clipboard.writeText(md);
