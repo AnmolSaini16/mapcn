@@ -517,7 +517,6 @@ function DefaultMarkerIcon() {
     <div className="relative h-4 w-4 rounded-full border-2 border-white bg-blue-500 shadow-lg" />
   );
 }
-
 function PopupCloseButton({ onClick }: { onClick: () => void }) {
   return (
     <button
@@ -1532,6 +1531,428 @@ function MapArc<T extends MapArcDatum = MapArcDatum>({
   return null;
 }
 
+/** A single polygon to render inside <MapPolygon data={...}>. */
+type MapPolygonDatum = {
+  /** Unique identifier. Required for hover state tracking and event payloads. */
+  id: string | number;
+  /**
+   * Polygon boundary. Accepts three nesting levels matching GeoJSON
+   * conventions:
+   * - **Single ring** `[[lng, lat], ...]` — outer boundary of a simple polygon
+   * - **Polygon with holes** `[[outer], [hole1], ...]` — rings of one polygon
+   * - **MultiPolygon** `[[[outer], [hole]?], [[outer], ...], ...]` — multiple
+   *   disjoint polygons (e.g. a region with islands)
+   *
+   * Rings are closed automatically if the last point does not equal the first.
+   */
+  coordinates:
+    | [number, number][]
+    | [number, number][][]
+    | [number, number][][][];
+};
+
+/** Event payload passed to MapPolygon interaction callbacks. */
+type MapPolygonEvent<T extends MapPolygonDatum = MapPolygonDatum> = {
+  /** The polygon datum that was hovered or clicked. */
+  polygon: T;
+  /** Longitude of the cursor at the time of the event. */
+  longitude: number;
+  /** Latitude of the cursor at the time of the event. */
+  latitude: number;
+  /** The underlying MapLibre mouse event for advanced use cases. */
+  originalEvent: MapLibreGL.MapMouseEvent;
+};
+
+type MapPolygonFillPaint = NonNullable<
+  MapLibreGL.FillLayerSpecification["paint"]
+>;
+type MapPolygonLinePaint = NonNullable<
+  MapLibreGL.LineLayerSpecification["paint"]
+>;
+
+type MapPolygonProps<T extends MapPolygonDatum = MapPolygonDatum> = {
+  /** Array of polygons to render. Each polygon must have a unique `id`. */
+  data: T[];
+  /** Optional unique identifier prefix for the source/layers. Auto-generated if not provided. */
+  id?: string;
+  /**
+   * MapLibre paint properties for the fill layer. Merged on top of sensible
+   * defaults (`fill-color: #3b82f6`, `fill-opacity: 0.2`). Any value can be a
+   * MapLibre expression for per-feature styling — every field on each polygon
+   * datum (besides `coordinates`) is exposed via `["get", ...]`.
+   */
+  paint?: MapPolygonFillPaint;
+  /**
+   * Paint properties applied to the polygon currently under the cursor. Each
+   * key is merged into `paint` as a `case` expression keyed on per-feature
+   * hover state, so only the hovered polygon changes appearance.
+   */
+  hoverPaint?: MapPolygonFillPaint;
+  /** Whether to draw a stroke around each polygon. (default: true) */
+  outline?: boolean;
+  /**
+   * MapLibre paint properties for the outline stroke. Merged on top of
+   * sensible defaults (`line-color: #3b82f6`, `line-width: 2`,
+   * `line-opacity: 0.85`).
+   */
+  outlinePaint?: MapPolygonLinePaint;
+  /** Outline paint applied to the polygon under the cursor (only when `outline` is true). */
+  outlineHoverPaint?: MapPolygonLinePaint;
+  /** Callback when a polygon is clicked. */
+  onClick?: (e: MapPolygonEvent<T>) => void;
+  /**
+   * Callback fired when the hovered polygon changes. Receives the cursor's
+   * lng/lat at the moment of entry, and `null` when the cursor leaves the
+   * last hovered polygon.
+   */
+  onHover?: (e: MapPolygonEvent<T> | null) => void;
+  /** Whether polygons respond to mouse events. (default: true) */
+  interactive?: boolean;
+  /** Optional MapLibre layer id to insert the polygon layers before (z-order control). */
+  beforeId?: string;
+};
+
+const DEFAULT_POLYGON_PAINT: MapPolygonFillPaint = {
+  "fill-color": "#3b82f6",
+  "fill-opacity": 0.2,
+  // Smooth fade between base and hoverPaint when the cursor enters/leaves a polygon.
+  "fill-color-transition": { duration: 180 },
+  "fill-opacity-transition": { duration: 180 },
+};
+
+const DEFAULT_POLYGON_OUTLINE_PAINT: MapPolygonLinePaint = {
+  "line-color": "#3b82f6",
+  "line-width": 2,
+  "line-opacity": 0.85,
+  "line-width-transition": { duration: 180 },
+  "line-color-transition": { duration: 180 },
+  "line-opacity-transition": { duration: 180 },
+};
+
+const DEFAULT_POLYGON_OUTLINE_LAYOUT: NonNullable<
+  MapLibreGL.LineLayerSpecification["layout"]
+> = {
+  "line-join": "round",
+  "line-cap": "round",
+};
+
+/**
+ * Generic paint merger: hoverPaint overrides become `case` expressions keyed
+ * on the per-feature hover feature-state. Shared between the fill and outline
+ * layers of MapPolygon.
+ *
+ * Hover-only keys (set in hoverPaint but absent from paint) are skipped
+ * because there's no safe base value to fall back to — applying them
+ * unconditionally would make them permanent, breaking the hover contract.
+ * A console warning fires in development to surface the misuse.
+ */
+function mergePolygonPaint<P extends Record<string, unknown>>(
+  paint: P,
+  hoverPaint: P | undefined,
+): P {
+  if (!hoverPaint) return paint;
+  const merged: Record<string, unknown> = { ...paint };
+  for (const [key, hoverValue] of Object.entries(hoverPaint)) {
+    if (hoverValue === undefined) continue;
+    const baseValue = merged[key];
+    if (baseValue === undefined) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(
+          `MapPolygon: hoverPaint key "${key}" has no base in paint and ` +
+            `cannot be applied as a hover-only override. Set it in paint ` +
+            `as well so it can be toggled by feature-state.`,
+        );
+      }
+      continue;
+    }
+    merged[key] = [
+      "case",
+      ["boolean", ["feature-state", "hover"], false],
+      hoverValue,
+      baseValue,
+    ];
+  }
+  return merged as P;
+}
+
+/**
+ * Detect the nesting depth of a coordinates array and return the matching
+ * GeoJSON geometry (Polygon for depth 1/2, MultiPolygon for depth 3). Rings
+ * are closed automatically if the last point does not equal the first.
+ */
+function closeRing(ring: [number, number][]): [number, number][] {
+  if (ring.length === 0) return ring;
+  const a = ring[0];
+  const b = ring[ring.length - 1];
+  if (a[0] === b[0] && a[1] === b[1]) return ring;
+  return [...ring, a];
+}
+
+function normalizePolygonGeometry(
+  coords:
+    | [number, number][]
+    | [number, number][][]
+    | [number, number][][][],
+): GeoJSON.Polygon | GeoJSON.MultiPolygon {
+  if (coords.length === 0) {
+    return { type: "Polygon", coordinates: [] };
+  }
+  // Depth 1: first element is a [lng, lat] pair → single ring
+  const first = coords[0] as unknown;
+  if (
+    Array.isArray(first) &&
+    first.length === 2 &&
+    typeof first[0] === "number" &&
+    typeof first[1] === "number"
+  ) {
+    return {
+      type: "Polygon",
+      coordinates: [closeRing(coords as [number, number][])],
+    };
+  }
+  // Depth 2: first element is a ring of pairs → Polygon with rings
+  const innerFirst = (first as unknown[])[0];
+  if (
+    Array.isArray(innerFirst) &&
+    innerFirst.length === 2 &&
+    typeof (innerFirst as [number, number])[0] === "number" &&
+    typeof (innerFirst as [number, number])[1] === "number"
+  ) {
+    return {
+      type: "Polygon",
+      coordinates: (coords as [number, number][][]).map(closeRing),
+    };
+  }
+  // Depth 3: MultiPolygon
+  return {
+    type: "MultiPolygon",
+    coordinates: (coords as [number, number][][][]).map((poly) =>
+      poly.map(closeRing),
+    ),
+  };
+}
+
+function MapPolygon<T extends MapPolygonDatum = MapPolygonDatum>({
+  data,
+  id: propId,
+  paint,
+  hoverPaint,
+  outline = true,
+  outlinePaint,
+  outlineHoverPaint,
+  onClick,
+  onHover,
+  interactive = true,
+  beforeId,
+}: MapPolygonProps<T>) {
+  const { map, isLoaded } = useMap();
+  const autoId = useId();
+  const id = propId ?? autoId;
+  const sourceId = `polygon-source-${id}`;
+  const fillLayerId = `polygon-fill-layer-${id}`;
+  const outlineLayerId = `polygon-outline-layer-${id}`;
+
+  const mergedFillPaint = useMemo(
+    () =>
+      mergePolygonPaint({ ...DEFAULT_POLYGON_PAINT, ...paint }, hoverPaint),
+    [paint, hoverPaint],
+  );
+
+  const mergedOutlinePaint = useMemo(
+    () =>
+      mergePolygonPaint(
+        { ...DEFAULT_POLYGON_OUTLINE_PAINT, ...outlinePaint },
+        outlineHoverPaint,
+      ),
+    [outlinePaint, outlineHoverPaint],
+  );
+
+  const geoJSON = useMemo<
+    GeoJSON.FeatureCollection<GeoJSON.Polygon | GeoJSON.MultiPolygon>
+  >(
+    () => ({
+      type: "FeatureCollection",
+      features: data.map((polygon) => {
+        const { coordinates, ...properties } = polygon;
+        return {
+          type: "Feature",
+          properties,
+          geometry: normalizePolygonGeometry(coordinates),
+        };
+      }),
+    }),
+    [data],
+  );
+
+  const latestRef = useRef({ data, onClick, onHover });
+  latestRef.current = { data, onClick, onHover };
+
+  // Add source and layers on mount.
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+
+    map.addSource(sourceId, {
+      type: "geojson",
+      data: geoJSON,
+      promoteId: "id",
+    });
+
+    map.addLayer(
+      {
+        id: fillLayerId,
+        type: "fill",
+        source: sourceId,
+        paint: mergedFillPaint,
+      },
+      beforeId,
+    );
+
+    if (outline) {
+      map.addLayer(
+        {
+          id: outlineLayerId,
+          type: "line",
+          source: sourceId,
+          layout: DEFAULT_POLYGON_OUTLINE_LAYOUT,
+          paint: mergedOutlinePaint,
+        },
+        beforeId,
+      );
+    }
+
+    return () => {
+      try {
+        if (map.getLayer(outlineLayerId)) map.removeLayer(outlineLayerId);
+        if (map.getLayer(fillLayerId)) map.removeLayer(fillLayerId);
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+      } catch {
+        // ignore
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, map, outline]);
+
+  // Sync features when data changes.
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+    const source = map.getSource(sourceId) as
+      | MapLibreGL.GeoJSONSource
+      | undefined;
+    source?.setData(geoJSON);
+  }, [isLoaded, map, geoJSON, sourceId]);
+
+  // Sync paint when it changes.
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+    if (map.getLayer(fillLayerId)) {
+      for (const [key, value] of Object.entries(mergedFillPaint)) {
+        map.setPaintProperty(
+          fillLayerId,
+          key as keyof MapPolygonFillPaint,
+          value as never,
+        );
+      }
+    }
+    if (outline && map.getLayer(outlineLayerId)) {
+      for (const [key, value] of Object.entries(mergedOutlinePaint)) {
+        map.setPaintProperty(
+          outlineLayerId,
+          key as keyof MapPolygonLinePaint,
+          value as never,
+        );
+      }
+    }
+  }, [
+    isLoaded,
+    map,
+    fillLayerId,
+    outlineLayerId,
+    outline,
+    mergedFillPaint,
+    mergedOutlinePaint,
+  ]);
+
+  // Interaction handlers — bound to the fill layer (any point inside is hit).
+  useEffect(() => {
+    if (!isLoaded || !map || !interactive) return;
+
+    let hoveredId: string | number | null = null;
+
+    const setHover = (next: string | number | null) => {
+      if (next === hoveredId) return;
+      const sourceExists = !!map.getSource(sourceId);
+      if (hoveredId != null && sourceExists) {
+        map.setFeatureState(
+          { source: sourceId, id: hoveredId },
+          { hover: false },
+        );
+      }
+      hoveredId = next;
+      if (next != null && sourceExists) {
+        map.setFeatureState({ source: sourceId, id: next }, { hover: true });
+      }
+    };
+
+    const findPolygon = (featureId: string | number | undefined) =>
+      featureId == null
+        ? undefined
+        : latestRef.current.data.find(
+            (poly) => String(poly.id) === String(featureId),
+          );
+
+    const handleMouseMove = (e: MapLibreGL.MapLayerMouseEvent) => {
+      const featureId = e.features?.[0]?.id as string | number | undefined;
+      if (featureId == null || featureId === hoveredId) return;
+
+      setHover(featureId);
+      map.getCanvas().style.cursor = "pointer";
+
+      const polygon = findPolygon(featureId);
+      if (polygon) {
+        latestRef.current.onHover?.({
+          polygon: polygon as T,
+          longitude: e.lngLat.lng,
+          latitude: e.lngLat.lat,
+          originalEvent: e,
+        });
+      }
+    };
+
+    const handleMouseLeave = () => {
+      setHover(null);
+      map.getCanvas().style.cursor = "";
+      latestRef.current.onHover?.(null);
+    };
+
+    const handleClick = (e: MapLibreGL.MapLayerMouseEvent) => {
+      const polygon = findPolygon(
+        e.features?.[0]?.id as string | number | undefined,
+      );
+      if (!polygon) return;
+      latestRef.current.onClick?.({
+        polygon: polygon as T,
+        longitude: e.lngLat.lng,
+        latitude: e.lngLat.lat,
+        originalEvent: e,
+      });
+    };
+
+    map.on("mousemove", fillLayerId, handleMouseMove);
+    map.on("mouseleave", fillLayerId, handleMouseLeave);
+    map.on("click", fillLayerId, handleClick);
+
+    return () => {
+      map.off("mousemove", fillLayerId, handleMouseMove);
+      map.off("mouseleave", fillLayerId, handleMouseLeave);
+      map.off("click", fillLayerId, handleClick);
+      setHover(null);
+      map.getCanvas().style.cursor = "";
+    };
+  }, [isLoaded, map, fillLayerId, sourceId, interactive]);
+
+  return null;
+}
+
 type MapClusterLayerProps<
   P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties,
 > = {
@@ -1847,7 +2268,15 @@ export {
   MapControls,
   MapRoute,
   MapArc,
+  MapPolygon,
   MapClusterLayer,
 };
 
-export type { MapRef, MapViewport, MapArcDatum, MapArcEvent };
+export type {
+  MapRef,
+  MapViewport,
+  MapArcDatum,
+  MapArcEvent,
+  MapPolygonDatum,
+  MapPolygonEvent,
+};

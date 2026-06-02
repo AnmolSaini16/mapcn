@@ -26,6 +26,7 @@ const anatomyCode = `<Map>
   <MapControls />
   <MapRoute coordinates={...} />
   <MapArc data={...} />
+  <MapPolygon data={...} />
   <MapClusterLayer data={...} />
 </Map>`;
 
@@ -51,6 +52,7 @@ export default function ApiReferencePage() {
         { title: "MapPopup", slug: "mappopup" },
         { title: "MapRoute", slug: "maproute" },
         { title: "MapArc", slug: "maparc" },
+        { title: "MapPolygon", slug: "mappolygon" },
         { title: "MapClusterLayer", slug: "mapclusterlayer" },
       ]}
     >
@@ -664,6 +666,123 @@ export default function ApiReferencePage() {
               name: "beforeId",
               type: "string",
               description: "Insert the arc layers before this layer id.",
+            },
+          ]}
+        />
+      </DocsSection>
+
+      {/* MapPolygon */}
+      <DocsSection title="MapPolygon">
+        <p>
+          Renders filled regions on the map — zones, areas of coverage,
+          administrative boundaries, geofences, or any closed shape. Must be
+          used inside <DocsCode>Map</DocsCode>. Supports click and hover
+          interactions, per-feature styling, and both{" "}
+          <DocsCode>Polygon</DocsCode> and <DocsCode>MultiPolygon</DocsCode>{" "}
+          geometries (regions with islands or disjoint parts).
+        </p>
+        <p>
+          Built on a MapLibre{" "}
+          <DocsLink
+            href="https://maplibre.org/maplibre-style-spec/layers/#fill"
+            external
+          >
+            fill layer
+          </DocsLink>{" "}
+          for the body and a{" "}
+          <DocsLink
+            href="https://maplibre.org/maplibre-style-spec/layers/#line"
+            external
+          >
+            line layer
+          </DocsLink>{" "}
+          for the outline. The <DocsCode>paint</DocsCode> prop accepts any{" "}
+          <DocsCode>FillLayerSpecification</DocsCode> field (e.g.{" "}
+          <DocsCode>fill-color</DocsCode>, <DocsCode>fill-opacity</DocsCode>,{" "}
+          <DocsCode>fill-pattern</DocsCode>); <DocsCode>outlinePaint</DocsCode>{" "}
+          accepts any <DocsCode>LineLayerSpecification</DocsCode> field.
+        </p>
+        <p>
+          Style per polygon by passing a{" "}
+          <DocsLink
+            href="https://maplibre.org/maplibre-style-spec/expressions/"
+            external
+          >
+            MapLibre expression
+          </DocsLink>{" "}
+          as any paint value. Reference fields on each datum with{" "}
+          <DocsCode>{`["get", "fieldName"]`}</DocsCode>.
+        </p>
+
+        <DocsPropTable
+          props={[
+            {
+              name: "data",
+              type: "MapPolygonDatum[]",
+              description:
+                "Polygons to render. Each needs a unique id and coordinates as a ring of [lng, lat] tuples, a Polygon (rings) or a MultiPolygon (polygons). Extra fields are forwarded to feature properties.",
+            },
+            {
+              name: "id",
+              type: "string",
+              default: "auto",
+              description: "Id prefix for the underlying source/layers.",
+            },
+            {
+              name: "paint",
+              type: "FillLayerSpecification['paint']",
+              default: '{ "fill-color": "#3b82f6", "fill-opacity": 0.2 }',
+              description:
+                "Fill paint props merged over defaults. Values may be MapLibre expressions for per-feature styling.",
+            },
+            {
+              name: "hoverPaint",
+              type: "FillLayerSpecification['paint']",
+              description:
+                "Fill paint overrides applied to the hovered polygon via feature-state.",
+            },
+            {
+              name: "outline",
+              type: "boolean",
+              default: "true",
+              description: "Draw a stroke around each polygon.",
+            },
+            {
+              name: "outlinePaint",
+              type: "LineLayerSpecification['paint']",
+              default:
+                '{ "line-color": "#3b82f6", "line-width": 2, "line-opacity": 0.85 }',
+              description:
+                "Outline paint props merged over defaults (only used when outline is true).",
+            },
+            {
+              name: "outlineHoverPaint",
+              type: "LineLayerSpecification['paint']",
+              description:
+                "Outline paint overrides applied to the hovered polygon.",
+            },
+            {
+              name: "onClick",
+              type: "(e: MapPolygonEvent) => void",
+              description: "Fired when a polygon is clicked.",
+            },
+            {
+              name: "onHover",
+              type: "(e: MapPolygonEvent | null) => void",
+              description:
+                "Fired when the hovered polygon changes, with the cursor's lng/lat at entry. Receives null when the cursor leaves all polygons.",
+            },
+            {
+              name: "interactive",
+              type: "boolean",
+              default: "true",
+              description:
+                "Respond to mouse events (hover, cursor, callbacks).",
+            },
+            {
+              name: "beforeId",
+              type: "string",
+              description: "Insert the polygon layers before this layer id.",
             },
           ]}
         />
