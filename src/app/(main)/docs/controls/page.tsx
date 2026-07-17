@@ -23,6 +23,11 @@ export default function ControlsPage() {
           The <DocsCode>MapControls</DocsCode> component provides a set of
           interactive controls that can be positioned on any corner of the map.
         </p>
+        <p>
+          Fullscreen uses the browser Fullscreen API when available and falls back to
+          MapLibre&apos;s pseudo-fullscreen mode on browsers such as iOS Safari. Press
+          Escape or tap the control again to exit.
+        </p>
         <ComponentPreview code={controlsSource}>
           <MapControlsExample />
         </ComponentPreview>
