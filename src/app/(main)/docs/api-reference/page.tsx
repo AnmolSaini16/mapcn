@@ -30,7 +30,7 @@ const anatomyCode = `<Map>
   <MapClusterLayer data={...} />
 </Map>`;
 
-const useMapCode = `const { map, isLoaded } = useMap();`;
+const useMapCode = `const { map, isLoaded, styleEpoch } = useMap();`;
 
 export default function ApiReferencePage() {
   return (
@@ -162,6 +162,8 @@ export default function ApiReferencePage() {
         <p>
           A hook that provides access to the MapLibre map instance and loading
           state. Must be used within a <DocsCode>Map</DocsCode> component.
+          Built-in layer components recreate on <DocsCode>styleEpoch</DocsCode>{" "}
+          so theme style swaps stay correct without a separate readiness path.
         </p>
         <CodeBlock code={useMapCode} language="tsx" showCopyButton={false} />
         <p>
@@ -172,8 +174,11 @@ export default function ApiReferencePage() {
           >
             MapLibre.Map
           </DocsLink>
-          ) and <DocsCode>isLoaded</DocsCode> (boolean) tells you if the map is
-          loaded and ready to use.
+          ), <DocsCode>isLoaded</DocsCode> (boolean — map exists and the current
+          style is safe to touch), <DocsCode>resolvedTheme</DocsCode>, and{" "}
+          <DocsCode>styleEpoch</DocsCode> (number — increments once per ready
+          style, including the initial load and each completed theme/style
+          change).
         </p>
       </DocsSection>
 
@@ -647,9 +652,9 @@ export default function ApiReferencePage() {
             },
             {
               name: "hoverPaint",
-              type: "LineLayerSpecification['paint']",
+              type: 'Pick<NonNullable<LineLayerSpecification["paint"]>, "line-opacity" | "line-color" | "line-width" | "line-gap-width" | "line-offset" | "line-blur">',
               description:
-                "Paint overrides applied to the hovered arc via feature-state.",
+                "Feature-state-capable paint overrides for the hovered arc. line-gap-width, line-offset, and line-blur must also have a base value in paint.",
             },
             {
               name: "onClick",
@@ -703,7 +708,9 @@ export default function ApiReferencePage() {
           </DocsLink>{" "}
           as paint values for data-driven styling. Hover highlighting via{" "}
           <DocsCode>fillHoverPaint</DocsCode> requires{" "}
-          <DocsCode>promoteId</DocsCode>.
+          <DocsCode>promoteId</DocsCode>. For hover-only properties without a
+          built-in mapcn default, set the normal value in{" "}
+          <DocsCode>fillPaint</DocsCode> as well.
         </p>
         <DocsPropTable
           props={[
@@ -739,9 +746,9 @@ export default function ApiReferencePage() {
             },
             {
               name: "fillHoverPaint",
-              type: "FillLayerSpecification['paint']",
+              type: 'Pick<NonNullable<FillLayerSpecification["paint"]>, "fill-opacity" | "fill-color" | "fill-outline-color">',
               description:
-                "Paint merged onto the fill layer for the hovered feature, applied via hover feature-state. Requires promoteId.",
+                "Feature-state-capable fill overrides for the hovered feature. Requires promoteId; fill-outline-color must also have a base value in fillPaint.",
             },
             {
               name: "onClick",

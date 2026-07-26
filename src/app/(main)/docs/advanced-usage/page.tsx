@@ -38,15 +38,17 @@ function MyMapComponent() {
 
 const useMapCode = `import { Map, useMap } from "@/components/ui/map";
 import { useEffect } from "react";
+import type { FeatureCollection } from "geojson";
+import type { MapMouseEvent } from "maplibre-gl";
 
-// For child components inside Map, use the useMap hook
+// Map-wide listeners only need isLoaded; they survive style swaps.
 function MapEventListener() {
   const { map, isLoaded } = useMap();
 
   useEffect(() => {
     if (!map || !isLoaded) return;
-    
-    const handleClick = (e) => {
+
+    const handleClick = (e: MapMouseEvent) => {
       console.log("Clicked at:", e.lngLat);
     };
 
@@ -57,10 +59,38 @@ function MapEventListener() {
   return null;
 }
 
-// Usage
-<Map center={[-74, 40.7]} zoom={10}>
-  <MapEventListener />
-</Map>`;
+// Custom sources/layers must recreate when styleEpoch advances.
+function CustomParkLayer({ data }: { data: FeatureCollection }) {
+  const { map, isLoaded, styleEpoch } = useMap();
+
+  useEffect(() => {
+    if (!map || !isLoaded) return;
+
+    map.addSource("parks", { type: "geojson", data });
+    map.addLayer({
+      id: "parks-fill",
+      type: "fill",
+      source: "parks",
+      paint: { "fill-color": "#22c55e", "fill-opacity": 0.4 },
+    });
+
+    return () => {
+      if (map.getLayer("parks-fill")) map.removeLayer("parks-fill");
+      if (map.getSource("parks")) map.removeSource("parks");
+    };
+  }, [map, isLoaded, styleEpoch, data]);
+
+  return null;
+}
+
+function Example({ parks }: { parks: FeatureCollection }) {
+  return (
+    <Map center={[-74, 40.7]} zoom={10}>
+      <MapEventListener />
+      <CustomParkLayer data={parks} />
+    </Map>
+  );
+}`
 
 export default function AdvancedPage() {
   const advancedSource = getExampleSource("advanced-usage-example.tsx");
@@ -119,7 +149,10 @@ export default function AdvancedPage() {
         <p>
           For child components rendered inside <DocsCode>Map</DocsCode>, use the{" "}
           <DocsCode>useMap</DocsCode> hook to access the map instance and listen
-          to events.
+          to events. <DocsCode>styleEpoch</DocsCode> increments each time a
+          basemap style becomes ready — key custom layer setup on it (and treat{" "}
+          <DocsCode>isLoaded</DocsCode> as the safe-to-touch gate) so theme
+          toggles recreate declarative layers without a second readiness owner.
         </p>
         <CodeBlock code={useMapCode} />
       </DocsSection>

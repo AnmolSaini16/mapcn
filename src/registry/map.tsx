@@ -58,17 +58,14 @@ function mergeHoverPaint<T extends Record<string, unknown>>(
   if (!hoverPaint) return paint;
   const merged: Record<string, unknown> = { ...paint };
   for (const [key, hoverValue] of Object.entries(hoverPaint)) {
-    if (hoverValue === undefined) continue;
     const baseValue = merged[key];
-    merged[key] =
-      baseValue === undefined
-        ? hoverValue
-        : [
-            "case",
-            ["boolean", ["feature-state", "hover"], false],
-            hoverValue,
-            baseValue,
-          ];
+    if (hoverValue === undefined || baseValue === undefined) continue;
+    merged[key] = [
+      "case",
+      ["boolean", ["feature-state", "hover"], false],
+      hoverValue,
+      baseValue,
+    ];
   }
   return merged as T;
 }
@@ -106,10 +103,7 @@ function useResolvedTheme(themeProp?: "light" | "dark"): Theme {
     // Watch for document theme changes (e.g., next-themes toggling the class
     // or the data-theme attribute).
     const observer = new MutationObserver(() => {
-      const docTheme = getDocumentTheme();
-      if (docTheme) {
-        setDetectedTheme(docTheme);
-      }
+      setDetectedTheme(getDocumentTheme() ?? getSystemTheme());
     });
     observer.observe(document.documentElement, {
       attributes: true,
@@ -139,6 +133,7 @@ type MapContextValue = {
   map: MapLibreGL.Map | null;
   isLoaded: boolean;
   resolvedTheme: Theme;
+  styleEpoch: number;
 };
 
 const MapContext = createContext<MapContextValue | null>(null);
@@ -149,6 +144,60 @@ function useMap() {
     throw new Error("useMap must be used within a Map component");
   }
   return context;
+}
+
+/** Armed → post-arm `styledata` → `isStyleLoaded()` → `onReady` once. `allowImmediate`: cold-start only. */
+function subscribeStyleReady(
+  map: MapLibreGL.Map,
+  onReady: () => void,
+  options?: { allowImmediate?: boolean },
+): () => void {
+  let settled = false;
+  let seenStyleData = false;
+  let polling = false;
+  let timeout = 0;
+
+  function cleanup() {
+    clearTimeout(timeout);
+    map.off("styledata", onStyleData);
+  }
+
+  function finish() {
+    if (settled || (!options?.allowImmediate && !seenStyleData) || !map.isStyleLoaded())
+      return;
+    settled = true;
+    cleanup();
+    onReady();
+  }
+
+  function poll() {
+    if (settled) return;
+    finish();
+    if (!settled) timeout = window.setTimeout(poll, 32);
+  }
+
+  function armPoll() {
+    if (polling || settled) return;
+    polling = true;
+    poll();
+  }
+
+  function onStyleData() {
+    seenStyleData = true;
+    finish();
+    if (!settled) armPoll();
+  }
+
+  map.on("styledata", onStyleData);
+  if (options?.allowImmediate) {
+    finish();
+    if (!settled) armPoll();
+  }
+
+  return () => {
+    settled = true;
+    cleanup();
+  };
 }
 
 /** Map viewport state */
@@ -245,13 +294,15 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mapInstance, setMapInstance] = useState<MapLibreGL.Map | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isStyleLoaded, setIsStyleLoaded] = useState(false);
-  const [pendingStyle, setPendingStyle] = useState<MapStyleOption | null>(null);
+  const [hasLoadEvent, setHasLoadEvent] = useState(false);
+  const [styleStatus, setStyleStatus] = useState({ ready: false, epoch: 0 });
   const currentStyleRef = useRef<MapStyleOption | null>(null);
-  const styleSwapInFlightRef = useRef(false);
   const internalUpdateRef = useRef(false);
+  const styleReadyUnsubRef = useRef<(() => void) | null>(null);
   const resolvedTheme = useResolvedTheme(themeProp);
+  const isStyleReady = styleStatus.ready;
+  const styleEpoch = styleStatus.epoch;
+  const isLoaded = hasLoadEvent && isStyleReady;
 
   const isControlled = viewport !== undefined && onViewportChange !== undefined;
 
@@ -275,6 +326,10 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     return defaultStyles;
   }, [stableStyles, blank]);
 
+  const handleStyleReady = useCallback(() => {
+    setStyleStatus((status) => ({ ready: true, epoch: status.epoch + 1 }));
+  }, []);
+
   // Expose the map instance to the parent component
   useImperativeHandle(ref, () => mapInstance as MapLibreGL.Map, [mapInstance]);
 
@@ -297,11 +352,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
       ...viewport,
     });
 
-    const styleLoadHandler = () => {
-      styleSwapInFlightRef.current = false;
-      setIsStyleLoaded(true);
-    };
-    const loadHandler = () => setIsLoaded(true);
+    const loadHandler = () => setHasLoadEvent(true);
 
     // Viewport change handler - skip if triggered by internal update
     const handleMove = () => {
@@ -310,17 +361,23 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     };
 
     map.on("load", loadHandler);
-    map.on("style.load", styleLoadHandler);
+    if (map.loaded()) setHasLoadEvent(true);
     map.on("move", handleMove);
+    styleReadyUnsubRef.current = subscribeStyleReady(
+      map,
+      handleStyleReady,
+      { allowImmediate: true },
+    );
     setMapInstance(map);
 
     return () => {
+      styleReadyUnsubRef.current?.();
+      styleReadyUnsubRef.current = null;
       map.off("load", loadHandler);
-      map.off("style.load", styleLoadHandler);
       map.off("move", handleMove);
       map.remove();
-      setIsLoaded(false);
-      setIsStyleLoaded(false);
+      setHasLoadEvent(false);
+      setStyleStatus({ ready: false, epoch: 0 });
       setMapInstance(null);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -354,8 +411,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     internalUpdateRef.current = false;
   }, [mapInstance, isControlled, viewport]);
 
-  // Handle style change: close the gate (so layer children tear down and
-  // re-add on the incoming style) - the swap itself is staged to the effect below.
+  // Style identity change: close ready gate, swap style, re-arm readiness.
   useEffect(() => {
     if (!mapInstance || !resolvedTheme) return;
 
@@ -365,34 +421,31 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     if (currentStyleRef.current === newStyle) return;
 
     currentStyleRef.current = newStyle;
-    setIsStyleLoaded(false);
-    setPendingStyle(newStyle);
-  }, [mapInstance, resolvedTheme, mapStyles]);
+    styleReadyUnsubRef.current?.();
+    setStyleStatus((status) => ({ ...status, ready: false }));
+    // Arm before setStyle. Prefer diff:false — diff:true can settle without
+    // a post-arm styledata (hangs the readiness owner).
+    styleReadyUnsubRef.current = subscribeStyleReady(
+      mapInstance,
+      handleStyleReady,
+    );
+    mapInstance.setStyle(newStyle, { diff: false });
+  }, [mapInstance, resolvedTheme, mapStyles, handleStyleReady]);
 
+  // Projection lives on styleEpoch — not inside the readiness callback.
   useEffect(() => {
-    if (!mapInstance || !pendingStyle) return;
-
-    setPendingStyle(null);
-    styleSwapInFlightRef.current = true;
-    // Full reload (no diff) so `style.load` fires deterministically. A
-    // successful diff would never fire it, leaving isStyleLoaded stuck false.
-    mapInstance.setStyle(pendingStyle, { diff: false });
-  }, [mapInstance, pendingStyle]);
-
-  // Sync projection when the prop changes after mount.
-  useEffect(() => {
-    if (!mapInstance || !isStyleLoaded || !projection) return;
-    if (styleSwapInFlightRef.current) return;
+    if (!mapInstance || !isStyleReady || !projection) return;
     mapInstance.setProjection(projection);
-  }, [mapInstance, isStyleLoaded, projection]);
+  }, [mapInstance, isStyleReady, styleEpoch, projection]);
 
   const contextValue = useMemo(
     () => ({
       map: mapInstance,
-      isLoaded: isLoaded && isStyleLoaded,
+      isLoaded,
       resolvedTheme,
+      styleEpoch,
     }),
-    [mapInstance, isLoaded, isStyleLoaded, resolvedTheme],
+    [mapInstance, isLoaded, resolvedTheme, styleEpoch],
   );
 
   return (
@@ -401,9 +454,9 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
         ref={containerRef}
         className={cn("relative h-full w-full", className)}
       >
-        {(!isLoaded || loading) && <DefaultLoader />}
-        {/* SSR-safe: children render only when map is loaded on client */}
-        {mapInstance && children}
+        {(!hasLoadEvent || loading) && <DefaultLoader />}
+        {/* Mount children only when map + style are safe to touch */}
+        {mapInstance && isLoaded && children}
       </div>
     </MapContext.Provider>
   );
@@ -1097,6 +1150,138 @@ function MapPopup({
   );
 }
 
+interface MapLayerSpec {
+  id: string;
+  type: "fill" | "line" | "circle" | "symbol";
+  paint?: Record<string, unknown>;
+  layout?: Record<string, unknown>;
+  filter?: unknown;
+  beforeId?: string;
+}
+
+interface UseMapLayersArgs {
+  sourceId: string;
+  sourceOptions?: {
+    promoteId?: string;
+    cluster?: boolean;
+    clusterMaxZoom?: number;
+    clusterRadius?: number;
+  };
+  layers: MapLayerSpec[];
+  data: GeoJSON.GeoJSON | string;
+  hoverLayerId?: string;
+}
+
+/** Private lifecycle Module: GeoJSON source + N layers + optional mechanical hover. */
+function useMapLayers({
+  sourceId,
+  sourceOptions,
+  layers,
+  data,
+  hoverLayerId,
+}: UseMapLayersArgs) {
+  const { map, isLoaded, styleEpoch } = useMap();
+  // Paint/layout *key* shape is part of topology so removed keys recreate the
+  // layer — MapLibre has no supported unset via setPaintProperty(undefined).
+  const topologyKey = useMemo(
+    () =>
+      JSON.stringify(
+        layers.map((l) => [
+          l.id,
+          l.type,
+          l.filter ?? null,
+          l.beforeId ?? null,
+          Object.keys(l.paint ?? {}).sort(),
+          Object.keys(l.layout ?? {}).sort(),
+        ]),
+      ),
+    [layers],
+  );
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+    map.addSource(sourceId, {
+      type: "geojson",
+      data: data as never,
+      ...sourceOptions,
+    });
+    for (const { beforeId, ...layer } of layers) {
+      map.addLayer(
+        { ...layer, source: sourceId } as MapLibreGL.AddLayerObject,
+        beforeId,
+      );
+    }
+    return () => {
+      try {
+        for (let i = layers.length - 1; i >= 0; i -= 1) {
+          if (map.getLayer(layers[i].id)) map.removeLayer(layers[i].id);
+        }
+        if (map.getSource(sourceId)) map.removeSource(sourceId);
+      } catch {
+        /* style mid-reload */
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- topologyKey owns recreate
+  }, [isLoaded, map, sourceId, sourceOptions, styleEpoch, topologyKey]);
+
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+    (map.getSource(sourceId) as MapLibreGL.GeoJSONSource | undefined)?.setData(
+      data as never,
+    );
+  }, [isLoaded, map, sourceId, data]);
+
+  useEffect(() => {
+    if (!isLoaded || !map) return;
+    for (const layer of layers) {
+      if (!map.getLayer(layer.id)) continue;
+      if (layer.paint) {
+        for (const [key, value] of Object.entries(layer.paint)) {
+          map.setPaintProperty(layer.id, key, value as never);
+        }
+      }
+      if (layer.layout) {
+        for (const [key, value] of Object.entries(layer.layout)) {
+          map.setLayoutProperty(layer.id, key, value as never);
+        }
+      }
+    }
+  }, [isLoaded, map, layers]);
+
+  useEffect(() => {
+    if (!isLoaded || !map || !hoverLayerId) return;
+    let hoveredId: string | number | null = null;
+    const setHover = (next: string | number | null) => {
+      if (next === hoveredId) return;
+      const sourceExists = !!map.getSource(sourceId);
+      if (hoveredId != null && sourceExists) {
+        map.setFeatureState({ source: sourceId, id: hoveredId }, { hover: false });
+      }
+      hoveredId = next;
+      if (next != null && sourceExists) {
+        map.setFeatureState({ source: sourceId, id: next }, { hover: true });
+      }
+    };
+    const handleMouseMove = (e: MapLibreGL.MapLayerMouseEvent) => {
+      const feature = e.features?.[0];
+      if (!feature) return;
+      map.getCanvas().style.cursor = "pointer";
+      setHover(feature.id ?? null);
+    };
+    const handleMouseLeave = () => {
+      setHover(null);
+      map.getCanvas().style.cursor = "";
+    };
+    map.on("mousemove", hoverLayerId, handleMouseMove);
+    map.on("mouseleave", hoverLayerId, handleMouseLeave);
+    return () => {
+      map.off("mousemove", hoverLayerId, handleMouseMove);
+      map.off("mouseleave", hoverLayerId, handleMouseLeave);
+      setHover(null);
+      map.getCanvas().style.cursor = "";
+    };
+  }, [isLoaded, map, sourceId, sourceOptions, hoverLayerId, styleEpoch, topologyKey]);
+}
+
 type MapRouteProps = {
   /** Optional unique identifier for the route layer */
   id?: string;
@@ -1132,73 +1317,44 @@ function MapRoute({
   onMouseLeave,
   interactive = true,
 }: MapRouteProps) {
-  const { map, isLoaded } = useMap();
+  const { map, isLoaded, styleEpoch } = useMap();
   const autoId = useId();
   const id = propId ?? autoId;
   const sourceId = `route-source-${id}`;
   const layerId = `route-layer-${id}`;
 
-  // Add source and layer on mount
-  useEffect(() => {
-    if (!isLoaded || !map) return;
-
-    map.addSource(sourceId, {
-      type: "geojson",
-      data: {
-        type: "Feature",
-        properties: {},
-        geometry: { type: "LineString", coordinates: [] },
+  const data = useMemo<GeoJSON.Feature<GeoJSON.LineString>>(
+    () => ({
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "LineString",
+        coordinates: coordinates.length >= 2 ? coordinates : [],
       },
-    });
+    }),
+    [coordinates],
+  );
 
-    map.addLayer({
-      id: layerId,
-      type: "line",
-      source: sourceId,
-      layout: { "line-join": "round", "line-cap": "round" },
-      paint: {
-        "line-color": color,
-        "line-width": width,
-        "line-opacity": opacity,
-        ...(dashArray && { "line-dasharray": dashArray }),
+  const layers = useMemo<MapLayerSpec[]>(
+    () => [
+      {
+        id: layerId,
+        type: "line",
+        layout: { "line-join": "round", "line-cap": "round" },
+        paint: {
+          "line-color": color,
+          "line-width": width,
+          "line-opacity": opacity,
+          ...(dashArray ? { "line-dasharray": dashArray } : {}),
+        },
       },
-    });
+    ],
+    [layerId, color, width, opacity, dashArray],
+  );
 
-    return () => {
-      try {
-        if (map.getLayer(layerId)) map.removeLayer(layerId);
-        if (map.getSource(sourceId)) map.removeSource(sourceId);
-      } catch {
-        // ignore
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, map]);
+  useMapLayers({ sourceId, layers, data });
 
-  // When coordinates change, update the source data
-  useEffect(() => {
-    if (!isLoaded || !map || coordinates.length < 2) return;
-
-    const source = map.getSource(sourceId) as MapLibreGL.GeoJSONSource;
-    if (source) {
-      source.setData({
-        type: "Feature",
-        properties: {},
-        geometry: { type: "LineString", coordinates },
-      });
-    }
-  }, [isLoaded, map, coordinates, sourceId]);
-
-  useEffect(() => {
-    if (!isLoaded || !map || !map.getLayer(layerId)) return;
-
-    map.setPaintProperty(layerId, "line-color", color);
-    map.setPaintProperty(layerId, "line-width", width);
-    map.setPaintProperty(layerId, "line-opacity", opacity);
-    map.setPaintProperty(layerId, "line-dasharray", dashArray);
-  }, [isLoaded, map, layerId, color, width, opacity, dashArray]);
-
-  // Handle click and hover events
+  // Semantic click / cursor stay in the shell.
   useEffect(() => {
     if (!isLoaded || !map || !interactive) return;
 
@@ -1222,10 +1378,12 @@ function MapRoute({
       map.off("click", layerId, handleClick);
       map.off("mouseenter", layerId, handleMouseEnter);
       map.off("mouseleave", layerId, handleMouseLeave);
+      map.getCanvas().style.cursor = "";
     };
   }, [
     isLoaded,
     map,
+    styleEpoch,
     layerId,
     onClick,
     onMouseEnter,
@@ -1245,6 +1403,10 @@ type MapGeoJSONData<
   | string;
 
 type MapFillPaint = NonNullable<MapLibreGL.FillLayerSpecification["paint"]>;
+type MapFillHoverPaint = Pick<
+  MapFillPaint,
+  "fill-opacity" | "fill-color" | "fill-outline-color"
+>;
 type MapLinePaint = NonNullable<MapLibreGL.LineLayerSpecification["paint"]>;
 
 /** A rendered feature with strongly-typed `properties`. */
@@ -1295,7 +1457,7 @@ type MapGeoJSONProps<
    * Paint merged onto the fill layer for the feature under the cursor, applied
    * as a `case` expression keyed on hover feature-state. Requires `promoteId`.
    */
-  fillHoverPaint?: MapFillPaint;
+  fillHoverPaint?: MapFillHoverPaint;
   /** Callback when a feature is clicked. */
   onClick?: (e: MapGeoJSONEvent<P>) => void;
   /** Callback fired when the hovered feature changes; `null` when the cursor leaves. */
@@ -1335,7 +1497,7 @@ function MapGeoJSON<
   interactive = false,
   beforeId,
 }: MapGeoJSONProps<P>) {
-  const { map, isLoaded, resolvedTheme } = useMap();
+  const { map, isLoaded, styleEpoch, resolvedTheme } = useMap();
   const autoId = useId();
   const id = propId ?? autoId;
   const sourceId = `geojson-source-${id}`;
@@ -1350,7 +1512,11 @@ function MapGeoJSON<
   const mergedFillPaint = useMemo(
     () =>
       mergeHoverPaint(
-        { "fill-color": defaults.fill, ...(fillPaint || {}) },
+        {
+          "fill-color": defaults.fill,
+          "fill-opacity": 1,
+          ...(fillPaint || {}),
+        },
         fillHoverPaint,
       ),
     [defaults.fill, fillPaint, fillHoverPaint],
@@ -1363,136 +1529,62 @@ function MapGeoJSON<
     }),
     [defaults.line, linePaint],
   );
-  const latestRef = useRef({ onClick, onHover });
-  latestRef.current = { onClick, onHover };
+  const sourceOptions = useMemo(
+    () => (promoteId ? { promoteId } : undefined),
+    [promoteId],
+  );
 
-  // Add source on mount.
-  useEffect(() => {
-    if (!isLoaded || !map) return;
-
-    map.addSource(sourceId, {
-      type: "geojson",
-      data,
-      ...(promoteId ? { promoteId } : {}),
-    });
-
-    return () => {
-      try {
-        if (map.getLayer(lineLayerId)) map.removeLayer(lineLayerId);
-        if (map.getLayer(fillLayerId)) map.removeLayer(fillLayerId);
-        if (map.getSource(sourceId)) map.removeSource(sourceId);
-      } catch {
-        // style may be mid-reload
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, map]);
-
-  // Sync data when it changes.
-  useEffect(() => {
-    if (!isLoaded || !map) return;
-    const source = map.getSource(sourceId) as
-      | MapLibreGL.GeoJSONSource
-      | undefined;
-    source?.setData(data as never);
-  }, [isLoaded, map, data, sourceId]);
-
-  // Sync layers and paint when visibility or styling changes.
-  useEffect(() => {
-    if (!isLoaded || !map) return;
-
-    const source = map.getSource(sourceId);
-    if (!source) return;
-
-    if (showFill && !map.getLayer(fillLayerId)) {
-      map.addLayer(
-        {
-          id: fillLayerId,
-          type: "fill",
-          source: sourceId,
-          paint: mergedFillPaint,
-        },
+  const layers = useMemo<MapLayerSpec[]>(() => {
+    const next: MapLayerSpec[] = [];
+    if (showFill) {
+      next.push({
+        id: fillLayerId,
+        type: "fill",
+        paint: mergedFillPaint as Record<string, unknown>,
         beforeId,
-      );
-    } else if (!showFill && map.getLayer(fillLayerId)) {
-      map.removeLayer(fillLayerId);
+      });
     }
-
-    if (showLine && !map.getLayer(lineLayerId)) {
-      map.addLayer(
-        {
-          id: lineLayerId,
-          type: "line",
-          source: sourceId,
-          paint: mergedLinePaint,
-        },
+    if (showLine) {
+      next.push({
+        id: lineLayerId,
+        type: "line",
+        paint: mergedLinePaint as Record<string, unknown>,
         beforeId,
-      );
-    } else if (!showLine && map.getLayer(lineLayerId)) {
-      map.removeLayer(lineLayerId);
+      });
     }
-
-    if (showFill && map.getLayer(fillLayerId)) {
-      for (const [key, value] of Object.entries(mergedFillPaint)) {
-        map.setPaintProperty(
-          fillLayerId,
-          key as keyof MapFillPaint,
-          value as never,
-        );
-      }
-    }
-    if (showLine && map.getLayer(lineLayerId)) {
-      for (const [key, value] of Object.entries(mergedLinePaint)) {
-        map.setPaintProperty(
-          lineLayerId,
-          key as keyof MapLinePaint,
-          value as never,
-        );
-      }
-    }
+    return next;
   }, [
-    isLoaded,
-    map,
-    sourceId,
-    fillLayerId,
-    lineLayerId,
     showFill,
     showLine,
+    fillLayerId,
+    lineLayerId,
     mergedFillPaint,
     mergedLinePaint,
     beforeId,
   ]);
 
-  // Interaction handlers (bound to the fill layer).
+  useMapLayers({
+    sourceId,
+    sourceOptions,
+    layers,
+    data: data as GeoJSON.GeoJSON | string,
+    hoverLayerId: interactive && showFill ? fillLayerId : undefined,
+  });
+
+  // Semantic feature payloads stay in the shell (same pattern as MapRoute).
   useEffect(() => {
     if (!isLoaded || !map || !interactive || !showFill) return;
 
-    let hoveredId: string | number | null = null;
-
-    const setHover = (next: string | number | null) => {
-      if (next === hoveredId) return;
-      const sourceExists = !!map.getSource(sourceId);
-      if (hoveredId != null && sourceExists) {
-        map.setFeatureState(
-          { source: sourceId, id: hoveredId },
-          { hover: false },
-        );
-      }
-      hoveredId = next;
-      if (next != null && sourceExists) {
-        map.setFeatureState({ source: sourceId, id: next }, { hover: true });
-      }
-    };
+    let lastFeatureId: string | number | null = null;
 
     const handleMouseMove = (e: MapLibreGL.MapLayerMouseEvent) => {
       const feature = e.features?.[0];
       if (!feature) return;
-      map.getCanvas().style.cursor = "pointer";
-
-      const featureId = feature.id;
-      if (featureId === hoveredId) return;
-      setHover(featureId ?? null);
-      latestRef.current.onHover?.({
+      const featureId = feature.id ?? null;
+      // Features without ids still need onHover; only dedupe when id is set.
+      if (featureId != null && featureId === lastFeatureId) return;
+      lastFeatureId = featureId;
+      onHover?.({
         feature: feature as unknown as MapGeoJSONFeature<P>,
         longitude: e.lngLat.lng,
         latitude: e.lngLat.lat,
@@ -1501,15 +1593,14 @@ function MapGeoJSON<
     };
 
     const handleMouseLeave = () => {
-      setHover(null);
-      map.getCanvas().style.cursor = "";
-      latestRef.current.onHover?.(null);
+      lastFeatureId = null;
+      onHover?.(null);
     };
 
     const handleClick = (e: MapLibreGL.MapLayerMouseEvent) => {
       const feature = e.features?.[0];
       if (!feature) return;
-      latestRef.current.onClick?.({
+      onClick?.({
         feature: feature as unknown as MapGeoJSONFeature<P>,
         longitude: e.lngLat.lng,
         latitude: e.lngLat.lat,
@@ -1525,10 +1616,17 @@ function MapGeoJSON<
       map.off("mousemove", fillLayerId, handleMouseMove);
       map.off("mouseleave", fillLayerId, handleMouseLeave);
       map.off("click", fillLayerId, handleClick);
-      setHover(null);
-      map.getCanvas().style.cursor = "";
     };
-  }, [isLoaded, map, fillLayerId, sourceId, interactive, showFill]);
+  }, [
+    isLoaded,
+    map,
+    styleEpoch,
+    fillLayerId,
+    interactive,
+    showFill,
+    onClick,
+    onHover,
+  ]);
 
   return null;
 }
@@ -1556,6 +1654,15 @@ type MapArcEvent<T extends MapArcDatum = MapArcDatum> = {
 };
 
 type MapArcLinePaint = NonNullable<MapLibreGL.LineLayerSpecification["paint"]>;
+type MapArcHoverPaint = Pick<
+  MapArcLinePaint,
+  | "line-opacity"
+  | "line-color"
+  | "line-width"
+  | "line-gap-width"
+  | "line-offset"
+  | "line-blur"
+>;
 type MapArcLineLayout = NonNullable<
   MapLibreGL.LineLayerSpecification["layout"]
 >;
@@ -1589,7 +1696,7 @@ type MapArcProps<T extends MapArcDatum = MapArcDatum> = {
    * is merged into `paint` as a `case` expression keyed on per-feature hover
    * state, so only the hovered arc changes appearance.
    */
-  hoverPaint?: MapArcLinePaint;
+  hoverPaint?: MapArcHoverPaint;
   /** Callback when an arc is clicked. */
   onClick?: (e: MapArcEvent<T>) => void;
   /**
@@ -1674,7 +1781,7 @@ function MapArc<T extends MapArcDatum = MapArcDatum>({
   interactive = true,
   beforeId,
 }: MapArcProps<T>) {
-  const { map, isLoaded } = useMap();
+  const { map, isLoaded, styleEpoch } = useMap();
   const autoId = useId();
   const id = propId ?? autoId;
   const sourceId = `arc-source-${id}`;
@@ -1714,126 +1821,59 @@ function MapArc<T extends MapArcDatum = MapArcDatum>({
     [data, curvature, samples],
   );
 
-  const latestRef = useRef({ data, onClick, onHover });
-  latestRef.current = { data, onClick, onHover };
+  const sourceOptions = useMemo(() => ({ promoteId: "id" }), []);
 
-  // Add source and layers on mount.
-  useEffect(() => {
-    if (!isLoaded || !map) return;
-
-    map.addSource(sourceId, {
-      type: "geojson",
-      data: geoJSON,
-      promoteId: "id",
-    });
-
-    map.addLayer(
+  const layers = useMemo<MapLayerSpec[]>(
+    () => [
       {
         id: hitLayerId,
         type: "line",
-        source: sourceId,
-        layout: DEFAULT_ARC_LAYOUT,
+        layout: DEFAULT_ARC_LAYOUT as Record<string, unknown>,
         paint: {
           "line-color": "rgba(0, 0, 0, 0)",
           "line-width": hitWidth,
           "line-opacity": 1,
         },
+        beforeId,
       },
-      beforeId,
-    );
-
-    map.addLayer(
       {
         id: layerId,
         type: "line",
-        source: sourceId,
-        layout: mergedLayout,
-        paint: mergedPaint,
+        layout: mergedLayout as Record<string, unknown>,
+        paint: mergedPaint as Record<string, unknown>,
+        beforeId,
       },
-      beforeId,
-    );
+    ],
+    [hitLayerId, layerId, hitWidth, mergedLayout, mergedPaint, beforeId],
+  );
 
-    return () => {
-      try {
-        if (map.getLayer(layerId)) map.removeLayer(layerId);
-        if (map.getLayer(hitLayerId)) map.removeLayer(hitLayerId);
-        if (map.getSource(sourceId)) map.removeSource(sourceId);
-      } catch {
-        // ignore
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, map]);
+  useMapLayers({
+    sourceId,
+    sourceOptions,
+    layers,
+    data: geoJSON,
+    hoverLayerId: interactive ? hitLayerId : undefined,
+  });
 
-  // Sync features when data / curvature / samples change.
-  useEffect(() => {
-    if (!isLoaded || !map) return;
-    const source = map.getSource(sourceId) as
-      | MapLibreGL.GeoJSONSource
-      | undefined;
-    source?.setData(geoJSON);
-  }, [isLoaded, map, geoJSON, sourceId]);
-
-  // Sync paint/layout when they change.
-  useEffect(() => {
-    if (!isLoaded || !map || !map.getLayer(layerId)) return;
-    for (const [key, value] of Object.entries(mergedPaint)) {
-      map.setPaintProperty(
-        layerId,
-        key as keyof MapArcLinePaint,
-        value as never,
-      );
-    }
-    for (const [key, value] of Object.entries(mergedLayout)) {
-      map.setLayoutProperty(
-        layerId,
-        key as keyof MapArcLineLayout,
-        value as never,
-      );
-    }
-    if (map.getLayer(hitLayerId)) {
-      map.setPaintProperty(hitLayerId, "line-width", hitWidth);
-    }
-  }, [isLoaded, map, layerId, hitLayerId, mergedPaint, mergedLayout, hitWidth]);
-
-  // Interaction handlers
+  // Semantic arc lookup stays in the shell (same pattern as MapRoute).
   useEffect(() => {
     if (!isLoaded || !map || !interactive) return;
 
-    let hoveredId: string | number | null = null;
-
-    const setHover = (next: string | number | null) => {
-      if (next === hoveredId) return;
-      const sourceExists = !!map.getSource(sourceId);
-      if (hoveredId != null && sourceExists) {
-        map.setFeatureState(
-          { source: sourceId, id: hoveredId },
-          { hover: false },
-        );
-      }
-      hoveredId = next;
-      if (next != null && sourceExists) {
-        map.setFeatureState({ source: sourceId, id: next }, { hover: true });
-      }
-    };
+    let lastFeatureId: string | number | null = null;
 
     const findArc = (featureId: string | number | undefined) =>
       featureId == null
         ? undefined
-        : latestRef.current.data.find(
-            (arc) => String(arc.id) === String(featureId),
-          );
+        : data.find((arc) => String(arc.id) === String(featureId));
 
     const handleMouseMove = (e: MapLibreGL.MapLayerMouseEvent) => {
       const featureId = e.features?.[0]?.id as string | number | undefined;
-      if (featureId == null || featureId === hoveredId) return;
-
-      setHover(featureId);
-      map.getCanvas().style.cursor = "pointer";
+      if (featureId == null || featureId === lastFeatureId) return;
+      lastFeatureId = featureId;
 
       const arc = findArc(featureId);
       if (arc) {
-        latestRef.current.onHover?.({
+        onHover?.({
           arc: arc as T,
           longitude: e.lngLat.lng,
           latitude: e.lngLat.lat,
@@ -1843,15 +1883,14 @@ function MapArc<T extends MapArcDatum = MapArcDatum>({
     };
 
     const handleMouseLeave = () => {
-      setHover(null);
-      map.getCanvas().style.cursor = "";
-      latestRef.current.onHover?.(null);
+      lastFeatureId = null;
+      onHover?.(null);
     };
 
     const handleClick = (e: MapLibreGL.MapLayerMouseEvent) => {
       const arc = findArc(e.features?.[0]?.id as string | number | undefined);
       if (!arc) return;
-      latestRef.current.onClick?.({
+      onClick?.({
         arc: arc as T,
         longitude: e.lngLat.lng,
         latitude: e.lngLat.lat,
@@ -1867,10 +1906,8 @@ function MapArc<T extends MapArcDatum = MapArcDatum>({
       map.off("mousemove", hitLayerId, handleMouseMove);
       map.off("mouseleave", hitLayerId, handleMouseLeave);
       map.off("click", hitLayerId, handleClick);
-      setHover(null);
-      map.getCanvas().style.cursor = "";
     };
-  }, [isLoaded, map, hitLayerId, sourceId, interactive]);
+  }, [isLoaded, map, styleEpoch, hitLayerId, interactive, data, onClick, onHover]);
 
   return null;
 }
@@ -1922,170 +1959,98 @@ function MapClusterLayer<
   onPointClick,
   onClusterClick,
 }: MapClusterLayerProps<P>) {
-  const { map, isLoaded } = useMap();
+  const { map, isLoaded, styleEpoch } = useMap();
   const id = useId();
   const sourceId = `cluster-source-${id}`;
   const clusterLayerId = `clusters-${id}`;
   const clusterCountLayerId = `cluster-count-${id}`;
   const unclusteredLayerId = `unclustered-point-${id}`;
 
-  const stylePropsRef = useRef({
-    clusterColors,
-    clusterThresholds,
-    pointColor,
-  });
-
-  // Add source and layers on mount
-  useEffect(() => {
-    if (!isLoaded || !map) return;
-
-    // Add clustered GeoJSON source
-    map.addSource(sourceId, {
-      type: "geojson",
-      data,
+  const sourceOptions = useMemo(
+    () => ({
       cluster: true,
       clusterMaxZoom,
       clusterRadius,
-    });
+    }),
+    [clusterMaxZoom, clusterRadius],
+  );
 
-    // Add cluster circles layer
-    map.addLayer({
-      id: clusterLayerId,
-      type: "circle",
-      source: sourceId,
-      filter: ["has", "point_count"],
-      paint: {
-        "circle-color": [
-          "step",
-          ["get", "point_count"],
-          clusterColors[0],
-          clusterThresholds[0],
-          clusterColors[1],
-          clusterThresholds[1],
-          clusterColors[2],
-        ],
-        "circle-radius": [
-          "step",
-          ["get", "point_count"],
-          20,
-          clusterThresholds[0],
-          30,
-          clusterThresholds[1],
-          40,
-        ],
-        "circle-stroke-width": 0.75,
-        "circle-stroke-color": "#fff",
-        "circle-opacity": 0.85,
+  const layers = useMemo<MapLayerSpec[]>(
+    () => [
+      {
+        id: clusterLayerId,
+        type: "circle",
+        filter: ["has", "point_count"],
+        paint: {
+          "circle-color": [
+            "step",
+            ["get", "point_count"],
+            clusterColors[0],
+            clusterThresholds[0],
+            clusterColors[1],
+            clusterThresholds[1],
+            clusterColors[2],
+          ],
+          "circle-radius": [
+            "step",
+            ["get", "point_count"],
+            20,
+            clusterThresholds[0],
+            30,
+            clusterThresholds[1],
+            40,
+          ],
+          "circle-stroke-width": 0.75,
+          "circle-stroke-color": "#fff",
+          "circle-opacity": 0.85,
+        },
       },
-    });
-
-    // Add cluster count text layer
-    map.addLayer({
-      id: clusterCountLayerId,
-      type: "symbol",
-      source: sourceId,
-      filter: ["has", "point_count"],
-      layout: {
-        "text-field": "{point_count_abbreviated}",
-        "text-font": ["Open Sans Semibold"],
-        "text-size": 12,
+      {
+        id: clusterCountLayerId,
+        type: "symbol",
+        filter: ["has", "point_count"],
+        layout: {
+          "text-field": "{point_count_abbreviated}",
+          "text-font": ["Open Sans Semibold"],
+          "text-size": 12,
+        },
+        paint: {
+          "text-color": "#fff",
+        },
       },
-      paint: {
-        "text-color": "#fff",
+      {
+        id: unclusteredLayerId,
+        type: "circle",
+        filter: ["!", ["has", "point_count"]],
+        paint: {
+          "circle-color": pointColor,
+          "circle-radius": 5,
+          "circle-stroke-width": 2,
+          "circle-stroke-color": "#fff",
+        },
       },
-    });
+    ],
+    [
+      clusterLayerId,
+      clusterCountLayerId,
+      unclusteredLayerId,
+      clusterColors,
+      clusterThresholds,
+      pointColor,
+    ],
+  );
 
-    // Add unclustered point layer
-    map.addLayer({
-      id: unclusteredLayerId,
-      type: "circle",
-      source: sourceId,
-      filter: ["!", ["has", "point_count"]],
-      paint: {
-        "circle-color": pointColor,
-        "circle-radius": 5,
-        "circle-stroke-width": 2,
-        "circle-stroke-color": "#fff",
-      },
-    });
+  useMapLayers({
+    sourceId,
+    sourceOptions,
+    layers,
+    data: data as GeoJSON.GeoJSON | string,
+  });
 
-    return () => {
-      try {
-        if (map.getLayer(clusterCountLayerId))
-          map.removeLayer(clusterCountLayerId);
-        if (map.getLayer(unclusteredLayerId))
-          map.removeLayer(unclusteredLayerId);
-        if (map.getLayer(clusterLayerId)) map.removeLayer(clusterLayerId);
-        if (map.getSource(sourceId)) map.removeSource(sourceId);
-      } catch {
-        // ignore
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoaded, map, sourceId]);
-
-  // Update source data when data prop changes (only for non-URL data)
-  useEffect(() => {
-    if (!isLoaded || !map || typeof data === "string") return;
-
-    const source = map.getSource(sourceId) as MapLibreGL.GeoJSONSource;
-    if (source) {
-      source.setData(data);
-    }
-  }, [isLoaded, map, data, sourceId]);
-
-  // Update layer styles when props change
+  // Expansion-zoom / point click stay in the shell.
   useEffect(() => {
     if (!isLoaded || !map) return;
 
-    const prev = stylePropsRef.current;
-    const colorsChanged =
-      prev.clusterColors !== clusterColors ||
-      prev.clusterThresholds !== clusterThresholds;
-
-    // Update cluster layer colors and sizes
-    if (map.getLayer(clusterLayerId) && colorsChanged) {
-      map.setPaintProperty(clusterLayerId, "circle-color", [
-        "step",
-        ["get", "point_count"],
-        clusterColors[0],
-        clusterThresholds[0],
-        clusterColors[1],
-        clusterThresholds[1],
-        clusterColors[2],
-      ]);
-      map.setPaintProperty(clusterLayerId, "circle-radius", [
-        "step",
-        ["get", "point_count"],
-        20,
-        clusterThresholds[0],
-        30,
-        clusterThresholds[1],
-        40,
-      ]);
-    }
-
-    // Update unclustered point layer color
-    if (map.getLayer(unclusteredLayerId) && prev.pointColor !== pointColor) {
-      map.setPaintProperty(unclusteredLayerId, "circle-color", pointColor);
-    }
-
-    stylePropsRef.current = { clusterColors, clusterThresholds, pointColor };
-  }, [
-    isLoaded,
-    map,
-    clusterLayerId,
-    unclusteredLayerId,
-    clusterColors,
-    clusterThresholds,
-    pointColor,
-  ]);
-
-  // Handle click events
-  useEffect(() => {
-    if (!isLoaded || !map) return;
-
-    // Cluster click handler - zoom into cluster
     const handleClusterClick = async (
       e: MapLibreGL.MapMouseEvent & {
         features?: MapLibreGL.MapGeoJSONFeature[];
@@ -2107,7 +2072,6 @@ function MapClusterLayer<
       if (onClusterClick) {
         onClusterClick(clusterId, coordinates, pointCount);
       } else {
-        // Default behavior: zoom to cluster expansion zoom
         const source = map.getSource(sourceId) as MapLibreGL.GeoJSONSource;
         const zoom = await source.getClusterExpansionZoom(clusterId);
         map.easeTo({
@@ -2117,7 +2081,6 @@ function MapClusterLayer<
       }
     };
 
-    // Unclustered point click handler
     const handlePointClick = (
       e: MapLibreGL.MapMouseEvent & {
         features?: MapLibreGL.MapGeoJSONFeature[];
@@ -2130,7 +2093,6 @@ function MapClusterLayer<
         feature.geometry as GeoJSON.Point
       ).coordinates.slice() as [number, number];
 
-      // Handle world copies
       while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
       }
@@ -2141,7 +2103,6 @@ function MapClusterLayer<
       );
     };
 
-    // Cursor style handlers
     const handleMouseEnterCluster = () => {
       map.getCanvas().style.cursor = "pointer";
     };
@@ -2171,10 +2132,12 @@ function MapClusterLayer<
       map.off("mouseleave", clusterLayerId, handleMouseLeaveCluster);
       map.off("mouseenter", unclusteredLayerId, handleMouseEnterPoint);
       map.off("mouseleave", unclusteredLayerId, handleMouseLeavePoint);
+      map.getCanvas().style.cursor = "";
     };
   }, [
     isLoaded,
     map,
+    styleEpoch,
     clusterLayerId,
     unclusteredLayerId,
     sourceId,
