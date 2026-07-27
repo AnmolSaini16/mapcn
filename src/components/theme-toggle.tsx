@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Moon, Sun } from "lucide-react-native";
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
-import { Moon, Sun } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+
 import { Skeleton } from "./ui/skeleton";
+
+import { Button } from "@/components/ui/button";
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -15,7 +17,6 @@ export function ThemeToggle() {
   }, [resolvedTheme, setTheme]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

@@ -1,15 +1,17 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ChartContainer } from "@/components/ui/chart";
-import { TrendingUp } from "lucide-react";
+import { TrendingUp } from "lucide-react-native";
 import { Area, AreaChart, Pie, PieChart } from "recharts";
+
 import {
   deviceCategoryChartConfig,
   deviceCategoryData,
   usersPerDay,
   usersPerDayChartConfig,
 } from "../data";
+
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { ChartContainer } from "@/components/ui/chart";
 
 function MetricChart() {
   return (
@@ -19,7 +21,13 @@ function MetricChart() {
     >
       <AreaChart data={usersPerDay}>
         <defs>
-          <linearGradient id="usersGradient" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient
+            id="usersGradient"
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="1"
+          >
             <stop
               offset="0%"
               stopColor="var(--color-users)"
@@ -88,7 +96,10 @@ export function OverviewCard() {
 
           <div className="mt-3 grid grid-cols-3 gap-2">
             {deviceCategoryData.map((device) => (
-              <div key={device.name} className="text-center">
+              <div
+                key={device.name}
+                className="text-center"
+              >
                 <p className="text-muted-foreground flex items-center justify-center gap-1.5 text-[10px] tracking-wide uppercase">
                   <span
                     className="size-2 rounded-full"

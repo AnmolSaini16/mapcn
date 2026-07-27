@@ -1,67 +1,82 @@
-<h1 align="center">mapcn</h1>
+<h1 align="center">mapcn-react-native</h1>
 
 <p align="center">
-  Free & open-source, ready-to-use, customizable map components for React.<br/>
-  Zero config. One command setup. Built on <a href="https://maplibre.org/">MapLibre GL</a>, styled with <a href="https://tailwindcss.com/">Tailwind</a>, works seamlessly with <a href="https://ui.shadcn.com/">shadcn/ui</a>.
+  React Native map components for Expo, forked from <a href="https://github.com/AnmolSaini16/mapcn">mapcn</a>.<br/>
+  Built on <a href="https://maplibre.org/maplibre-react-native/">MapLibre React Native</a>, styled with <a href="https://www.nativewind.dev/">NativeWind</a>, and inspired by <a href="https://ui.shadcn.com/">shadcn/ui</a> patterns.
 </p>
 
 <p align="center">
-  <a href="https://mapcn.dev/docs">Get Started</a> ·
-  <a href="https://mapcn.dev/docs/installation">Installation</a> ·
-  <a href="https://mapcn.dev/docs/basic-map">Components</a>
+  <a href="https://github.com/AnmolSaini16/mapcn">Upstream mapcn</a> ·
+  <a href="https://mapcn.dev">mapcn.dev</a> ·
+  <a href="ATTRIBUTION.md">Attribution</a>
 </p>
 
 <br />
 
-<p align="center">
-  <a href="https://vercel.com/oss">
-    <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" />
-  </a>
-</p>
+## About this fork
 
-<p align="center">
-  <img src="public/banner.png" alt="mapcn banner" />
-</p>
+This repository is a fork of [AnmolSaini16/mapcn](https://github.com/AnmolSaini16/mapcn), the web version of mapcn. It ports the component API and design language to React Native and Expo using `@maplibre/maplibre-react-native`.
+
+Original project: [mapcn.dev](https://mapcn.dev)
 
 ## Features
 
-- 🎨 **Theme-aware** — Automatically adapts to light/dark mode
-- 🎯 **Zero config** — Works out of the box with sensible defaults
-- 📦 **shadcn/ui compatible** — Uses the same patterns and styling conventions
-- 🗺️ **MapLibre GL powered** — Full access to MapLibre's powerful mapping capabilities
-- 🧩 **Composable** — Build complex map UIs with simple, declarative components
-- 📍 **Markers & Popups** — Rich marker system with popups, tooltips, and labels
-- 🛤️ **Routes** — Draw routes and paths on your maps
-- 🎮 **Controls** — Zoom, compass, locate, and fullscreen controls
+- **Theme-aware** — Adapts to light and dark mode
+- **Expo-ready** — Works with Expo Router and dev client
+- **MapLibre powered** — Native maps via MapLibre React Native
+- **Composable** — Map, markers, popups, routes, arcs, and controls
+- **NativeWind** — Tailwind-style styling for React Native
+- **Registry-compatible** — Component library lives in `src/registry/`
 
-## Basemap Terms of Service
+## Getting started
+
+```bash
+npm install
+npx expo start
+```
+
+Run on a device or simulator:
+
+```bash
+npm run ios
+npm run android
+```
+
+Build the distributable registry:
+
+```bash
+npm run registry:build
+```
+
+## Project structure
+
+```
+src/
+├── app/              # Expo Router screens
+├── components/       # Shared UI components
+├── registry/         # Map component library (forked from mapcn)
+│   ├── map.tsx       # Map, Marker, Popup, Route, Controls, etc.
+│   └── blocks/       # Full-page block examples
+├── lib/              # Utilities and theme
+└── styles/           # Global styles
+```
+
+## Basemap terms of service
 
 This project uses [CARTO Basemaps](https://docs.carto.com/faqs/carto-basemaps) which are based on OpenStreetMap data.
 
 - **Commercial use**: Requires a CARTO Enterprise license. [Request a demo](https://carto.com/request-live-demo) for pricing details.
 - **Non-commercial use**: Free for CARTO grantees under their [basemap terms](https://carto.com/legal/bmap).
-- **Alternative**: You can switch to [OpenStreetMap](https://www.openstreetmap.org/) tiles or any other MapLibre-compatible tile provider (MapTiler, Stadia Maps, etc).
+- **Alternative**: Switch to [OpenStreetMap](https://www.openstreetmap.org/) tiles or any other MapLibre-compatible tile provider.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome. Please open an issue or pull request on this repository.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+For changes that belong in the upstream web project, consider contributing to [AnmolSaini16/mapcn](https://github.com/AnmolSaini16/mapcn) instead.
 
 ## License
 
-MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License — see [LICENSE](LICENSE) for details.
 
-## Star History
-
-<a href="https://www.star-history.com/#AnmolSaini16/mapcn&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=AnmolSaini16/mapcn&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=AnmolSaini16/mapcn&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=AnmolSaini16/mapcn&type=date&legend=top-left" />
- </picture>
-</a>
+This fork includes code from the original [mapcn](https://github.com/AnmolSaini16/mapcn) project. See [ATTRIBUTION.md](ATTRIBUTION.md) for full attribution.

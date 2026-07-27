@@ -1,17 +1,26 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Suspense } from "react";
+
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function GitHubButton({ withCount = true }: { withCount?: boolean }) {
   return (
-    <Button variant="ghost" size="sm" asChild>
+    <Button
+      variant="ghost"
+      size="sm"
+      asChild
+    >
       <Link
         href="https://github.com/AnmolSaini16/mapcn"
         target="_blank"
         rel="noopener noreferrer"
       >
-        <svg viewBox="0 0 1024 1024" fill="currentColor" className="size-4">
+        <svg
+          viewBox="0 0 1024 1024"
+          fill="currentColor"
+          className="size-4"
+        >
           <path
             fillRule="evenodd"
             clipRule="evenodd"

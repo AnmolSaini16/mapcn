@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { Menu } from "lucide-react-native";
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import { useState } from "react";
+
+import { Logo } from "./logo";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,13 +15,15 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { siteNavigation } from "@/lib/site-navigation";
-import { Logo } from "./logo";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet
+      open={open}
+      onOpenChange={setOpen}
+    >
       <SheetTrigger asChild>
         <Button
           variant="ghost"
@@ -30,7 +34,10 @@ export function MobileNav() {
           <Menu className="size-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="rounded-r-xl">
+      <SheetContent
+        side="left"
+        className="rounded-r-xl"
+      >
         <SheetHeader>
           <SheetTitle>
             <Logo isLink={false} />
@@ -48,7 +55,9 @@ export function MobileNav() {
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        onClick={() => setOpen(false)}
+                        onClick={() => {
+                          setOpen(false);
+                        }}
                         className="active:text-muted-foreground flex items-center px-3 py-2 text-lg"
                       >
                         {item.title}

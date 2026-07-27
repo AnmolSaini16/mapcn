@@ -1,7 +1,8 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { getNetworkSummary, statusMeta, type EdgeNode } from "../data";
+
+import { cn } from "@/lib/utils";
 
 interface StatusSidebarProps {
   nodes: EdgeNode[];
@@ -51,7 +52,10 @@ export function StatusSidebar({ nodes }: StatusSidebarProps) {
           const meta = statusMeta[node.status];
 
           return (
-            <li key={node.id} className="flex items-center gap-2.5 px-3 py-2">
+            <li
+              key={node.id}
+              className="flex items-center gap-2.5 px-3 py-2"
+            >
               <span className={cn("size-2 shrink-0 rounded-full", meta.dot)} />
 
               <div className="min-w-0 flex-1">

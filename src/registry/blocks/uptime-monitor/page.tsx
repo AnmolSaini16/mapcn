@@ -1,9 +1,10 @@
 "use client";
 
-import { Map, MapControls, MapGeoJSON } from "@/registry/map";
 import { EdgeNodeMarker } from "./components/edge-node-marker";
 import { StatusSidebar } from "./components/status-sidebar";
 import { edgeNodes, mapView, WORLD_GEOJSON } from "./data";
+
+import { Map, MapControls, MapGeoJSON } from "@/registry/map";
 
 export default function Page() {
   return (
@@ -22,10 +23,16 @@ export default function Page() {
             dragRotate={false}
             pitchWithRotate={false}
           >
-            <MapGeoJSON data={WORLD_GEOJSON} linePaint={false} />
+            <MapGeoJSON
+              data={WORLD_GEOJSON}
+              linePaint={false}
+            />
 
             {edgeNodes.map((node) => (
-              <EdgeNodeMarker key={node.id} node={node} />
+              <EdgeNodeMarker
+                key={node.id}
+                node={node}
+              />
             ))}
 
             <MapControls className="bottom-2" />

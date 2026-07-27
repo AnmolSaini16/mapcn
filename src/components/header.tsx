@@ -1,11 +1,12 @@
+import { Separator } from "./ui/separator";
+
+import { CommandSearch } from "@/components/command-search";
+import { GitHubButton } from "@/components/github-button";
 import { Logo } from "@/components/logo";
 import { MainNav } from "@/components/main-nav";
 import { MobileNav } from "@/components/mobile-nav";
-import { GitHubButton } from "@/components/github-button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { CommandSearch } from "@/components/command-search";
 import { cn } from "@/lib/utils";
-import { Separator } from "./ui/separator";
 
 export function Header({ className }: { className?: string }) {
   return (

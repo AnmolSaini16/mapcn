@@ -1,8 +1,9 @@
 "use client";
 
+import { statusMeta, type EdgeNode } from "../data";
+
 import { cn } from "@/lib/utils";
 import { MapMarker, MarkerContent, MarkerTooltip } from "@/registry/map";
-import { statusMeta, type EdgeNode } from "../data";
 
 interface EdgeNodeMarkerProps {
   node: EdgeNode;
@@ -12,7 +13,10 @@ export function EdgeNodeMarker({ node }: EdgeNodeMarkerProps) {
   const meta = statusMeta[node.status];
 
   return (
-    <MapMarker longitude={node.lng} latitude={node.lat}>
+    <MapMarker
+      longitude={node.lng}
+      latitude={node.lat}
+    >
       <MarkerContent>
         <div className="group flex size-4 items-center justify-center">
           <span

@@ -1,4 +1,5 @@
 import registry from "../../registry.json";
+
 import { mapInstallCommand } from "@/lib/llm-prompts";
 
 interface ComponentDoc {

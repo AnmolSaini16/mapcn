@@ -1,6 +1,17 @@
 "use client";
 
 import { useMemo } from "react";
+
+import {
+  modeConfig,
+  regionLabels,
+  statusConfig,
+  type Hub,
+  type Route,
+} from "../data";
+
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   Map,
   MapArc,
@@ -9,15 +20,6 @@ import {
   MarkerContent,
   MarkerTooltip,
 } from "@/registry/map";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import {
-  modeConfig,
-  regionLabels,
-  statusConfig,
-  type Hub,
-  type Route,
-} from "../data";
-import { Separator } from "@/components/ui/separator";
 
 interface NetworkMapProps {
   hubs: Hub[];
@@ -28,7 +30,10 @@ function MapControlsCard() {
   return (
     <div className="border-border/40 bg-background/70 absolute top-4 left-4 z-20 flex items-center gap-3 rounded-lg border px-2.5 py-1.5 backdrop-blur-sm">
       <SidebarTrigger />
-      <Separator orientation="vertical" className="h-4!" />
+      <Separator
+        orientation="vertical"
+        className="h-4!"
+      />
       <div className="flex items-center gap-3 text-xs">
         <div className="flex items-center gap-1.5">
           <span
@@ -51,7 +56,10 @@ function MapControlsCard() {
           />
           <span>{statusConfig.delayed.label}</span>
         </div>
-        <Separator orientation="vertical" className="h-4!" />
+        <Separator
+          orientation="vertical"
+          className="h-4!"
+        />
         <div className="flex items-center gap-1.5">
           <div className="size-2.5 shrink-0 rounded-full border border-white bg-blue-500 shadow-sm" />
           <span>Hub</span>
@@ -88,7 +96,11 @@ export function NetworkMap({ hubs, routes }: NetworkMapProps) {
     <div className="relative h-full">
       <MapControlsCard />
 
-      <Map center={[-98, 39]} zoom={4} projection={{ type: "globe" }}>
+      <Map
+        center={[-98, 39]}
+        zoom={4}
+        projection={{ type: "globe" }}
+      >
         <MapControls />
         <MapArc
           data={arcs}
@@ -102,7 +114,11 @@ export function NetworkMap({ hubs, routes }: NetworkMapProps) {
         />
 
         {hubs.map((hub) => (
-          <MapMarker key={hub.id} longitude={hub.lng} latitude={hub.lat}>
+          <MapMarker
+            key={hub.id}
+            longitude={hub.lng}
+            latitude={hub.lat}
+          >
             <MarkerContent>
               <div className="size-3 rounded-full border-2 border-white bg-blue-500 shadow-md" />
             </MarkerContent>

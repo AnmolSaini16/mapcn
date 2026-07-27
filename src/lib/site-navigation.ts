@@ -1,4 +1,9 @@
-import { BookOpen, CornerDownRight, Layers2, LucideIcon } from "lucide-react";
+import {
+  BookOpen,
+  CornerDownRight,
+  Layers2,
+  LucideIcon,
+} from "lucide-react-native";
 
 export interface MainNavItem {
   href: string;

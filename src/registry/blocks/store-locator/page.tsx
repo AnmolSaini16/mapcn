@@ -2,10 +2,11 @@
 
 import { useMemo, useState, type CSSProperties } from "react";
 
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { StoreList } from "./components/store-list";
 import { LocatorMap } from "./components/locator-map";
+import { StoreList } from "./components/store-list";
 import { MAP_CENTER, stores } from "./data";
+
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Page() {
   const [query, setQuery] = useState("");
@@ -37,7 +38,9 @@ export default function Page() {
           stores={filtered}
           selectedId={selectedId}
           onSelect={setSelectedId}
-          onClearSelection={() => setSelectedId(null)}
+          onClearSelection={() => {
+            setSelectedId(null);
+          }}
           center={MAP_CENTER}
         />
       </SidebarInset>

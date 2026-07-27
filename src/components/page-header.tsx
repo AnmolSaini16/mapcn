@@ -1,7 +1,8 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { createContext, useContext, type CSSProperties } from "react";
+
+import { cn } from "@/lib/utils";
 
 type HeaderAlign = "center" | "left";
 type HeaderSize = "default" | "sm";

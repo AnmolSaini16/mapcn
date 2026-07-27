@@ -1,6 +1,8 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { TrendingUp } from "lucide-react-native";
+
+import { totalVisitors, visitorGrowth, visitorLocations } from "./data";
 
 import { Badge } from "@/components/ui/badge";
 import {
@@ -11,7 +13,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Map, MapGeoJSON, MapMarker, MarkerContent } from "@/registry/map";
-import { totalVisitors, visitorGrowth, visitorLocations } from "./data";
 
 // Country borders from a public CDN, or swap in your own GeoJSON.
 const WORLD_GEOJSON =
@@ -36,7 +37,10 @@ export default function Page() {
             className="[&_.maplibregl-canvas]:cursor-default! [&_.maplibregl-canvas-container]:cursor-default!"
             blank
           >
-            <MapGeoJSON data={WORLD_GEOJSON} linePaint={false} />
+            <MapGeoJSON
+              data={WORLD_GEOJSON}
+              linePaint={false}
+            />
             {visitorLocations.map((location) => {
               const size = bubbleSize(location.visitors);
               return (

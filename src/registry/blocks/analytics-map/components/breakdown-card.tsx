@@ -1,7 +1,8 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type BreakdownRow } from "../data";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface BreakdownCardProps {
   title: string;

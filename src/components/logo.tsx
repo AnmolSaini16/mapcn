@@ -1,5 +1,6 @@
+import { MapPin } from "lucide-react-native";
 import Link from "next/link";
-import { MapPin } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
