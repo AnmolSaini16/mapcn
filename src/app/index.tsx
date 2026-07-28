@@ -1,19 +1,6 @@
 import { useState } from "react";
-import { View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Text } from "@/components/ui/text";
-import {
-  DefaultMarkerIcon,
-  Map,
-  MapArc,
-  MapControls,
-  MapMarker,
-  MapRoute,
-  MarkerContent,
-  MarkerLabel,
-  MarkerPopup,
-} from "@/registry/map";
+import { HomePage } from "@/contents/Home";
 
 const cities = {
   paris: {
@@ -41,8 +28,10 @@ type CityId = keyof typeof cities;
 export default function HomeScreen() {
   const [selectedCity, setSelectedCity] = useState<CityId | null>(null);
 
-  return (
-    <View className="bg-background flex-1">
+  return <HomePage />;
+
+  /* return (
+    <>
       <Map
         viewport={{
           center: [8, 50],
@@ -85,7 +74,9 @@ export default function HomeScreen() {
                     </Text>
                   </MarkerPopup>
                 ) : (
-                  <MarkerLabel className="mt-1">{city.name}</MarkerLabel>
+                  <MarkerLabel className="mt-1">
+                    <Text>{city.name}</Text>
+                  </MarkerLabel>
                 )}
               </MarkerContent>
             </MapMarker>
@@ -104,6 +95,6 @@ export default function HomeScreen() {
           </Text>
         </View>
       </SafeAreaView>
-    </View>
-  );
+    </>
+  ); */
 }

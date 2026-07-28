@@ -1,0 +1,24 @@
+import { PropsWithChildren } from "react";
+import { View } from "react-native";
+
+import { cn } from "@/lib/utils";
+
+type ExampleCardProps = {
+  className?: string;
+};
+
+export function ExampleCard({
+  className,
+  children,
+}: PropsWithChildren<ExampleCardProps>) {
+  return (
+    <View
+      className={cn(
+        "bg-card border-border/50 relative w-full overflow-hidden rounded-xl border shadow-sm",
+        className,
+      )}
+    >
+      {children}
+    </View>
+  );
+}

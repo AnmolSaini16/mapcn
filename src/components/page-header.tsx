@@ -1,7 +1,7 @@
-"use client";
+import { createContext, useContext } from "react";
+import { StyleProp, TextStyle, View, ViewStyle } from "react-native";
 
-import { createContext, useContext, type CSSProperties } from "react";
-
+import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 
 type HeaderAlign = "center" | "left";
@@ -36,7 +36,7 @@ function PageHeader({
 }: PageHeaderProps) {
   return (
     <PageHeaderContext.Provider value={{ align, size }}>
-      <section
+      <View
         className={cn(
           "container mx-auto flex w-full max-w-6xl flex-col",
           size === "sm"
@@ -49,7 +49,7 @@ function PageHeader({
         )}
       >
         {children}
-      </section>
+      </View>
     </PageHeaderContext.Provider>
   );
 }
@@ -63,12 +63,13 @@ interface PageHeaderHeadingProps {
 function PageHeaderHeading({
   children,
   className,
-  as: Comp = "h1",
+  as = "h1",
 }: PageHeaderHeadingProps) {
   const { align, size } = usePageHeaderContext();
 
   return (
-    <Comp
+    <Text
+      variant={as === "h2" ? "h2" : "h1"}
       className={cn(
         "animate-fade-up animate-stagger max-w-4xl font-bold tracking-tight",
         size === "sm"
@@ -80,13 +81,11 @@ function PageHeaderHeading({
       style={
         {
           "--stagger": 1,
-        } as CSSProperties
+        } as StyleProp<TextStyle>
       }
     >
-      <span className="from-foreground via-foreground to-foreground/65 bg-linear-to-b bg-clip-text text-transparent">
-        {children}
-      </span>
-    </Comp>
+      {children}
+    </Text>
   );
 }
 
@@ -102,7 +101,7 @@ function PageHeaderDescription({
   const { align, size } = usePageHeaderContext();
 
   return (
-    <p
+    <Text
       className={cn(
         "text-foreground/80 animate-fade-up animate-stagger max-w-2xl leading-relaxed",
         size === "sm"
@@ -114,11 +113,11 @@ function PageHeaderDescription({
       style={
         {
           "--stagger": 2,
-        } as CSSProperties
+        } as StyleProp<TextStyle>
       }
     >
       {children}
-    </p>
+    </Text>
   );
 }
 
@@ -131,21 +130,21 @@ function PageActions({ children, className }: PageActionsProps) {
   const { align } = usePageHeaderContext();
 
   return (
-    <div
+    <View
       className={cn(
-        "animate-fade-up animate-stagger mt-3 flex flex-wrap items-center gap-3",
+        "animate-fade-up animate-stagger mt-3 flex-row flex-wrap items-center gap-3",
         align === "center" ? "justify-center" : "justify-start",
         className,
       )}
       style={
         {
           "--stagger": 3,
-        } as CSSProperties
+        } as StyleProp<ViewStyle>
       }
     >
       {children}
-    </div>
+    </View>
   );
 }
 
-export { PageHeader, PageHeaderHeading, PageHeaderDescription, PageActions };
+export { PageActions, PageHeader, PageHeaderDescription, PageHeaderHeading };

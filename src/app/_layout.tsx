@@ -10,11 +10,14 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { useColorScheme, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import { Header } from "@/components/header";
 import { NAV_THEME } from "@/lib/theme";
+import { cn } from "@/lib/utils";
 import "../styles/global.css";
 
-SplashScreen.preventAutoHideAsync();
+void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
@@ -36,14 +39,24 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={NAV_THEME[colorScheme]}>
-      <View className="bg-background flex-1">
-        <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-        </Stack>
-        <PortalHost />
-      </View>
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <ThemeProvider value={NAV_THEME[colorScheme]}>
+        <View
+          className={cn(
+            "flex-1 bg-background",
+            colorScheme === "dark" && "dark",
+          )}
+        >
+          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+          <Header />
+          <View className="flex-1">
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+            </Stack>
+          </View>
+          <PortalHost />
+        </View>
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }

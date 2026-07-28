@@ -1,3 +1,4 @@
+import type { Href } from "expo-router";
 import {
   BookOpen,
   CornerDownRight,
@@ -6,13 +7,13 @@ import {
 } from "lucide-react-native";
 
 export interface MainNavItem {
-  href: string;
+  href: Href;
   label: string;
 }
 
 export interface SiteNavigationItem {
   title: string;
-  href: string;
+  href: Href;
   icon: LucideIcon;
   new?: boolean;
 }
