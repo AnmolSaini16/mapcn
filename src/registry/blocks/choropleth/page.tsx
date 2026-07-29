@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { useTheme } from "next-themes";
+import { useMemo, useState } from "react";
 
-import { Map, MapControls, MapGeoJSON, MapPopup } from "@/registry/map";
-import { useWorldData } from "@/lib/use-world-data";
 import { mapConfig, visitorsByCountry, type Theme } from "./data";
+
+import { useWorldData } from "@/lib/use-world-data";
+import { Map, MapControls, MapGeoJSON, MapPopup } from "@/registry/map";
 
 // WebGL paint can't read CSS variables, so we build a concrete value→color
 // expression per theme. The hovered country is highlighted in place via the

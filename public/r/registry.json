@@ -1,7 +1,7 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
-  "name": "mapcn",
-  "homepage": "https://mapcn.dev",
+  "name": "mapcn-react-native",
+  "homepage": "https://github.com/unkn0wndfbx/mapcn-react-native",
   "items": [
     {
       "name": "map",
@@ -9,10 +9,13 @@
       "title": "Map",
       "description": "A MapLibre-powered map component with markers, popups, tooltips, routes, and controls.",
       "dependencies": [
-        "maplibre-gl",
-        "lucide-react"
+        "@maplibre/maplibre-react-native",
+        "lucide-react-native",
+        "react-native-svg"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "https://reactnativereusables.com/r/nativewind/text.json"
+      ],
       "files": [
         {
           "path": "src/registry/map.tsx",
@@ -20,28 +23,6 @@
           "target": "components/ui/map.tsx"
         }
       ],
-      "css": {
-        "@layer base": {
-          ".maplibregl-popup-content": {
-            "@apply bg-transparent! shadow-none! p-0! rounded-none!": {}
-          },
-          ".maplibregl-popup-tip": {
-            "@apply hidden!": {}
-          },
-          ".maplibregl-ctrl-attrib": {
-            "@apply bg-background! text-muted-foreground! border-border! rounded-md! border! shadow-sm!": {}
-          },
-          ".maplibregl-ctrl-attrib a": {
-            "@apply text-muted-foreground!": {}
-          },
-          ".maplibregl-ctrl-attrib a:hover": {
-            "@apply text-foreground!": {}
-          },
-          ".maplibregl-ctrl-attrib-button": {
-            "@apply bg-transparent! dark:invert": {}
-          }
-        }
-      },
       "meta": {
         "components": [
           {
@@ -86,23 +67,17 @@
           }
         ]
       },
-      "devDependencies": [
-        "@types/geojson"
-      ]
+      "devDependencies": ["@types/geojson"]
     },
     {
       "name": "analytics-map",
       "type": "registry:block",
       "title": "Analytics Map",
       "description": "Real-time analytics overview with a world map, breakdown cards, and device stats.",
-      "dependencies": [
-        "recharts",
-        "lucide-react"
-      ],
+      "dependencies": ["recharts", "lucide-react-native"],
       "registryDependencies": [
-        "@mapcn/map",
-        "card",
-        "chart"
+        "unkn0wndfbx/mapcn-react-native/map",
+        "https://reactnativereusables.com/r/nativewind/card.json"
       ],
       "files": [
         {
@@ -124,12 +99,14 @@
           "path": "src/registry/blocks/analytics-map/components/breakdown-card.tsx",
           "type": "registry:component",
           "target": "app/analytics/components/breakdown-card.tsx"
+        },
+        {
+          "path": "src/components/ui/chart.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/chart.tsx"
         }
       ],
-      "categories": [
-        "analytics",
-        "dashboard"
-      ],
+      "categories": ["analytics", "dashboard"],
       "meta": {
         "iframeHeight": "940px"
       }
@@ -139,13 +116,8 @@
       "type": "registry:block",
       "title": "Choropleth",
       "description": "World choropleth map shading countries by a metric, with a hover tooltip and legend.",
-      "dependencies": [
-        "maplibre-gl",
-        "next-themes"
-      ],
-      "registryDependencies": [
-        "@mapcn/map"
-      ],
+      "dependencies": [],
+      "registryDependencies": ["unkn0wndfbx/mapcn-react-native/map"],
       "files": [
         {
           "path": "src/registry/blocks/choropleth/page.tsx",
@@ -163,10 +135,7 @@
           "target": "@lib/use-world-data.ts"
         }
       ],
-      "categories": [
-        "visualization",
-        "choropleth"
-      ],
+      "categories": ["visualization", "choropleth"],
       "meta": {
         "iframeHeight": "720px"
       }
@@ -176,13 +145,11 @@
       "type": "registry:block",
       "title": "Analytics Card",
       "description": "Compact analytics card with a headline metric over a world map.",
-      "dependencies": [
-        "lucide-react"
-      ],
+      "dependencies": ["lucide-react-native"],
       "registryDependencies": [
-        "@mapcn/map",
-        "card",
-        "badge"
+        "unkn0wndfbx/mapcn-react-native/map",
+        "https://reactnativereusables.com/r/nativewind/card.json",
+        "https://reactnativereusables.com/r/nativewind/badge.json"
       ],
       "files": [
         {
@@ -196,10 +163,7 @@
           "target": "app/analytics-card/data.ts"
         }
       ],
-      "categories": [
-        "analytics",
-        "card"
-      ],
+      "categories": ["analytics", "card"],
       "meta": {
         "iframeHeight": "600px"
       }
@@ -209,14 +173,12 @@
       "type": "registry:block",
       "title": "Delivery Tracker",
       "description": "Live order tracking with route progress, courier position, and order details.",
-      "dependencies": [
-        "lucide-react"
-      ],
+      "dependencies": ["lucide-react-native"],
       "registryDependencies": [
-        "@mapcn/map",
-        "card",
-        "badge",
-        "button"
+        "unkn0wndfbx/mapcn-react-native/map",
+        "https://reactnativereusables.com/r/nativewind/card.json",
+        "https://reactnativereusables.com/r/nativewind/badge.json",
+        "https://reactnativereusables.com/r/nativewind/button.json"
       ],
       "files": [
         {
@@ -230,10 +192,7 @@
           "target": "app/delivery/data.ts"
         }
       ],
-      "categories": [
-        "tracking",
-        "delivery"
-      ],
+      "categories": ["tracking", "delivery"],
       "meta": {
         "iframeHeight": "720px"
       }
@@ -243,12 +202,8 @@
       "type": "registry:block",
       "title": "Uptime Monitor",
       "description": "Status-page style map of edge network locations with live health, latency, and uptime.",
-      "dependencies": [
-        "maplibre-gl"
-      ],
-      "registryDependencies": [
-        "@mapcn/map"
-      ],
+      "dependencies": [],
+      "registryDependencies": ["unkn0wndfbx/mapcn-react-native/map"],
       "files": [
         {
           "path": "src/registry/blocks/uptime-monitor/page.tsx",
@@ -271,10 +226,7 @@
           "target": "app/uptime-monitor/components/status-sidebar.tsx"
         }
       ],
-      "categories": [
-        "monitoring",
-        "status"
-      ],
+      "categories": ["monitoring", "status"],
       "meta": {
         "iframeHeight": "720px"
       }
@@ -285,9 +237,7 @@
       "title": "Heatmap",
       "description": "Globe-projected heatmap visualizing earthquake density with zoom-dependent styling.",
       "dependencies": [],
-      "registryDependencies": [
-        "@mapcn/map"
-      ],
+      "registryDependencies": ["unkn0wndfbx/mapcn-react-native/map"],
       "files": [
         {
           "path": "src/registry/blocks/heatmap/page.tsx",
@@ -295,10 +245,7 @@
           "target": "app/heatmap/page.tsx"
         }
       ],
-      "categories": [
-        "visualization",
-        "heatmap"
-      ],
+      "categories": ["visualization", "heatmap"],
       "meta": {
         "iframeHeight": "800px"
       }
@@ -308,13 +255,14 @@
       "type": "registry:block",
       "title": "Logistics Network",
       "description": "Domestic logistics map with a sidebar of stats.",
-      "dependencies": [
-        "lucide-react"
-      ],
+      "dependencies": ["lucide-react-native"],
       "registryDependencies": [
-        "@mapcn/map",
-        "sidebar",
-        "separator"
+        "unkn0wndfbx/mapcn-react-native/map",
+        "https://reactnativereusables.com/r/nativewind/separator.json",
+        "https://reactnativereusables.com/r/nativewind/button.json",
+        "https://reactnativereusables.com/r/nativewind/input.json",
+        "https://reactnativereusables.com/r/nativewind/skeleton.json",
+        "https://reactnativereusables.com/r/nativewind/tooltip.json"
       ],
       "files": [
         {
@@ -336,12 +284,24 @@
           "path": "src/registry/blocks/logistics-network/components/network-map.tsx",
           "type": "registry:component",
           "target": "app/logistics/components/network-map.tsx"
+        },
+        {
+          "path": "src/components/ui/sidebar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/sidebar.tsx"
+        },
+        {
+          "path": "src/components/ui/sheet.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/sheet.tsx"
+        },
+        {
+          "path": "src/hooks/use-mobile.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-mobile.ts"
         }
       ],
-      "categories": [
-        "logistics",
-        "network"
-      ],
+      "categories": ["logistics", "network"],
       "meta": {
         "iframeHeight": "800px"
       }
@@ -351,13 +311,14 @@
       "type": "registry:block",
       "title": "Store Locator",
       "description": "Searchable store list synced with map markers.",
-      "dependencies": [
-        "lucide-react"
-      ],
+      "dependencies": ["lucide-react-native"],
       "registryDependencies": [
-        "@mapcn/map",
-        "input",
-        "sidebar"
+        "unkn0wndfbx/mapcn-react-native/map",
+        "https://reactnativereusables.com/r/nativewind/input.json",
+        "https://reactnativereusables.com/r/nativewind/button.json",
+        "https://reactnativereusables.com/r/nativewind/separator.json",
+        "https://reactnativereusables.com/r/nativewind/skeleton.json",
+        "https://reactnativereusables.com/r/nativewind/tooltip.json"
       ],
       "files": [
         {
@@ -379,12 +340,24 @@
           "path": "src/registry/blocks/store-locator/components/locator-map.tsx",
           "type": "registry:component",
           "target": "app/store-locator/components/locator-map.tsx"
+        },
+        {
+          "path": "src/components/ui/sidebar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/sidebar.tsx"
+        },
+        {
+          "path": "src/components/ui/sheet.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/sheet.tsx"
+        },
+        {
+          "path": "src/hooks/use-mobile.ts",
+          "type": "registry:hook",
+          "target": "hooks/use-mobile.ts"
         }
       ],
-      "categories": [
-        "store-locator",
-        "locator"
-      ],
+      "categories": ["store-locator", "locator"],
       "meta": {
         "iframeHeight": "800px"
       }

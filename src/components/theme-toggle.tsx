@@ -1,36 +1,28 @@
-"use client";
+import { Moon, Sun } from "lucide-react-native";
+import { useCallback } from "react";
+import { Appearance, useColorScheme } from "react-native";
 
-import { useCallback, useEffect, useState } from "react";
-import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun } from "lucide-react";
-import { Skeleton } from "./ui/skeleton";
+import { Icon } from "@/components/ui/icon";
 
 export function ThemeToggle() {
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const colorScheme = useColorScheme();
 
   const toggleTheme = useCallback(() => {
-    setTheme(resolvedTheme === "dark" ? "light" : "dark");
-  }, [resolvedTheme, setTheme]);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return <Skeleton className="size-8" />;
-  }
+    Appearance.setColorScheme(colorScheme === "dark" ? "light" : "dark");
+  }, [colorScheme]);
 
   return (
     <Button
-      onClick={toggleTheme}
+      onPress={toggleTheme}
       variant="ghost"
-      aria-label="Toggle theme"
-      size="icon-sm"
+      accessibilityLabel="Toggle theme"
+      size="icon"
     >
-      {resolvedTheme === "dark" ? <Moon /> : <Sun />}
+      <Icon
+        as={colorScheme === "dark" ? Moon : Sun}
+        size={16}
+      />
     </Button>
   );
 }

@@ -5,7 +5,7 @@ export interface RegistryBlockItem {
   type: string;
   title?: string;
   description?: string;
-  files?: Array<{ path: string; target?: string }>;
+  files?: { path: string; target?: string }[];
   registryDependencies?: string[];
   categories?: string[];
   meta?: { iframeHeight?: string };
@@ -61,7 +61,7 @@ export function getAllBlocks(): RegistryBlockItem[] {
 }
 
 export function createFileTreeForRegistryItemFiles(
-  files: Array<{ path: string; target?: string }>,
+  files: { path: string; target?: string }[],
 ): FileTree[] {
   const root: FileTree[] = [];
 

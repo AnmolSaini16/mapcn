@@ -1,5 +1,15 @@
 "use client";
 
+import { BreakdownCard } from "./components/breakdown-card";
+import { OverviewCard } from "./components/overview-card";
+import {
+  locations,
+  visitedPagesRows,
+  countriesRows,
+  referrersRows,
+  browsersRows,
+} from "./data";
+
 import {
   Map,
   MapControls,
@@ -8,15 +18,6 @@ import {
   MarkerContent,
   MarkerTooltip,
 } from "@/registry/map";
-import { OverviewCard } from "./components/overview-card";
-import { BreakdownCard } from "./components/breakdown-card";
-import {
-  locations,
-  visitedPagesRows,
-  countriesRows,
-  referrersRows,
-  browsersRows,
-} from "./data";
 
 const MAP_HEIGHT = "38rem";
 
@@ -42,7 +43,10 @@ export default function Page() {
           renderWorldCopies
           blank
         >
-          <MapGeoJSON data={WORLD_GEOJSON} linePaint={false} />
+          <MapGeoJSON
+            data={WORLD_GEOJSON}
+            linePaint={false}
+          />
           <MapControls className="bottom-2" />
           {locations.map((location) => (
             <MapMarker
@@ -79,10 +83,22 @@ export default function Page() {
       </div>
 
       <div className="grid gap-4 p-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <BreakdownCard title="Visited pages" rows={visitedPagesRows} />
-        <BreakdownCard title="Referrers" rows={referrersRows} />
-        <BreakdownCard title="Countries" rows={countriesRows} />
-        <BreakdownCard title="Browsers" rows={browsersRows} />
+        <BreakdownCard
+          title="Visited pages"
+          rows={visitedPagesRows}
+        />
+        <BreakdownCard
+          title="Referrers"
+          rows={referrersRows}
+        />
+        <BreakdownCard
+          title="Countries"
+          rows={countriesRows}
+        />
+        <BreakdownCard
+          title="Browsers"
+          rows={browsersRows}
+        />
       </div>
     </div>
   );

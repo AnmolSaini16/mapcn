@@ -1,8 +1,11 @@
 "use client";
 
+import { Clock, MapPin, Phone, Search } from "lucide-react-native";
 import { useEffect, useRef } from "react";
-import { Clock, MapPin, Phone, Search } from "lucide-react";
 
+import type { Store } from "../data";
+
+import { Input } from "@/components/ui/input";
 import {
   Sidebar,
   SidebarContent,
@@ -13,9 +16,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import type { Store } from "../data";
 
 interface StoreListProps {
   stores: Store[];
@@ -57,7 +58,9 @@ export function StoreList({
           <Search className="text-muted-foreground absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
           <Input
             value={query}
-            onChange={(e) => onQueryChange(e.target.value)}
+            onChange={(e) => {
+              onQueryChange(e.target.value);
+            }}
             placeholder="Search name or address"
             className="bg-background pl-8"
             aria-label="Search stores"
@@ -90,7 +93,9 @@ export function StoreList({
                           if (el) itemRefs.current.set(store.id, el);
                           else itemRefs.current.delete(store.id);
                         }}
-                        onClick={() => onSelect(store.id)}
+                        onClick={() => {
+                          onSelect(store.id);
+                        }}
                         aria-current={active}
                       >
                         <div className="flex items-center justify-between gap-2">

@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  Clock3,
+  House,
+  Store,
+  Truck,
+  UserRound,
+  Utensils,
+} from "lucide-react-native";
 import { useTheme } from "next-themes";
-import { Clock3, House, Store, Utensils, Truck, UserRound } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
-import { Map, MapMarker, MapRoute, MarkerContent } from "@/registry/map";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   buildRouteUrl,
   deliveryMeals,
@@ -18,6 +21,11 @@ import {
   routeStyle,
   type OsrmRouteData,
 } from "./data";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Map, MapMarker, MapRoute, MarkerContent } from "@/registry/map";
 
 function formatDistance(meters?: number) {
   if (!meters) return "--";
@@ -94,7 +102,10 @@ export default function Page() {
             </CardHeader>
             <CardContent className="space-y-5">
               {deliveryMeals.map((meal) => (
-                <div key={meal.name} className="flex items-center gap-3">
+                <div
+                  key={meal.name}
+                  className="flex items-center gap-3"
+                >
                   <div className="bg-muted grid size-8 place-items-center rounded-full text-xs">
                     <Utensils className="text-muted-foreground size-4" />
                   </div>
@@ -151,7 +162,10 @@ export default function Page() {
               <Clock3 />
               View timeline
             </Button>
-            <Button variant="outline" size="sm">
+            <Button
+              variant="outline"
+              size="sm"
+            >
               <UserRound />
               Contact courier
             </Button>
@@ -204,7 +218,10 @@ export default function Page() {
               </MapMarker>
             )}
 
-            <MapMarker longitude={pickup.lng} latitude={pickup.lat}>
+            <MapMarker
+              longitude={pickup.lng}
+              latitude={pickup.lat}
+            >
               <MarkerContent>
                 <div className="grid size-7 place-items-center rounded-full bg-emerald-500 shadow-md">
                   <Store className="size-3.5 text-white" />
@@ -212,7 +229,10 @@ export default function Page() {
               </MarkerContent>
             </MapMarker>
 
-            <MapMarker longitude={dropoff.lng} latitude={dropoff.lat}>
+            <MapMarker
+              longitude={dropoff.lng}
+              latitude={dropoff.lat}
+            >
               <MarkerContent>
                 <div className="grid size-7 place-items-center rounded-full bg-rose-500 shadow-md">
                   <House className="size-3.5 text-white" />

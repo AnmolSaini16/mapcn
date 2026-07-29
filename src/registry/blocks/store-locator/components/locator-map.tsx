@@ -1,8 +1,12 @@
 "use client";
 
+import { Clock, MapPin, Phone } from "lucide-react-native";
 import { useEffect } from "react";
-import { Clock, MapPin, Phone } from "lucide-react";
 
+import type { Store } from "../data";
+
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 import {
   Map,
   MapControls,
@@ -12,9 +16,6 @@ import {
   MarkerTooltip,
   useMap,
 } from "@/registry/map";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
-import type { Store } from "../data";
 
 interface LocatorMapProps {
   stores: Store[];
@@ -68,8 +69,16 @@ export function LocatorMap({
     <div className="relative h-full">
       <SidebarTrigger className="bg-background absolute top-3 left-3 z-10 border shadow-sm md:hidden" />
 
-      <Map center={center} zoom={12} minZoom={10} maxZoom={17}>
-        <MapControls showFullscreen showCompass />
+      <Map
+        center={center}
+        zoom={12}
+        minZoom={10}
+        maxZoom={17}
+      >
+        <MapControls
+          showFullscreen
+          showCompass
+        />
         <FlyToSelected store={selected} />
 
         {stores.map((store) => (
@@ -77,7 +86,9 @@ export function LocatorMap({
             key={store.id}
             longitude={store.lng}
             latitude={store.lat}
-            onClick={() => onSelect(store.id)}
+            onClick={() => {
+              onSelect(store.id);
+            }}
           >
             <MarkerContent>
               <StorePin active={store.id === selectedId} />

@@ -1,9 +1,10 @@
 "use client";
 
+import { Check, Copy } from "lucide-react-native";
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
-import { cn } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface CodeCopyButtonProps {
   text: string;
@@ -21,7 +22,9 @@ export function CodeCopyButton({
   const copy = async () => {
     await navigator.clipboard.writeText(text);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
     onCopy?.();
   };
 

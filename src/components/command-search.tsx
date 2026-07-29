@@ -1,14 +1,16 @@
 "use client";
 
-import * as React from "react";
-import { useRouter } from "next/navigation";
 import {
   ArrowDown,
   ArrowUp,
   CornerDownLeft,
   FileText,
   SearchIcon,
-} from "lucide-react";
+} from "lucide-react-native";
+import { useRouter } from "next/navigation";
+import * as React from "react";
+
+import { Button } from "./ui/button";
 
 import {
   CommandDialog,
@@ -20,7 +22,6 @@ import {
 } from "@/components/ui/command";
 import { Kbd } from "@/components/ui/kbd";
 import { siteNavigation } from "@/lib/site-navigation";
-import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
 export function CommandSearch({ className }: { className?: string }) {
@@ -36,7 +37,9 @@ export function CommandSearch({ className }: { className?: string }) {
     }
 
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
   function handleSelect(href: string) {
@@ -49,7 +52,9 @@ export function CommandSearch({ className }: { className?: string }) {
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setOpen(true);
+        }}
         aria-label="Jump to pages, components, and docs"
         className={cn(
           "bg-muted dark:bg-muted/50 text-muted-foreground hover:bg-muted/60 dark:hover:bg-muted/60 hover:text-foreground mr-2.5 hidden w-48 md:flex",
@@ -79,12 +84,17 @@ export function CommandSearch({ className }: { className?: string }) {
             </div>
           </CommandEmpty>
           {siteNavigation.map((group) => (
-            <CommandGroup key={group.title} heading={group.title}>
+            <CommandGroup
+              key={group.title}
+              heading={group.title}
+            >
               {group.items.map((item) => (
                 <CommandItem
                   key={item.href}
                   value={item.title}
-                  onSelect={() => handleSelect(item.href)}
+                  onSelect={() => {
+                    handleSelect(item.href);
+                  }}
                 >
                   <item.icon />
                   <span>{item.title}</span>

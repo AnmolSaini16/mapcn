@@ -1,55 +1,120 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import * as WebBrowser from "expo-web-browser";
+import type { LucideProps } from "lucide-react-native";
+import { useCallback, useEffect, useState } from "react";
+import { useColorScheme } from "react-native";
+import Svg, { Path } from "react-native-svg";
 
-export function GitHubButton({ withCount = true }: { withCount?: boolean }) {
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Text } from "@/components/ui/text";
+import { THEME } from "@/lib/theme";
+
+const GITHUB_REPO_URL = "https://github.com/unkn0wndfbx/mapcn-react-native";
+const GITHUB_API_URL =
+  "https://api.github.com/repos/unkn0wndfbx/mapcn-react-native";
+
+type GitHubButtonProps = {
+  withCount?: boolean;
+};
+
+function GitHubIcon({ size = 24, color = "currentColor" }: LucideProps) {
   return (
-    <Button variant="ghost" size="sm" asChild>
-      <Link
-        href="https://github.com/AnmolSaini16/mapcn"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <svg viewBox="0 0 1024 1024" fill="currentColor" className="size-4">
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z"
-            transform="scale(64)"
-            fill="currentColor"
-          />
-        </svg>
-        {withCount && (
-          <Suspense fallback={<Skeleton className="h-4 w-6 rounded" />}>
-            <StarCount />
-          </Suspense>
-        )}
-      </Link>
-    </Button>
+    <Svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill={color}
+    >
+      <Path d="M12 0.296997c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.082 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.296997c0-6.627-5.373-12-12-12" />
+    </Svg>
   );
 }
 
-export async function StarCount() {
-  const response = await fetch(
-    "https://api.github.com/repos/AnmolSaini16/mapcn",
-    { next: { revalidate: 60 } },
-  );
+function getStarCount(data: unknown): number | null {
+  if (
+    typeof data === "object" &&
+    data !== null &&
+    "stargazers_count" in data &&
+    typeof data.stargazers_count === "number"
+  ) {
+    return data.stargazers_count;
+  }
 
-  const data = await response.json();
+  return null;
+}
 
-  const formattedCount =
-    data.stargazers_count >= 1000
-      ? `${(data.stargazers_count / 1000).toFixed(1)}k`
-      : data.stargazers_count;
+function StarCount() {
+  const [starCount, setStarCount] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchStarCount() {
+      try {
+        const response = await fetch(GITHUB_API_URL);
+        if (!response.ok) {
+          return;
+        }
+
+        const starCountValue = getStarCount(await response.json());
+        if (cancelled || starCountValue === null) {
+          return;
+        }
+
+        setStarCount(
+          starCountValue >= 1000
+            ? `${(starCountValue / 1000).toFixed(1)}k`
+            : String(starCountValue),
+        );
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void fetchStarCount();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (isLoading) {
+    return <Skeleton className="h-4 w-6 rounded" />;
+  }
+
+  if (!starCount) {
+    return null;
+  }
 
   return (
-    <>
-      {formattedCount && (
-        <span className="text-muted-foreground pt-0.5 text-xs tabular-nums">
-          {formattedCount}
-        </span>
-      )}
-    </>
+    <Text className="text-muted-foreground pt-0.5 text-xs tabular-nums">
+      {starCount}
+    </Text>
+  );
+}
+
+export function GitHubButton({ withCount = true }: GitHubButtonProps) {
+  const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
+
+  const openRepository = useCallback(() => {
+    void WebBrowser.openBrowserAsync(GITHUB_REPO_URL);
+  }, []);
+
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      onPress={openRepository}
+      accessibilityLabel="Open GitHub repository"
+    >
+      <GitHubIcon
+        size={16}
+        color={THEME[colorScheme].foreground}
+      />
+      {withCount ? <StarCount /> : null}
+    </Button>
   );
 }

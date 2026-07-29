@@ -1,5 +1,9 @@
 "use client";
 
+import { Network, Plane, Truck } from "lucide-react-native";
+
+import { regionLabels, statusConfig, type Hub, type Route } from "../data";
+
 import {
   Sidebar,
   SidebarContent,
@@ -14,8 +18,6 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { Network, Plane, Truck } from "lucide-react";
-import { regionLabels, statusConfig, type Hub, type Route } from "../data";
 
 const regionIcons: Record<Hub["region"], string> = {
   west: "W",

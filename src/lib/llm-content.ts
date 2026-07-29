@@ -1,4 +1,5 @@
 import registry from "../../registry.json";
+
 import { mapInstallCommand } from "@/lib/llm-prompts";
 
 interface ComponentDoc {
@@ -56,6 +57,7 @@ function formatFiles(files: RegistryFile[] | undefined) {
     .join("\n");
 }
 
+/* TODO: update this to use the new mapcn react native API */
 function createBasemapMarkdown() {
   return `## Basemap Selection
 
@@ -95,13 +97,16 @@ export function createLlmIndexMarkdown() {
   const blocks = typedRegistry.items.filter(
     (item) => item.type === "registry:block",
   );
+  const homepage =
+    typedRegistry.homepage ??
+    "https://github.com/unkn0wndfbx/mapcn-react-native";
 
-  return `# mapcn
+  return `# mapcn-react-native
 
-mapcn is a free, open-source shadcn-style registry of ready-to-use React map components and blocks. It is built on MapLibre GL, styled with Tailwind CSS, and intended for projects that already use shadcn/ui.
+mapcn-react-native is a free, open-source shadcn-style registry of ready-to-use React Native map components and blocks. It is built on MapLibre React Native, styled with NativeWind, and intended for projects that already use React Native Reusables.
 
-Website: ${typedRegistry.homepage ?? "https://mapcn.dev"}
-Registry index: https://mapcn.dev/r/registry.json
+Website: ${homepage}
+Install via GitHub registry: ${code("unkn0wndfbx/mapcn-react-native/<item>")}
 
 ## Install the base map component
 
@@ -137,19 +142,19 @@ ${components.map((item) => `- [${item.title}](${item.href}) - ${item.description
 
 ## Blocks
 
-${blocks.map((item) => `- [${item.title ?? item.name}](/llm/${item.name}) - install with ${code(`npx shadcn@latest add @mapcn/${item.name}`)}`).join("\n")}
+${blocks.map((item) => `- [${item.title ?? item.name}](/llm/${item.name}) - install with ${code(`npx shadcn@latest add unkn0wndfbx/mapcn-react-native/${item.name}`)}`).join("\n")}
 `;
 }
 
 export function createLlmItemMarkdown(item: RegistryItem) {
-  const installCommand = `npx shadcn@latest add @mapcn/${item.name}`;
+  const installCommand = `npx shadcn@latest add unkn0wndfbx/mapcn-react-native/${item.name}`;
 
   return `# ${item.title ?? item.name}
 
 ${item.description ?? "No description available."}
 
 Type: ${code(item.type)}
-Registry item: https://mapcn.dev/r/${item.name}.json
+Registry item: ${code(`unkn0wndfbx/mapcn-react-native/${item.name}`)}
 
 ## Install
 
