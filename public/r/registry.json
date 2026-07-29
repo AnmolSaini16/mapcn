@@ -10,6 +10,7 @@
       "description": "A MapLibre-powered map component with markers, popups, tooltips, routes, and controls.",
       "dependencies": [
         "@maplibre/maplibre-react-native",
+        "@types/geojson",
         "lucide-react-native",
         "react-native-svg"
       ],
@@ -66,8 +67,7 @@
             "description": "Clustered point layers for dense datasets."
           }
         ]
-      },
-      "devDependencies": ["@types/geojson"]
+      }
     },
     {
       "name": "analytics-map",

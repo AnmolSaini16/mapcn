@@ -5,11 +5,9 @@
   "description": "A MapLibre-powered map component with markers, popups, tooltips, routes, and controls.",
   "dependencies": [
     "@maplibre/maplibre-react-native",
+    "@types/geojson",
     "lucide-react-native",
     "react-native-svg"
-  ],
-  "devDependencies": [
-    "@types/geojson"
   ],
   "registryDependencies": [
     "https://reactnativereusables.com/r/nativewind/text.json"
