@@ -1,9 +1,16 @@
+import { useState } from "react";
 import { View } from "react-native";
 
 import { ExampleCard } from "@/atoms/ExampleCard";
 import { ExampleMap } from "@/atoms/ExampleMap";
 import { Text } from "@/components/ui/text";
-import { MapArc, MapMarker, MarkerContent, MarkerLabel } from "@/registry/map";
+import {
+  MapArc,
+  MapMarker,
+  MapPopup,
+  MarkerContent,
+  MarkerLabel,
+} from "@/registry/map";
 
 const hub = { name: "London", lng: -0.1276, lat: 51.5074 };
 
@@ -22,6 +29,11 @@ const arcs = destinations.map((dest) => ({
 }));
 
 export function ArcExample() {
+  const [selectedArcId, setSelectedArcId] = useState<string | null>(null);
+  const selectedDestination = destinations.find(
+    (destination) => destination.name === selectedArcId,
+  );
+
   return (
     <ExampleCard className="aspect-square min-h-[280px]">
       <ExampleMap
@@ -34,12 +46,25 @@ export function ArcExample() {
       >
         <MapArc
           data={arcs}
-          color="#3b82f6"
+          interactive
           opacity={0.9}
           paint={{
+            "line-color": "#3b82f6",
             "line-dasharray": [2, 2],
           }}
-          interactive={false}
+          selectedId={selectedArcId}
+          selectedPaint={{
+            "line-color": "#1d4ed8",
+            "line-width": 3,
+            "line-opacity": 1,
+          }}
+          onClick={(event) => {
+            const nextId =
+              typeof event.arc.id === "string"
+                ? event.arc.id
+                : String(event.arc.id);
+            setSelectedArcId((current) => (current === nextId ? null : nextId));
+          }}
         />
 
         <MapMarker
@@ -68,6 +93,26 @@ export function ArcExample() {
             </MarkerContent>
           </MapMarker>
         ))}
+
+        {selectedDestination ? (
+          <MapPopup
+            closeButton
+            latitude={(hub.lat + selectedDestination.lat) / 2}
+            longitude={(hub.lng + selectedDestination.lng) / 2}
+            onClose={() => {
+              setSelectedArcId(null);
+            }}
+          >
+            <View className="min-w-28 gap-0.5 pr-3">
+              <Text className="text-sm font-semibold">
+                {hub.name} → {selectedDestination.name}
+              </Text>
+              <Text className="text-muted-foreground text-xs">
+                Tap again to clear
+              </Text>
+            </View>
+          </MapPopup>
+        ) : null}
       </ExampleMap>
     </ExampleCard>
   );

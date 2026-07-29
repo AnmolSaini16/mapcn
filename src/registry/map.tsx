@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import {
   Camera,
   GeoJSONSource,
@@ -14,7 +15,7 @@ import {
   type StyleSpecification,
 } from "@maplibre/maplibre-react-native";
 import type * as GeoJSON from "geojson";
-import { Locate, Maximize, Minus, Plus } from "lucide-react-native";
+import { Locate, Maximize, Minus, Plus, X } from "lucide-react-native";
 import type * as React from "react";
 import {
   Children,
@@ -33,16 +34,19 @@ import {
 } from "react";
 import {
   ActivityIndicator,
+  Animated,
   Pressable,
   Text,
   useColorScheme,
   View,
   type NativeSyntheticEvent,
 } from "react-native";
+import Svg, { Path } from "react-native-svg";
 
+import { TextClassContext } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 
-const styles = {
+const defaultStyles = {
   dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
   light: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
 };
@@ -59,6 +63,39 @@ const blankMapStyle: StyleSpecification = {
   ],
 };
 
+function useStableValue<T>(value: T): T {
+  const key = useMemo(() => JSON.stringify(value) ?? "", [value]);
+
+  return useMemo(() => value, [key]);
+}
+
+function mergeSelectedPaint<T extends Record<string, unknown>>(
+  paint: T,
+  selectedPaint: T | undefined,
+  promoteId: string,
+  selectedId: string | number | null | undefined,
+): T {
+  if (!selectedPaint || selectedId === null || selectedId === undefined) {
+    return paint;
+  }
+
+  const merged: Record<string, unknown> = { ...paint };
+  for (const [key, selectedValue] of Object.entries(selectedPaint)) {
+    if (selectedValue === undefined) continue;
+    const baseValue = merged[key];
+    merged[key] =
+      baseValue === undefined
+        ? selectedValue
+        : [
+            "case",
+            ["==", ["to-string", ["get", promoteId]], String(selectedId)],
+            selectedValue,
+            baseValue,
+          ];
+  }
+  return merged as T;
+}
+
 type Theme = "light" | "dark";
 type MapRef = NativeMapRef;
 type MapViewport = {
@@ -69,63 +106,88 @@ type MapViewport = {
 };
 type MapStyleOption = string | StyleSpecification;
 
+type MapPressListener = () => void;
+
 type MapContextValue = {
   camera: CameraRef | null;
   map: MapRef | null;
   isLoaded: boolean;
   resolvedTheme: Theme;
   viewport: MapViewport;
+  addMapPressListener: (listener: MapPressListener) => () => void;
 };
 
 const MapContext = createContext<MapContextValue | null>(null);
 
-/**
- * Access the map instance, camera, and current viewport from a descendant of
- * {@link Map}.
- */
+type MarkerTooltipController = {
+  show: (reason: "press" | "hover") => void;
+  hide: () => void;
+  toggle: () => void;
+};
+
+type MarkerInteractionContextValue = {
+  suppressNextPress: () => void;
+  setTopOverlayHeight: (height: number) => void;
+  registerTooltip: (controller: MarkerTooltipController) => () => void;
+  showTooltipFromHover: () => void;
+  hideTooltipFromHover: () => void;
+};
+
+const MarkerInteractionContext =
+  createContext<MarkerInteractionContextValue | null>(null);
+
+const TOOLTIP_AUTO_HIDE_MS = 2500;
+
 function useMap() {
   const context = useContext(MapContext);
   if (!context) throw new Error("useMap must be used within a Map component");
   return context;
 }
 
-/**
- * Props for the cross-platform MapLibre map wrapper.
- */
 type MapProps = Omit<
   React.ComponentProps<typeof MapLibreMap>,
-  "children" | "mapStyle" | "onRegionIsChanging" | "onDidFinishLoadingMap"
+  | "children"
+  | "mapStyle"
+  | "onRegionIsChanging"
+  | "onDidFinishLoadingMap"
+  | "onDidFinishLoadingStyle"
+  | "className"
 > & {
-  /** Map content: markers, sources, layers, and controls. */
   children?: ReactNode;
-  /** Overrides the device colour scheme. */
+  className?: string;
   theme?: Theme;
-  /** Map styles keyed by colour scheme. */
   styles?: Partial<Record<Theme, MapStyleOption>>;
-  /** Renders an empty transparent map style for data visualizations. */
   blank?: boolean;
-  /** Controls any supplied viewport values. */
   viewport?: Partial<MapViewport>;
-  /** Called as the visible map viewport changes. */
   onViewportChange?: (viewport: MapViewport) => void;
-  /** Displays an overlay while external map data is loading. */
   loading?: boolean;
 };
 
-/**
- * A React Native MapLibre map with light/dark styles, viewport state, and a
- * declarative camera.
- */
+function MapLoader() {
+  return (
+    <View className="bg-background/50 absolute inset-0 z-10 items-center justify-center">
+      <View className="flex-row gap-1">
+        <View className="bg-muted-foreground/60 size-1.5 rounded-full opacity-60" />
+        <View className="bg-muted-foreground/60 size-1.5 rounded-full opacity-80" />
+        <View className="bg-muted-foreground/60 size-1.5 rounded-full" />
+      </View>
+      <ActivityIndicator className="absolute" />
+    </View>
+  );
+}
+
 const Map = forwardRef<MapRef, MapProps>(function Map(
   {
     children,
+    className,
     theme,
     styles: customStyles,
-    blank,
+    blank = false,
     viewport,
     onViewportChange,
-    loading,
+    loading = false,
     style,
+    onPress,
     ...props
   },
   ref,
@@ -137,23 +199,65 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
   const [map, setMap] = useState<MapRef | null>(null);
   const [camera, setCamera] = useState<CameraRef | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isStyleLoaded, setIsStyleLoaded] = useState(false);
+  const internalUpdateRef = useRef(false);
+  const onViewportChangeRef = useRef(onViewportChange);
+  const mapPressListenersRef = useRef(new Set<MapPressListener>());
+
+  useEffect(() => {
+    onViewportChangeRef.current = onViewportChange;
+  }, [onViewportChange]);
+
+  const addMapPressListener = useCallback((listener: MapPressListener) => {
+    mapPressListenersRef.current.add(listener);
+    return () => {
+      mapPressListenersRef.current.delete(listener);
+    };
+  }, []);
+
+  const handleMapPress = useCallback<
+    NonNullable<React.ComponentProps<typeof MapLibreMap>["onPress"]>
+  >(
+    (event) => {
+      for (const listener of mapPressListenersRef.current) {
+        listener();
+      }
+      onPress?.(event);
+    },
+    [onPress],
+  );
+
   const isControlled = viewport !== undefined && onViewportChange !== undefined;
   const [currentViewport, setCurrentViewport] = useState<MapViewport>({
-    center: [0, 0],
-    zoom: 1,
-    bearing: 0,
-    pitch: 0,
+    center: viewport?.center ?? [0, 0],
+    zoom: viewport?.zoom ?? 1,
+    bearing: viewport?.bearing ?? 0,
+    pitch: viewport?.pitch ?? 0,
   });
+
+  const stableStyles = useStableValue(customStyles);
+  const mapStyles = useMemo(() => {
+    if (stableStyles) {
+      return {
+        dark: stableStyles.dark ?? defaultStyles.dark,
+        light: stableStyles.light ?? defaultStyles.light,
+      };
+    }
+    if (blank) {
+      return { dark: blankMapStyle, light: blankMapStyle };
+    }
+    return defaultStyles;
+  }, [stableStyles, blank]);
+
+  const mapStyle = resolvedTheme === "dark" ? mapStyles.dark : mapStyles.light;
 
   useImperativeHandle(ref, () => {
-    if (!nativeMapRef.current)
+    if (!nativeMapRef.current) {
       throw new Error("Map ref is not available before mount");
+    }
     return nativeMapRef.current;
-  });
+  }, [map]);
 
-  const mapStyle =
-    customStyles?.[resolvedTheme] ??
-    (blank ? blankMapStyle : styles[resolvedTheme]);
   const cameraState = {
     center: viewport?.center ?? currentViewport.center,
     zoom: viewport?.zoom ?? currentViewport.zoom,
@@ -177,19 +281,46 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
       nextViewport.bearing === currentViewport.bearing &&
       nextViewport.pitch === currentViewport.pitch;
 
-    if (!isCurrentViewport) {
-      camera.jumpTo(nextViewport);
-    }
+    if (isCurrentViewport) return;
+
+    internalUpdateRef.current = true;
+    camera.jumpTo(nextViewport);
+    setCurrentViewport(nextViewport);
+    const timeout = setTimeout(() => {
+      internalUpdateRef.current = false;
+    }, 50);
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [camera, currentViewport, isControlled, viewport]);
 
+  useEffect(() => {
+    setIsStyleLoaded(false);
+  }, [mapStyle]);
+
   const contextValue = useMemo(
-    () => ({ camera, map, isLoaded, resolvedTheme, viewport: currentViewport }),
-    [camera, currentViewport, isLoaded, map, resolvedTheme],
+    () => ({
+      camera,
+      map,
+      isLoaded: isLoaded && isStyleLoaded,
+      resolvedTheme,
+      viewport: currentViewport,
+      addMapPressListener,
+    }),
+    [
+      addMapPressListener,
+      camera,
+      currentViewport,
+      isLoaded,
+      isStyleLoaded,
+      map,
+      resolvedTheme,
+    ],
   );
 
   return (
     <MapContext.Provider value={contextValue}>
-      <View className="relative flex-1">
+      <View className={cn("relative flex-1", className)}>
         <MapLibreMap
           {...props}
           ref={(instance) => {
@@ -200,7 +331,12 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
           onDidFinishLoadingMap={() => {
             setIsLoaded(true);
           }}
+          onDidFinishLoadingStyle={() => {
+            setIsStyleLoaded(true);
+          }}
+          onPress={handleMapPress}
           onRegionIsChanging={(event) => {
+            if (internalUpdateRef.current) return;
             const nextViewport: MapViewport = {
               center: event.nativeEvent.center,
               zoom: event.nativeEvent.zoom,
@@ -208,7 +344,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
               pitch: event.nativeEvent.pitch,
             };
             setCurrentViewport(nextViewport);
-            onViewportChange?.(nextViewport);
+            onViewportChangeRef.current?.(nextViewport);
           }}
           style={[{ flex: 1 }, style]}
         >
@@ -219,71 +355,24 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
             }}
             {...cameraState}
           />
-          {children}
+          {isStyleLoaded ? children : null}
         </MapLibreMap>
-        {loading ? <MapLoader /> : null}
+        {!isLoaded || !isStyleLoaded || loading ? <MapLoader /> : null}
       </View>
     </MapContext.Provider>
   );
 });
 
-/**
- * Loading overlay displayed by {@link Map}.
- */
-function MapLoader() {
-  return (
-    <View className="bg-background/50 absolute inset-0 items-center justify-center">
-      <ActivityIndicator />
-    </View>
-  );
-}
-
-/**
- * Props for a map marker rendered at a longitude/latitude coordinate.
- */
 type MapMarkerProps = Omit<
   React.ComponentProps<typeof Marker>,
   "children" | "lngLat" | "onPress"
 > & {
-  /** Longitude in degrees. */
   longitude: number;
-  /** Latitude in degrees. */
   latitude: number;
-  /** Marker content. Include a single {@link MarkerContent} child. */
-  children: ReactNode;
-  /** Called when the marker is tapped. */
+  children?: ReactNode;
   onClick?: React.ComponentProps<typeof Marker>["onPress"];
 };
 
-/**
- * Renders an interactive native marker. Unlike web markers, native markers do
- * not expose pointer hover or drag events.
- */
-function MapMarker({
-  longitude,
-  latitude,
-  children,
-  onClick,
-  ...props
-}: MapMarkerProps) {
-  const content = getMarkerContent(children);
-
-  if (!content) return null;
-
-  return (
-    <Marker
-      {...props}
-      lngLat={[longitude, latitude]}
-      onPress={onClick}
-    >
-      {content}
-    </Marker>
-  );
-}
-
-/**
- * Finds the marker view that MapLibre Native can mount as the marker child.
- */
 function getMarkerContent(children: ReactNode) {
   for (const child of Children.toArray(children)) {
     if (isValidElement(child) && child.type === MarkerContent) {
@@ -294,39 +383,161 @@ function getMarkerContent(children: ReactNode) {
   return null;
 }
 
-/**
- * A view anchored to a {@link MapMarker}. It may contain labels, popups, and
- * arbitrary React Native content.
- */
-type MarkerContentProps = React.ComponentProps<typeof View>;
+function MapMarker({
+  longitude,
+  latitude,
+  children,
+  onClick,
+  offset,
+  ...props
+}: MapMarkerProps) {
+  const content = getMarkerContent(children);
+  const suppressPressRef = useRef(false);
+  const tooltipControllerRef = useRef<MarkerTooltipController | null>(null);
+  const [topOverlayHeight, setTopOverlayHeight] = useState(0);
 
-function MarkerContent({ className, ...props }: MarkerContentProps) {
+  const handlePress = useCallback<
+    NonNullable<React.ComponentProps<typeof Marker>["onPress"]>
+  >(
+    (event) => {
+      if (suppressPressRef.current) {
+        suppressPressRef.current = false;
+        return;
+      }
+
+      if (onClick) {
+        onClick(event);
+        return;
+      }
+
+      tooltipControllerRef.current?.toggle();
+    },
+    [onClick],
+  );
+
+  const markerInteractionValue = useMemo<MarkerInteractionContextValue>(
+    () => ({
+      suppressNextPress: () => {
+        suppressPressRef.current = true;
+      },
+      setTopOverlayHeight,
+      registerTooltip: (controller) => {
+        tooltipControllerRef.current = controller;
+        return () => {
+          if (tooltipControllerRef.current === controller) {
+            tooltipControllerRef.current = null;
+          }
+        };
+      },
+      showTooltipFromHover: () => {
+        tooltipControllerRef.current?.show("hover");
+      },
+      hideTooltipFromHover: () => {
+        tooltipControllerRef.current?.hide();
+      },
+    }),
+    [],
+  );
+
+  const resolvedOffset = useMemo((): [number, number] => {
+    const baseX = offset?.[0] ?? 0;
+    const baseY = offset?.[1] ?? 0;
+    return [baseX, baseY - topOverlayHeight / 2];
+  }, [offset, topOverlayHeight]);
+
+  return (
+    <MarkerInteractionContext.Provider value={markerInteractionValue}>
+      <Marker
+        {...props}
+        lngLat={[longitude, latitude]}
+        offset={resolvedOffset}
+        onPress={handlePress}
+      >
+        {content ?? (
+          <MarkerContent>
+            {Children.count(children) > 0 ? children : <DefaultMarkerIcon />}
+          </MarkerContent>
+        )}
+      </Marker>
+    </MarkerInteractionContext.Provider>
+  );
+}
+
+type MarkerContentProps = React.ComponentProps<typeof View> & {
+  children?: ReactNode;
+};
+
+function MarkerContent({ className, children, ...props }: MarkerContentProps) {
+  const markerInteraction = useContext(MarkerInteractionContext);
+  const childArray = Children.toArray(children);
+  const topPopups: ReactNode[] = [];
+  const bottomPopups: ReactNode[] = [];
+  const rest: ReactNode[] = [];
+
+  for (const child of childArray) {
+    if (isValidElement(child) && child.type === MarkerPopup) {
+      const position =
+        (child.props as { position?: "top" | "bottom" }).position ?? "top";
+      if (position === "bottom") {
+        bottomPopups.push(child);
+      } else {
+        topPopups.push(child);
+      }
+    } else {
+      rest.push(child);
+    }
+  }
+
+  const core =
+    rest.length > 0 ? (
+      rest
+    ) : topPopups.length === 0 && bottomPopups.length === 0 ? (
+      <DefaultMarkerIcon />
+    ) : null;
+
   return (
     <View
       {...props}
-      className={cn("items-center justify-center", className)}
-    />
+      collapsable={false}
+      className={cn("relative items-center justify-center", className)}
+      onPointerEnter={() => {
+        markerInteraction?.showTooltipFromHover();
+      }}
+      onPointerLeave={() => {
+        markerInteraction?.hideTooltipFromHover();
+      }}
+    >
+      {topPopups.length > 0 ? (
+        <View
+          className="items-center"
+          onLayout={(event) => {
+            if (!core) {
+              markerInteraction?.setTopOverlayHeight(0);
+              return;
+            }
+            markerInteraction?.setTopOverlayHeight(
+              event.nativeEvent.layout.height,
+            );
+          }}
+        >
+          {topPopups}
+        </View>
+      ) : null}
+      {core}
+      {bottomPopups}
+    </View>
   );
 }
 
-/**
- * Default circular marker content.
- */
 function DefaultMarkerIcon() {
   return (
-    <View className="size-4 rounded-full border-2 border-white bg-blue-500" />
+    <View className="size-4 rounded-full border-2 border-white bg-blue-500 shadow-lg" />
   );
 }
 
-/**
- * Text positioned relative to marker content.
- */
-type MarkerLabelProps = React.ComponentProps<typeof Text> & {
-  /** Label text content */
+type MarkerLabelProps = {
   children: ReactNode;
-  /** Additional CSS classes for the label */
   className?: string;
-  /** Position of the label relative to the marker (default: "top") */
   position?: "top" | "bottom";
 };
 
@@ -343,83 +554,257 @@ function MarkerLabel({
   return (
     <View
       className={cn(
-        "absolute left-1/2 -translate-x-1/2 whitespace-nowrap",
-        "text-foreground text-[10px] font-medium",
+        "absolute items-center",
         positionClasses[position],
         className,
       )}
+      pointerEvents="none"
+      style={{ left: -96, right: -96 }}
     >
+      {typeof children === "string" || typeof children === "number" ? (
+        <Text
+          className="text-foreground text-[10px] font-medium"
+          // numberOfLines={1}
+        >
+          {children}
+        </Text>
+      ) : (
+        children
+      )}
+    </View>
+  );
+}
+
+function PopupCloseButton({ onPress }: { onPress: () => void }) {
+  const markerInteraction = useContext(MarkerInteractionContext);
+
+  return (
+    <Pressable
+      accessibilityLabel="Close popup"
+      className="absolute top-1 right-1 z-10 size-5 items-center justify-center rounded-sm"
+      hitSlop={8}
+      onPressIn={() => {
+        markerInteraction?.suppressNextPress();
+      }}
+      onPress={() => {
+        markerInteraction?.suppressNextPress();
+        onPress();
+      }}
+    >
+      <X
+        className="text-foreground"
+        size={14}
+      />
+    </Pressable>
+  );
+}
+
+type MarkerPopupProps = React.ComponentProps<typeof View> & {
+  position?: "top" | "bottom";
+  closeButton?: boolean;
+  closeOnClick?: boolean;
+  onClose?: () => void;
+};
+
+type MarkerTooltipProps = {
+  children: ReactNode;
+  className?: string;
+  position?: "top" | "bottom";
+};
+
+function MarkerPopup({
+  className,
+  position = "top",
+  closeButton = false,
+  closeOnClick = true,
+  onClose,
+  children,
+  ...props
+}: MarkerPopupProps) {
+  const markerInteraction = useContext(MarkerInteractionContext);
+  const { addMapPressListener } = useMap();
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!closeOnClick) return;
+
+    let enabled = false;
+    const enableTimeout = setTimeout(() => {
+      enabled = true;
+    }, 50);
+
+    const unsubscribe = addMapPressListener(() => {
+      if (!enabled) return;
+      onCloseRef.current?.();
+    });
+
+    return () => {
+      clearTimeout(enableTimeout);
+      unsubscribe();
+    };
+  }, [addMapPressListener, closeOnClick]);
+
+  useEffect(() => {
+    return () => {
+      markerInteraction?.setTopOverlayHeight(0);
+    };
+  }, [markerInteraction]);
+
+  return (
+    <View
+      {...props}
+      className={cn(
+        "bg-popover border-border relative max-w-62 rounded-md border p-3 shadow-md",
+        position === "top" ? "mb-2" : "mt-2",
+        className,
+      )}
+      onTouchStart={() => {
+        markerInteraction?.suppressNextPress();
+      }}
+    >
+      {closeButton ? (
+        <PopupCloseButton
+          onPress={() => {
+            onClose?.();
+          }}
+        />
+      ) : null}
       {children}
     </View>
   );
 }
 
-/**
- * Props shared by marker-attached popup and tooltip views.
- */
-type MarkerPopupProps = React.ComponentProps<typeof View> & {
-  /** Displays the view above or below its marker. */
-  position?: "top" | "bottom";
-};
-type MarkerTooltipProps = MarkerPopupProps;
-
-/**
- * A popup view positioned relative to its parent {@link MarkerContent}.
- *
- * MapLibre Native does not provide DOM-style popup portals. Place this inside
- * `MarkerContent` and control its visibility from application state.
- */
-function MarkerPopup({
-  className,
-  position = "top",
-  ...props
-}: MarkerPopupProps) {
-  return (
-    <View
-      {...props}
-      className={cn(
-        "bg-popover border-border absolute rounded-md border p-3",
-        position === "top" ? "bottom-full mb-2" : "top-full mt-2",
-        className,
-      )}
-    />
-  );
-}
-
-/**
- * A compact, non-interactive annotation positioned beside marker content.
- */
 function MarkerTooltip({
   className,
   position = "top",
-  ...props
+  children,
 }: MarkerTooltipProps) {
+  const markerInteraction = useContext(MarkerInteractionContext);
+  const { addMapPressListener } = useMap();
+  const [visible, setVisible] = useState(false);
+  const visibleRef = useRef(false);
+  const reasonRef = useRef<"press" | "hover" | null>(null);
+  const opacity = useMemo(() => new Animated.Value(0), []);
+  const scale = useMemo(() => new Animated.Value(0.95), []);
+
+  const show = useCallback((reason: "press" | "hover") => {
+    reasonRef.current = reason;
+    visibleRef.current = true;
+    setVisible(true);
+  }, []);
+
+  const hide = useCallback(() => {
+    reasonRef.current = null;
+    visibleRef.current = false;
+    setVisible(false);
+  }, []);
+
+  const toggle = useCallback(() => {
+    if (visibleRef.current) {
+      hide();
+      return;
+    }
+    show("press");
+  }, [hide, show]);
+
+  useEffect(() => {
+    return markerInteraction?.registerTooltip({ show, hide, toggle });
+  }, [hide, markerInteraction, show, toggle]);
+
+  useEffect(() => {
+    if (!visible) return;
+
+    let enabled = false;
+    const enableTimeout = setTimeout(() => {
+      enabled = true;
+    }, 50);
+
+    const unsubscribe = addMapPressListener(() => {
+      if (!enabled) return;
+      hide();
+    });
+
+    return () => {
+      clearTimeout(enableTimeout);
+      unsubscribe();
+    };
+  }, [addMapPressListener, hide, visible]);
+
+  useEffect(() => {
+    if (!visible || reasonRef.current !== "press") return;
+    const timeout = setTimeout(hide, TOOLTIP_AUTO_HIDE_MS);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [hide, visible]);
+
+  useEffect(() => {
+    if (!visible) return;
+
+    opacity.setValue(0);
+    scale.setValue(0.95);
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 160,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scale, {
+        toValue: 1,
+        duration: 160,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [opacity, scale, visible]);
+
+  if (!visible) return null;
+
   return (
-    <View
-      {...props}
+    <Animated.View
       className={cn(
-        "bg-popover border-border absolute rounded-md border px-2 py-1",
+        "absolute items-center",
         position === "top" ? "bottom-full mb-2" : "top-full mt-2",
-        className,
       )}
-    />
+      pointerEvents="none"
+      style={{
+        left: -96,
+        right: -96,
+        opacity,
+        transform: [{ scale }],
+      }}
+    >
+      <View
+        className={cn(
+          "bg-foreground rounded-md px-2 py-1 shadow-md",
+          className,
+        )}
+      >
+        <TextClassContext.Provider value="text-background text-xs">
+          {children}
+        </TextClassContext.Provider>
+      </View>
+    </Animated.View>
   );
 }
 
-/**
- * Props for a popup pinned to a map coordinate.
- */
 type MapPopupProps = MarkerPopupProps & {
-  /** Longitude in degrees. */
   longitude: number;
-  /** Latitude in degrees. */
   latitude: number;
 };
 
-/**
- * Renders a coordinate-pinned popup through a native marker.
- */
-function MapPopup({ longitude, latitude, className, ...props }: MapPopupProps) {
+function MapPopup({
+  longitude,
+  latitude,
+  className,
+  onClose,
+  closeButton = false,
+  closeOnClick = true,
+  ...props
+}: MapPopupProps) {
   return (
     <MapMarker
       latitude={latitude}
@@ -428,6 +813,9 @@ function MapPopup({ longitude, latitude, className, ...props }: MapPopupProps) {
       <MarkerContent>
         <MarkerPopup
           className={className}
+          closeButton={closeButton}
+          closeOnClick={closeOnClick}
+          onClose={onClose}
           {...props}
         />
       </MarkerContent>
@@ -435,42 +823,96 @@ function MapPopup({ longitude, latitude, className, ...props }: MapPopupProps) {
   );
 }
 
-/**
- * Props for the map control overlay.
- */
 type MapControlsProps = {
-  /** Overlay position. */
   position?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
-  /** Additional NativeWind classes for the overlay. */
   className?: string;
-  /** Shows zoom-in and zoom-out actions. */
   showZoom?: boolean;
-  /** Shows a control that resets north and pitch. */
   showCompass?: boolean;
-  /** Shows a native permission-aware current-location action. */
   showLocate?: boolean;
-  /**
-   * Shows an action for the enclosing screen to enter fullscreen mode.
-   * Fullscreen belongs to the native screen rather than MapLibre itself.
-   */
   showFullscreen?: boolean;
-  /** Receives the current device coordinates after a successful location request. */
   onLocate?: (coordinates: { longitude: number; latitude: number }) => void;
-  /** Lets the parent screen implement a native fullscreen presentation. */
   onFullscreenRequest?: () => void;
 };
 
 const controlPositionClasses = {
-  "top-left": "top-3 left-3",
-  "top-right": "top-3 right-3",
-  "bottom-left": "bottom-3 left-3",
-  "bottom-right": "bottom-3 right-3",
+  "top-left": "top-2 left-2",
+  "top-right": "top-2 right-2",
+  "bottom-left": "bottom-2 left-2",
+  "bottom-right": "bottom-10 right-2",
 };
 
-/**
- * Native controls for zoom, orientation, current location, and screen
- * fullscreen presentation.
- */
+function ControlGroup({ children }: { children: ReactNode }) {
+  return (
+    <View className="border-border bg-background overflow-hidden rounded-md border shadow-sm">
+      {children}
+    </View>
+  );
+}
+
+function ControlButton({
+  children,
+  disabled = false,
+  label,
+  onPress,
+}: {
+  children: ReactNode;
+  disabled?: boolean;
+  label: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityLabel={label}
+      className="border-border size-8 items-center justify-center border-b opacity-100 last:border-b-0 disabled:opacity-50"
+      disabled={disabled}
+      onPress={onPress}
+    >
+      {children}
+    </Pressable>
+  );
+}
+
+function CompassButton({ onPress }: { onPress: () => void }) {
+  const { viewport } = useMap();
+
+  return (
+    <ControlButton
+      label="Reset bearing to north"
+      onPress={onPress}
+    >
+      <Svg
+        height={20}
+        style={{
+          transform: [
+            { perspective: 200 },
+            { rotateX: `${String(viewport.pitch)}deg` },
+            { rotateZ: `${String(-viewport.bearing)}deg` },
+          ],
+        }}
+        viewBox="0 0 24 24"
+        width={20}
+      >
+        <Path
+          d="M12 2L16 12H12V2Z"
+          fill="#ef4444"
+        />
+        <Path
+          d="M12 2L8 12H12V2Z"
+          fill="#fca5a5"
+        />
+        <Path
+          d="M12 22L16 12H12V22Z"
+          fill="rgba(115,115,115,0.6)"
+        />
+        <Path
+          d="M12 22L8 12H12V22Z"
+          fill="rgba(115,115,115,0.3)"
+        />
+      </Svg>
+    </ControlButton>
+  );
+}
+
 function MapControls({
   className,
   position = "bottom-right",
@@ -483,25 +925,25 @@ function MapControls({
 }: MapControlsProps) {
   const { camera, viewport } = useMap();
   const [isLocating, setIsLocating] = useState(false);
-  const zoomIn = useCallback(
-    () => camera?.zoomTo(viewport.zoom + 1, { duration: 200 }),
-    [camera, viewport.zoom],
-  );
-  const zoomOut = useCallback(
-    () => camera?.zoomTo(viewport.zoom - 1, { duration: 200 }),
-    [camera, viewport.zoom],
-  );
-  const resetNorth = useCallback(
-    () =>
-      camera?.easeTo({
-        center: viewport.center,
-        zoom: viewport.zoom,
-        bearing: 0,
-        pitch: 0,
-        duration: 200,
-      }),
-    [camera, viewport],
-  );
+
+  const zoomIn = useCallback(() => {
+    camera?.zoomTo(viewport.zoom + 1, { duration: 300 });
+  }, [camera, viewport.zoom]);
+
+  const zoomOut = useCallback(() => {
+    camera?.zoomTo(viewport.zoom - 1, { duration: 300 });
+  }, [camera, viewport.zoom]);
+
+  const resetNorth = useCallback(() => {
+    camera?.easeTo({
+      center: viewport.center,
+      zoom: viewport.zoom,
+      bearing: 0,
+      pitch: 0,
+      duration: 300,
+    });
+  }, [camera, viewport]);
+
   const locate = useCallback(() => {
     void (async () => {
       setIsLocating(true);
@@ -534,121 +976,76 @@ function MapControls({
   return (
     <View
       className={cn(
-        "bg-background border-border absolute overflow-hidden rounded-md border",
+        "absolute z-10 flex-col gap-1.5",
         controlPositionClasses[position],
         className,
       )}
+      pointerEvents="box-none"
     >
       {showZoom ? (
-        <ControlButton
-          label="Zoom in"
-          onPress={zoomIn}
-        >
-          <Plus size={16} />
-        </ControlButton>
-      ) : null}
-      {showZoom ? (
-        <ControlButton
-          label="Zoom out"
-          onPress={zoomOut}
-        >
-          <Minus size={16} />
-        </ControlButton>
+        <ControlGroup>
+          <ControlButton
+            label="Zoom in"
+            onPress={zoomIn}
+          >
+            <Plus size={16} />
+          </ControlButton>
+          <ControlButton
+            label="Zoom out"
+            onPress={zoomOut}
+          >
+            <Minus size={16} />
+          </ControlButton>
+        </ControlGroup>
       ) : null}
       {showCompass ? (
-        <ControlButton
-          label="Reset bearing"
-          onPress={resetNorth}
-        >
-          <Text
-            className="text-foreground"
-            style={{
-              transform: [{ rotate: `${String(-viewport.bearing)}deg` }],
-            }}
-          >
-            N
-          </Text>
-        </ControlButton>
+        <ControlGroup>
+          <CompassButton onPress={resetNorth} />
+        </ControlGroup>
       ) : null}
       {showLocate ? (
-        <ControlButton
-          disabled={isLocating}
-          label="Find my location"
-          onPress={locate}
-        >
-          {isLocating ? (
-            <ActivityIndicator size="small" />
-          ) : (
-            <Locate size={16} />
-          )}
-        </ControlButton>
+        <ControlGroup>
+          <ControlButton
+            disabled={isLocating}
+            label="Find my location"
+            onPress={locate}
+          >
+            {isLocating ? (
+              <ActivityIndicator size="small" />
+            ) : (
+              <Locate size={16} />
+            )}
+          </ControlButton>
+        </ControlGroup>
       ) : null}
       {showFullscreen && onFullscreenRequest ? (
-        <ControlButton
-          label="Toggle fullscreen"
-          onPress={onFullscreenRequest}
-        >
-          <Maximize size={16} />
-        </ControlButton>
+        <ControlGroup>
+          <ControlButton
+            label="Toggle fullscreen"
+            onPress={onFullscreenRequest}
+          >
+            <Maximize size={16} />
+          </ControlButton>
+        </ControlGroup>
       ) : null}
     </View>
   );
 }
 
-function ControlButton({
-  children,
-  disabled = false,
-  label,
-  onPress,
-}: {
-  children: ReactNode;
-  disabled?: boolean;
-  label: string;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      accessibilityLabel={label}
-      className="border-border items-center border-b p-2.5 opacity-100 last:border-b-0 disabled:opacity-50"
-      disabled={disabled}
-      onPress={onPress}
-    >
-      {children}
-    </Pressable>
-  );
-}
-
-/**
- * Props for a line route layer.
- */
 type MapRouteProps = {
-  /** Optional stable route identifier. */
   id?: string;
-  /** Ordered [longitude, latitude] route coordinates. */
   coordinates: [number, number][];
-  /** Route colour. */
   color?: string;
-  /** Route width in points. */
   width?: number;
-  /** Route opacity from 0 to 1. */
   opacity?: number;
-  /** Dash and gap lengths. */
   dashArray?: [number, number];
-  /** Additional MapLibre paint properties. */
   linePaint?: LineLayerSpecification["paint"];
-  /** Additional MapLibre layout properties. */
   lineLayout?: LineLayerSpecification["layout"];
-  /** Called when the route is tapped. */
   onClick?: () => void;
-  /** Enables route tap handling. */
   interactive?: boolean;
-  /** Places this route below the supplied layer id. */
   beforeId?: string;
 };
 
-/**
- * Declaratively renders a route and optional native tap interaction.
- */
 function MapRoute({
   id: propId,
   coordinates,
@@ -700,70 +1097,107 @@ function MapRoute({
   );
 }
 
-/**
- * A feature received from a native source tap.
- */
-type MapGeoJSONFeature = GeoJSON.Feature;
-/**
- * Payload for GeoJSON feature taps.
- */
-type MapGeoJSONEvent = {
-  /** The first rendered feature at the pressed location. */
-  feature: MapGeoJSONFeature;
-  /** Geographic location of the tap. */
+type MapGeoJSONData<
+  P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties,
+> =
+  | string
+  | GeoJSON.FeatureCollection<GeoJSON.Geometry, P>
+  | GeoJSON.Feature<GeoJSON.Geometry, P>
+  | GeoJSON.Geometry;
+
+type MapFillPaint = NonNullable<FillLayerSpecification["paint"]>;
+type MapLinePaint = NonNullable<LineLayerSpecification["paint"]>;
+
+type MapGeoJSONFeature<
+  P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties,
+> = GeoJSON.Feature<GeoJSON.Geometry, P>;
+
+type MapGeoJSONEvent<
+  P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties,
+> = {
+  feature: MapGeoJSONFeature<P>;
   longitude: number;
-  /** Geographic location of the tap. */
   latitude: number;
 };
-/**
- * Props for arbitrary GeoJSON fill and outline layers.
- */
+
 type MapGeoJSONProps<
   P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties,
 > = {
-  /** GeoJSON data or an HTTP(S)/file URL supported by MapLibre Native. */
-  data:
-    | string
-    | GeoJSON.FeatureCollection<GeoJSON.Geometry, P>
-    | GeoJSON.Feature<GeoJSON.Geometry, P>
-    | GeoJSON.Geometry;
-  /** Optional stable source and layer identifier prefix. */
+  data: MapGeoJSONData<P>;
   id?: string;
-  /** Fill paint, or false to omit the fill layer. */
-  fillPaint?: FillLayerSpecification["paint"] | false;
-  /** Outline paint, or false to omit the line layer. */
-  linePaint?: LineLayerSpecification["paint"] | false;
-  /** Called when a rendered feature is tapped. */
-  onClick?: (event: MapGeoJSONEvent) => void;
-  /** Enables native feature tap handling. */
+  /**
+   * Feature property used to match `selectedId` for press-driven selection
+   * styling. Native replacement for web hover feature-state.
+   */
+  promoteId?: string;
+  fillPaint?: MapFillPaint | false;
+  linePaint?: MapLinePaint | false;
+  /**
+   * Paint merged onto the selected feature. Requires `promoteId` and
+   * `selectedId`. Use with press selection instead of web hover paint.
+   */
+  selectedPaint?: MapFillPaint;
+  /** Currently selected feature id from press interaction. */
+  selectedId?: string | number | null;
+  onClick?: (event: MapGeoJSONEvent<P>) => void;
   interactive?: boolean;
-  /** Places GeoJSON layers below the supplied layer id. */
   beforeId?: string;
 };
 
-/**
- * Renders arbitrary GeoJSON as fill and outline layers. Native maps use taps
- * rather than browser pointer hover for feature interaction.
- */
+const GEOJSON_DEFAULT_COLORS = {
+  light: { fill: "#d4d4d4", line: "#ffffff" },
+  dark: { fill: "#404040", line: "#171717" },
+} satisfies Record<Theme, { fill: string; line: string }>;
+
 function MapGeoJSON<
   P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties,
 >({
   data,
   id: propId,
-  fillPaint = { "fill-color": "#3b82f6", "fill-opacity": 0.35 },
-  linePaint = { "line-color": "#2563eb", "line-width": 1 },
+  promoteId = "id",
+  fillPaint,
+  linePaint,
+  selectedPaint,
+  selectedId = null,
   onClick,
   interactive = false,
   beforeId,
 }: MapGeoJSONProps<P>) {
+  const { resolvedTheme } = useMap();
   const autoId = useId();
   const id = propId ?? autoId;
+  const defaults = GEOJSON_DEFAULT_COLORS[resolvedTheme];
+  const showFill = fillPaint !== false;
+  const showLine = linePaint !== false;
+
+  const mergedFillPaint = useMemo(
+    () =>
+      mergeSelectedPaint(
+        {
+          "fill-color": defaults.fill,
+          ...(fillPaint === false ? {} : (fillPaint ?? {})),
+        },
+        selectedPaint,
+        promoteId,
+        selectedId,
+      ),
+    [defaults.fill, fillPaint, promoteId, selectedId, selectedPaint],
+  );
+  const mergedLinePaint = useMemo(
+    () => ({
+      "line-color": defaults.line,
+      "line-width": 0.5,
+      ...(linePaint === false ? {} : (linePaint ?? {})),
+    }),
+    [defaults.line, linePaint],
+  );
+
   const handlePress = useCallback(
     (event: NativeSyntheticEvent<PressEventWithFeatures>) => {
       const feature = event.nativeEvent.features[0];
       if (!feature || !onClick) return;
       onClick({
-        feature,
+        feature: feature as MapGeoJSONFeature<P>,
         longitude: event.nativeEvent.lngLat[0],
         latitude: event.nativeEvent.lngLat[1],
       });
@@ -777,19 +1211,19 @@ function MapGeoJSON<
       id={`geojson-${id}`}
       onPress={interactive ? handlePress : undefined}
     >
-      {fillPaint ? (
+      {showFill ? (
         <Layer
           beforeId={beforeId}
           id={`geojson-fill-${id}`}
-          paint={fillPaint}
+          paint={mergedFillPaint}
           type="fill"
         />
       ) : null}
-      {linePaint ? (
+      {showLine ? (
         <Layer
           beforeId={beforeId}
           id={`geojson-line-${id}`}
-          paint={linePaint}
+          paint={mergedLinePaint}
           type="line"
         />
       ) : null}
@@ -797,141 +1231,58 @@ function MapGeoJSON<
   );
 }
 
-/**
- * A source/destination pair rendered by {@link MapArc}.
- */
 type MapArcDatum = {
-  /** Optional stable data identifier for native tap event lookup. */
-  id?: string | number;
-  /** Origin coordinate. */
+  id: string | number;
   from: [number, number];
-  /** Destination coordinate. */
   to: [number, number];
 };
-/**
- * Payload for an arc tap.
- */
+
 type MapArcEvent<T extends MapArcDatum = MapArcDatum> = {
-  /** Source data for the tapped arc. */
   arc: T;
-  /** Geographic location of the tap. */
   longitude: number;
-  /** Geographic location of the tap. */
   latitude: number;
 };
-/**
- * Props for a collection of curved line arcs.
- */
+
+type MapArcLinePaint = NonNullable<LineLayerSpecification["paint"]>;
+type MapArcLineLayout = NonNullable<LineLayerSpecification["layout"]>;
+
 type MapArcProps<T extends MapArcDatum = MapArcDatum> = {
-  /** Arc data. Each arc needs a unique id for tap events. */
   data: T[];
-  /** Optional stable source and layer identifier prefix. */
   id?: string;
-  /** Arc colour. */
   color?: string;
-  /** Arc width. */
   width?: number;
-  /** Arc opacity. */
   opacity?: number;
-  /** Curve displacement from the straight line. */
   curvature?: number;
-  /** Number of points used for each curve. */
   samples?: number;
-  /** Additional line paint properties. */
-  paint?: LineLayerSpecification["paint"];
-  /** Additional line layout properties. */
-  layout?: LineLayerSpecification["layout"];
-  /** Called when an arc is tapped. */
+  paint?: MapArcLinePaint;
+  layout?: MapArcLineLayout;
+  /**
+   * Paint for the selected arc. Pair with `selectedId` from press selection
+   * instead of web hover paint.
+   */
+  selectedPaint?: MapArcLinePaint;
+  selectedId?: string | number | null;
   onClick?: (event: MapArcEvent<T>) => void;
-  /** Enables native arc tap handling. */
   interactive?: boolean;
-  /** Places this arc layer below the supplied layer id. */
   beforeId?: string;
 };
 
-/**
- * Renders curved source-to-destination lines with native tap interactions.
- */
-function MapArc<T extends MapArcDatum = MapArcDatum>({
-  data,
-  id: propId,
-  color = "#3b82f6",
-  width = 2,
-  opacity = 0.8,
-  curvature = 0.2,
-  samples = 64,
-  paint,
-  layout,
-  onClick,
-  interactive = true,
-  beforeId,
-}: MapArcProps<T>) {
-  const autoId = useId();
-  const id = propId ?? autoId;
-  const geojson = useMemo<GeoJSON.FeatureCollection<GeoJSON.LineString>>(
-    () => ({
-      type: "FeatureCollection",
-      features: data.map((arc, index) => {
-        const { from, id: arcId, to } = arc;
-        return {
-          type: "Feature",
-          properties: { id: arcId ?? index },
-          geometry: {
-            type: "LineString",
-            coordinates: buildArcCoordinates(from, to, curvature, samples),
-          },
-        };
-      }),
-    }),
-    [curvature, data, samples],
-  );
-  const handlePress = useCallback(
-    (event: NativeSyntheticEvent<PressEventWithFeatures>) => {
-      const feature = event.nativeEvent.features[0];
-      const featureId: unknown = feature?.properties?.id;
-      if (
-        !onClick ||
-        (typeof featureId !== "string" && typeof featureId !== "number")
-      ) {
-        return;
-      }
-      const arc = data.find((item, index) => (item.id ?? index) === featureId);
-      if (!arc) return;
-      onClick({
-        arc,
-        longitude: event.nativeEvent.lngLat[0],
-        latitude: event.nativeEvent.lngLat[1],
-      });
-    },
-    [data, onClick],
-  );
+const DEFAULT_ARC_CURVATURE = 0.2;
+const DEFAULT_ARC_SAMPLES = 64;
+const ARC_HIT_MIN_WIDTH = 12;
+const ARC_HIT_PADDING = 6;
 
-  return (
-    <GeoJSONSource
-      data={geojson}
-      id={`arc-${id}`}
-      onPress={interactive ? handlePress : undefined}
-    >
-      <Layer
-        beforeId={beforeId}
-        id={`arc-line-${id}`}
-        layout={{ "line-cap": "round", "line-join": "round", ...layout }}
-        paint={{
-          "line-color": color,
-          "line-width": width,
-          "line-opacity": opacity,
-          ...paint,
-        }}
-        type="line"
-      />
-    </GeoJSONSource>
-  );
-}
+const DEFAULT_ARC_PAINT: MapArcLinePaint = {
+  "line-color": "#4285F4",
+  "line-width": 2,
+  "line-opacity": 0.85,
+};
 
-/**
- * Builds a quadratic Bézier arc which takes the shorter route across the
- * antimeridian.
- */
+const DEFAULT_ARC_LAYOUT: MapArcLineLayout = {
+  "line-join": "round",
+  "line-cap": "round",
+};
+
 function buildArcCoordinates(
   from: [number, number],
   to: [number, number],
@@ -977,38 +1328,143 @@ function buildArcCoordinates(
   });
 }
 
+function MapArc<T extends MapArcDatum = MapArcDatum>({
+  data,
+  id: propId,
+  color,
+  width,
+  opacity,
+  curvature = DEFAULT_ARC_CURVATURE,
+  samples = DEFAULT_ARC_SAMPLES,
+  paint,
+  layout,
+  selectedPaint,
+  selectedId = null,
+  onClick,
+  interactive = true,
+  beforeId,
+}: MapArcProps<T>) {
+  const autoId = useId();
+  const id = propId ?? autoId;
+
+  const shortcutPaint = useMemo(
+    () => ({
+      ...(color !== undefined ? { "line-color": color } : {}),
+      ...(width !== undefined ? { "line-width": width } : {}),
+      ...(opacity !== undefined ? { "line-opacity": opacity } : {}),
+    }),
+    [color, opacity, width],
+  );
+
+  const mergedPaint = useMemo(
+    () =>
+      mergeSelectedPaint(
+        { ...DEFAULT_ARC_PAINT, ...shortcutPaint, ...paint },
+        selectedPaint,
+        "id",
+        selectedId,
+      ),
+    [paint, selectedId, selectedPaint, shortcutPaint],
+  );
+  const mergedLayout = useMemo(
+    () => ({ ...DEFAULT_ARC_LAYOUT, ...layout }),
+    [layout],
+  );
+
+  const hitWidth = useMemo(() => {
+    const lineWidth =
+      paint?.["line-width"] ?? width ?? DEFAULT_ARC_PAINT["line-width"];
+    const base = typeof lineWidth === "number" ? lineWidth : ARC_HIT_MIN_WIDTH;
+    return Math.max(base + ARC_HIT_PADDING, ARC_HIT_MIN_WIDTH);
+  }, [paint, width]);
+
+  const geojson = useMemo<GeoJSON.FeatureCollection<GeoJSON.LineString>>(
+    () => ({
+      type: "FeatureCollection",
+      features: data.map((arc) => {
+        const { from, to, ...properties } = arc;
+        return {
+          type: "Feature",
+          properties,
+          geometry: {
+            type: "LineString",
+            coordinates: buildArcCoordinates(from, to, curvature, samples),
+          },
+        };
+      }),
+    }),
+    [curvature, data, samples],
+  );
+
+  const handlePress = useCallback(
+    (event: NativeSyntheticEvent<PressEventWithFeatures>) => {
+      const feature = event.nativeEvent.features[0];
+      const featureId: unknown = feature?.properties?.id;
+      if (
+        !onClick ||
+        (typeof featureId !== "string" && typeof featureId !== "number")
+      ) {
+        return;
+      }
+      const arc = data.find((item) => String(item.id) === String(featureId));
+      if (!arc) return;
+      onClick({
+        arc,
+        longitude: event.nativeEvent.lngLat[0],
+        latitude: event.nativeEvent.lngLat[1],
+      });
+    },
+    [data, onClick],
+  );
+
+  return (
+    <GeoJSONSource
+      data={geojson}
+      id={`arc-${id}`}
+      onPress={interactive ? handlePress : undefined}
+    >
+      <Layer
+        beforeId={beforeId}
+        id={`arc-hit-${id}`}
+        layout={DEFAULT_ARC_LAYOUT}
+        paint={{
+          "line-color": "rgba(0, 0, 0, 0)",
+          "line-width": hitWidth,
+          "line-opacity": 1,
+        }}
+        type="line"
+      />
+      <Layer
+        beforeId={beforeId}
+        id={`arc-line-${id}`}
+        layout={mergedLayout}
+        paint={mergedPaint}
+        type="line"
+      />
+    </GeoJSONSource>
+  );
+}
+
 function isPointFeature(
   feature: GeoJSON.Feature,
 ): feature is GeoJSON.Feature<GeoJSON.Point> {
   return feature.geometry.type === "Point";
 }
 
-/**
- * Props for an automatically clustered point source.
- */
 type MapClusterLayerProps<
   P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties,
 > = {
-  /** Point data or a supported GeoJSON URL. */
   data: string | GeoJSON.FeatureCollection<GeoJSON.Point, P>;
-  /** Optional stable source and layer identifier prefix. */
   id?: string;
-  /** Maximum zoom at which nearby points form clusters. */
   clusterRadius?: number;
-  /** Cluster radius in pixels. */
   clusterMaxZoom?: number;
-  /** Colours for small, medium, and large clusters. */
   clusterColors?: [string, string, string];
-  /** Point counts at which cluster size and colour increase. */
   clusterThresholds?: [number, number];
-  /** Colour for individual unclustered points. */
   pointColor?: string;
-  /** Called when an individual point is tapped. */
   onPointClick?: (
-    feature: GeoJSON.Feature<GeoJSON.Point>,
+    feature: GeoJSON.Feature<GeoJSON.Point, P>,
     coordinates: [number, number],
   ) => void;
-  /** Called when a cluster is tapped instead of expanding it. */
   onClusterClick?: (
     clusterId: number,
     coordinates: [number, number],
@@ -1023,10 +1479,6 @@ const DEFAULT_CLUSTER_COLORS: [string, string, string] = [
 ];
 const DEFAULT_CLUSTER_THRESHOLDS: [number, number] = [100, 750];
 
-/**
- * Renders clusters, point counts, and individual points. Tapping a cluster
- * expands it by default; provide `onClusterClick` to take control.
- */
 function MapClusterLayer<
   P extends GeoJSON.GeoJsonProperties = GeoJSON.GeoJsonProperties,
 >({
@@ -1044,6 +1496,7 @@ function MapClusterLayer<
   const autoId = useId();
   const id = propId ?? autoId;
   const sourceRef = useRef<GeoJSONSourceRef>(null);
+
   const handleClusterPress = useCallback(
     async (event: NativeSyntheticEvent<PressEventWithFeatures>) => {
       const feature = event.nativeEvent.features[0];
@@ -1071,10 +1524,14 @@ function MapClusterLayer<
       }
 
       if (!isPointFeature(feature) || !onPointClick) return;
-      onPointClick(feature, [longitude, latitude]);
+      onPointClick(feature as GeoJSON.Feature<GeoJSON.Point, P>, [
+        longitude,
+        latitude,
+      ]);
     },
     [camera, onClusterClick, onPointClick],
   );
+
   const handlePress = useCallback(
     (event: NativeSyntheticEvent<PressEventWithFeatures>) => {
       void handleClusterPress(event);
@@ -1108,12 +1565,15 @@ function MapClusterLayer<
           "circle-radius": [
             "step",
             ["get", "point_count"],
-            18,
+            20,
             clusterThresholds[0],
-            24,
-            clusterThresholds[1],
             30,
+            clusterThresholds[1],
+            40,
           ],
+          "circle-stroke-width": 0.75,
+          "circle-stroke-color": "#fff",
+          "circle-opacity": 0.85,
         }}
         type="circle"
       />
@@ -1130,7 +1590,12 @@ function MapClusterLayer<
       <Layer
         filter={["!", ["has", "point_count"]]}
         id={`clusters-point-${id}`}
-        paint={{ "circle-color": pointColor, "circle-radius": 6 }}
+        paint={{
+          "circle-color": pointColor,
+          "circle-radius": 5,
+          "circle-stroke-width": 2,
+          "circle-stroke-color": "#fff",
+        }}
         type="circle"
       />
     </GeoJSONSource>
@@ -1159,6 +1624,7 @@ export type {
   MapArcProps,
   MapClusterLayerProps,
   MapControlsProps,
+  MapGeoJSONData,
   MapGeoJSONEvent,
   MapGeoJSONFeature,
   MapGeoJSONProps,

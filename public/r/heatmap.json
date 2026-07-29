@@ -5,7 +5,7 @@
   "description": "Globe-projected heatmap visualizing earthquake density with zoom-dependent styling.",
   "dependencies": [],
   "registryDependencies": [
-    "@mapcn/map"
+    "unkn0wndfbx/mapcn-react-native/map"
   ],
   "files": [
     {

@@ -1,11 +1,12 @@
 import { Zap } from "lucide-react-native";
+import { useState } from "react";
 import { View } from "react-native";
 
 import { ExampleCard } from "@/atoms/ExampleCard";
 import { ExampleMap } from "@/atoms/ExampleMap";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { MapMarker, MarkerContent, MarkerTooltip } from "@/registry/map";
+import { MapMarker, MarkerContent, MarkerPopup } from "@/registry/map";
 
 type Status = "available" | "in-use" | "offline";
 
@@ -119,6 +120,8 @@ const statusConfig: Record<
 };
 
 export function EVChargingExample() {
+  const [selectedStation, setSelectedStation] = useState<string | null>(null);
+
   return (
     <ExampleCard className="aspect-square min-h-[280px]">
       <ExampleMap
@@ -131,11 +134,18 @@ export function EVChargingExample() {
       >
         {stations.map((station) => {
           const config = statusConfig[station.status];
+          const isSelected = selectedStation === station.name;
+
           return (
             <MapMarker
               key={station.name}
               longitude={station.lng}
               latitude={station.lat}
+              onClick={() => {
+                setSelectedStation((current) =>
+                  current === station.name ? null : station.name,
+                );
+              }}
             >
               <MarkerContent>
                 <View className={`${config.bg} rounded-full p-1.5 shadow-lg`}>
@@ -144,22 +154,34 @@ export function EVChargingExample() {
                     className="size-3 fill-white text-white"
                   />
                 </View>
-                <MarkerTooltip className="bg-popover text-popover-foreground border px-2.5 py-1.5">
-                  <View className="gap-1">
-                    <Text className="text-xs font-medium">{station.name}</Text>
-                    <View className="flex-row items-center gap-1">
-                      <View className={`size-1.5 rounded-full ${config.bg}`} />
-                      <Text className={`text-xs ${config.textClass}`}>
-                        {config.label}
+                {isSelected ? (
+                  <MarkerPopup
+                    className="bg-popover text-popover-foreground min-w-28 border px-2.5 py-1.5"
+                    closeButton
+                    onClose={() => {
+                      setSelectedStation(null);
+                    }}
+                  >
+                    <View className="gap-1 pr-3">
+                      <Text className="text-xs font-medium">
+                        {station.name}
                       </Text>
+                      <View className="flex-row items-center gap-1">
+                        <View
+                          className={`size-1.5 rounded-full ${config.bg}`}
+                        />
+                        <Text className={`text-xs ${config.textClass}`}>
+                          {config.label}
+                        </Text>
+                      </View>
+                      {station.detail ? (
+                        <Text className="text-muted-foreground text-[11px]">
+                          {station.detail}
+                        </Text>
+                      ) : null}
                     </View>
-                    {station.detail ? (
-                      <Text className="text-muted-foreground text-[11px]">
-                        {station.detail}
-                      </Text>
-                    ) : null}
-                  </View>
-                </MarkerTooltip>
+                  </MarkerPopup>
+                ) : null}
               </MarkerContent>
             </MapMarker>
           );

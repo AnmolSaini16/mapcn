@@ -1,11 +1,12 @@
 import { TrendingUp } from "lucide-react-native";
+import { useState } from "react";
 import { View } from "react-native";
 
 import { ExampleCard } from "@/atoms/ExampleCard";
 import { ExampleMap } from "@/atoms/ExampleMap";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { MapMarker, MarkerContent, MarkerTooltip } from "@/registry/map";
+import { MapMarker, MarkerContent, MarkerPopup } from "@/registry/map";
 
 const analyticsData = [
   { lng: -74.006, lat: 40.7128, city: "New York", users: 847, size: 14 },
@@ -23,6 +24,8 @@ const analyticsData = [
 ];
 
 export function AnalyticsExample() {
+  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+
   return (
     <ExampleCard className="aspect-square min-h-[280px]">
       <View className="bg-background/95 border-border/50 absolute top-3 left-3 z-10 rounded-lg border p-3 shadow-lg">
@@ -53,20 +56,33 @@ export function AnalyticsExample() {
             key={loc.city}
             longitude={loc.lng}
             latitude={loc.lat}
+            onClick={() => {
+              setSelectedCity((current) =>
+                current === loc.city ? null : loc.city,
+              );
+            }}
           >
             <MarkerContent>
               <View
                 className="rounded-full bg-blue-500/80 shadow-sm"
                 style={{ width: loc.size * 1.8, height: loc.size * 1.8 }}
               />
-              <MarkerTooltip>
-                <View className="items-center">
-                  <Text className="font-medium">{loc.city}</Text>
-                  <Text className="text-muted-foreground text-xs">
-                    {loc.users} users
-                  </Text>
-                </View>
-              </MarkerTooltip>
+              {selectedCity === loc.city ? (
+                <MarkerPopup
+                  className="min-w-24"
+                  closeButton
+                  onClose={() => {
+                    setSelectedCity(null);
+                  }}
+                >
+                  <View className="items-center gap-0.5 pr-3">
+                    <Text className="text-sm font-medium">{loc.city}</Text>
+                    <Text className="text-muted-foreground text-xs">
+                      {loc.users} users
+                    </Text>
+                  </View>
+                </MarkerPopup>
+              ) : null}
             </MarkerContent>
           </MapMarker>
         ))}

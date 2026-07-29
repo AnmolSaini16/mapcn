@@ -43,7 +43,7 @@ export default function RootLayout() {
       <ThemeProvider value={NAV_THEME[colorScheme]}>
         <View
           className={cn(
-            "flex-1 bg-background",
+            "flex-1 bg-background will-change-variable",
             colorScheme === "dark" && "dark",
           )}
         >
@@ -51,7 +51,10 @@ export default function RootLayout() {
           <Header />
           <View className="flex-1">
             <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" />
+              <Stack.Screen
+                name="index"
+                options={{ gestureEnabled: false }}
+              />
             </Stack>
           </View>
           <PortalHost />

@@ -42,10 +42,46 @@ npm run ios
 npm run android
 ```
 
-Build the distributable registry:
+## Install into your project
+
+Requires an Expo / React Native project with NativeWind and [React Native Reusables](https://reactnativereusables.com) set up.
 
 ```bash
-npm run registry:build
+npx shadcn@latest add unkn0wndfbx/mapcn-react-native/map
+```
+
+Or with the Reusables CLI:
+
+```bash
+npx @react-native-reusables/cli@latest add unkn0wndfbx/mapcn-react-native/map
+```
+
+Then import from `@/components/ui/map`:
+
+```tsx
+import { Map, MapControls } from "@/components/ui/map";
+
+export function MyMap() {
+  return (
+    <View className="h-[320px] overflow-hidden rounded-lg">
+      <Map center={[-74.006, 40.7128]} zoom={11}>
+        <MapControls />
+      </Map>
+    </View>
+  );
+}
+```
+
+Blocks install the same way, for example:
+
+```bash
+npx shadcn@latest add unkn0wndfbx/mapcn-react-native/delivery-tracker
+```
+
+Build the distributable registry (docs site):
+
+```bash
+bun run registry:build
 ```
 
 ## Project structure
