@@ -1,5 +1,5 @@
 {
-  "name": "mobile",
+  "name": "mapcn-react-native",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "private": true,
@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@expo-google-fonts/geist": "^0.4.2",
+    "@expo/metro-runtime": "~57.0.8",
     "@expo/ui": "~57.0.7",
     "@maplibre/maplibre-react-native": "^11.3.6",
     "@react-navigation/native": "^7.3.14",
@@ -57,8 +58,8 @@
     "react-native-reanimated": "4.5.0",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
-    "react-native-svg": "^15.15.4",
-    "react-native-web": "~0.21.0",
+    "react-native-svg": "^15.15.5",
+    "react-native-web": "^0.21.2",
     "react-native-worklets": "0.10.0",
     "recharts": "^2.15.4",
     "shiki": "^3.20.0",

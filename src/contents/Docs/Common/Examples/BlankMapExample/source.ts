@@ -1,0 +1,22 @@
+export const blankMapExampleSource = `import { View } from "react-native";
+
+import { WORLD_GEOJSON } from "@/lib/use-world-data";
+import { Map, MapGeoJSON } from "@/components/ui/map";
+
+export function BlankMapExample() {
+  return (
+    <View className="h-[420px] w-full">
+      <Map
+        blank
+        viewport={{
+          center: [10, 25],
+          zoom: 1,
+        }}
+        style={{ flex: 1 }}
+      >
+        <MapGeoJSON data={WORLD_GEOJSON} />
+      </Map>
+    </View>
+  );
+}
+`;

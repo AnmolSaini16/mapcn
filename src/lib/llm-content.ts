@@ -57,7 +57,6 @@ function formatFiles(files: RegistryFile[] | undefined) {
     .join("\n");
 }
 
-/* TODO: update this to use the new mapcn react native API */
 function createBasemapMarkdown() {
   return `## Basemap Selection
 
@@ -120,14 +119,15 @@ Then import from ${code("@/components/ui/map")}:
 
 \`\`\`tsx
 import { Map, MapControls } from "@/components/ui/map";
+import { View } from "react-native";
 
 export function MyMap() {
   return (
-    <div className="h-[320px] overflow-hidden rounded-lg">
-      <Map center={[-74.006, 40.7128]} zoom={11}>
+    <View className="h-[320px] overflow-hidden rounded-lg">
+      <Map viewport={{ center: [-74.006, 40.7128], zoom: 11 }}>
         <MapControls />
       </Map>
-    </div>
+    </View>
   );
 }
 \`\`\`

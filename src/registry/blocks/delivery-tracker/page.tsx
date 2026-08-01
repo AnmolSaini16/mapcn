@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Clock3,
   House,
@@ -8,8 +6,8 @@ import {
   UserRound,
   Utensils,
 } from "lucide-react-native";
-import { useTheme } from "next-themes";
 import { useEffect, useMemo, useState } from "react";
+import { useColorScheme, View } from "react-native";
 
 import {
   buildRouteUrl,
@@ -25,6 +23,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
+import { Text } from "@/components/ui/text";
 import { Map, MapMarker, MapRoute, MarkerContent } from "@/registry/map";
 
 function formatDistance(meters?: number) {
@@ -45,9 +45,9 @@ function formatDuration(seconds?: number) {
 export default function Page() {
   const [routeData, setRouteData] = useState<OsrmRouteData | null>(null);
   const [loading, setLoading] = useState(true);
-  const { resolvedTheme } = useTheme();
+  const colorScheme = useColorScheme();
   const remainingRouteColor =
-    resolvedTheme === "dark"
+    colorScheme === "dark"
       ? routeStyle.remaining.color.dark
       : routeStyle.remaining.color.light;
 
@@ -72,7 +72,7 @@ export default function Page() {
       }
     }
 
-    fetchRoute();
+    void fetchRoute();
   }, []);
 
   const progressCoordinates = useMemo(() => {
@@ -84,15 +84,17 @@ export default function Page() {
   const courierPosition = progressCoordinates[progressCoordinates.length - 1];
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-8">
-      <div className="bg-sidebar mx-auto grid w-[1200px] rounded-xl border md:grid-cols-[1.05fr_1fr]">
-        <div className="flex flex-col p-5 md:p-6">
-          <div className="space-y-1">
-            <h3 className="text-2xl font-semibold tracking-tight">
+    <View className="min-h-screen flex-1 items-center justify-center p-8">
+      <View className="bg-sidebar w-full max-w-5xl flex-row overflow-hidden rounded-xl border">
+        <View className="flex-1 flex-col p-5 md:p-6">
+          <View className="gap-1">
+            <Text className="text-2xl font-semibold tracking-tight">
               Track Delivery
-            </h3>
-            <p className="text-muted-foreground text-sm">Mon Feb 10 - 2-3 PM</p>
-          </div>
+            </Text>
+            <Text className="text-muted-foreground text-sm">
+              Mon Feb 10 - 2-3 PM
+            </Text>
+          </View>
 
           <Card className="mt-5">
             <CardHeader>
@@ -100,83 +102,102 @@ export default function Page() {
                 Order items ({deliveryMeals.length})
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-5">
+            <CardContent className="gap-5">
               {deliveryMeals.map((meal) => (
-                <div
+                <View
                   key={meal.name}
-                  className="flex items-center gap-3"
+                  className="flex-row items-center gap-3"
                 >
-                  <div className="bg-muted grid size-8 place-items-center rounded-full text-xs">
-                    <Utensils className="text-muted-foreground size-4" />
-                  </div>
-                  <div className="min-w-4 flex-1">
-                    <p className="truncate pb-1 text-sm font-medium">
+                  <View className="bg-muted size-8 items-center justify-center rounded-full">
+                    <Icon
+                      as={Utensils}
+                      size={16}
+                      className="text-muted-foreground"
+                    />
+                  </View>
+                  <View className="min-w-0 flex-1">
+                    <Text
+                      className="pb-1 text-sm font-medium"
+                      numberOfLines={1}
+                    >
                       {meal.name}
-                    </p>
-                    <p className="text-muted-foreground text-xs">
+                    </Text>
+                    <Text className="text-muted-foreground text-xs">
                       {meal.price}
-                    </p>
-                  </div>
+                    </Text>
+                  </View>
                   <Badge
                     variant="secondary"
                     className="h-6 rounded-full px-2.5"
                   >
-                    x{meal.quantity}
+                    <Text className="text-xs">x{meal.quantity}</Text>
                   </Badge>
-                </div>
+                </View>
               ))}
-              <div className="border-border/60 flex items-center justify-between border-t pt-3 text-sm">
-                <span className="text-muted-foreground">Bundle total</span>
-                <span className="font-medium">$189.00</span>
-              </div>
+              <View className="border-border/60 flex-row items-center justify-between border-t pt-3">
+                <Text className="text-muted-foreground text-sm">
+                  Bundle total
+                </Text>
+                <Text className="text-sm font-medium">$189.00</Text>
+              </View>
             </CardContent>
           </Card>
 
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <Card>
-              <CardContent className="space-y-2">
-                <p className="text-muted-foreground text-sm">
+          <View className="mt-4 flex-row gap-3">
+            <Card className="flex-1">
+              <CardContent className="gap-2">
+                <Text className="text-muted-foreground text-sm">
                   Pickup confirmed
-                </p>
-                <p className="text-sm font-medium">Mon, Feb 10 at 1:48 PM</p>
+                </Text>
+                <Text className="text-sm font-medium">
+                  Mon, Feb 10 at 1:48 PM
+                </Text>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="space-y-2">
-                <p className="text-muted-foreground text-sm">
+            <Card className="flex-1">
+              <CardContent className="gap-2">
+                <Text className="text-muted-foreground text-sm">
                   Remaining travel
-                </p>
-                <p className="text-sm font-medium">
+                </Text>
+                <Text className="text-sm font-medium">
                   {formatDuration(routeData?.duration)}
-                  <span className="text-muted-foreground font-normal">
+                  <Text className="text-muted-foreground font-normal">
                     {" · "}
                     {formatDistance(routeData?.distance)}
-                  </span>
-                </p>
+                  </Text>
+                </Text>
               </CardContent>
             </Card>
-          </div>
+          </View>
 
-          <div className="mt-6 flex flex-wrap items-center gap-2">
+          <View className="mt-6 flex-row flex-wrap items-center gap-2">
             <Button size="sm">
-              <Clock3 />
-              View timeline
+              <Icon
+                as={Clock3}
+                size={16}
+              />
+              <Text>View timeline</Text>
             </Button>
             <Button
               variant="outline"
               size="sm"
             >
-              <UserRound />
-              Contact courier
+              <Icon
+                as={UserRound}
+                size={16}
+              />
+              <Text>Contact courier</Text>
             </Button>
-          </div>
-        </div>
+          </View>
+        </View>
 
-        <div className="relative h-[450px] overflow-hidden rounded-xl shadow-sm md:h-full">
+        <View className="relative h-[450px] min-w-0 flex-1 overflow-hidden rounded-xl shadow-sm">
           <Map
             loading={loading}
-            center={mapView.center}
-            zoom={mapView.zoom}
+            viewport={{
+              center: mapView.center,
+              zoom: mapView.zoom,
+            }}
             minZoom={mapView.minZoom}
             maxZoom={mapView.maxZoom}
           >
@@ -197,35 +218,44 @@ export default function Page() {
               interactive={false}
             />
 
-            {courierPosition && (
+            {courierPosition ? (
               <MapMarker
                 longitude={courierPosition[0]}
                 latitude={courierPosition[1]}
                 offset={[0, 10]}
               >
                 <MarkerContent>
-                  <div
-                    className="relative grid size-9 place-items-center rounded-full shadow-md"
+                  <View
+                    className="relative size-9 items-center justify-center rounded-full shadow-md"
                     style={{ backgroundColor: routeStyle.progress.color }}
                   >
-                    <Truck className="size-4 text-white" />
-                    <div className="bg-popover text-popover-foreground absolute bottom-full left-1/2 mb-2.5 -translate-x-1/2 rounded-md border px-2 py-1 text-xs font-medium whitespace-nowrap shadow-md">
-                      {formatDuration(routeData?.duration)} away
-                      <span className="bg-popover absolute top-full left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rotate-45 border-r border-b" />
-                    </div>
-                  </div>
+                    <Icon
+                      as={Truck}
+                      size={16}
+                      className="text-white"
+                    />
+                    <View className="bg-popover border-border absolute bottom-full mb-2.5 rounded-md border px-2 py-1 shadow-md">
+                      <Text className="text-popover-foreground text-xs font-medium">
+                        {formatDuration(routeData?.duration)} away
+                      </Text>
+                    </View>
+                  </View>
                 </MarkerContent>
               </MapMarker>
-            )}
+            ) : null}
 
             <MapMarker
               longitude={pickup.lng}
               latitude={pickup.lat}
             >
               <MarkerContent>
-                <div className="grid size-7 place-items-center rounded-full bg-emerald-500 shadow-md">
-                  <Store className="size-3.5 text-white" />
-                </div>
+                <View className="size-7 items-center justify-center rounded-full bg-emerald-500 shadow-md">
+                  <Icon
+                    as={Store}
+                    size={14}
+                    className="text-white"
+                  />
+                </View>
               </MarkerContent>
             </MapMarker>
 
@@ -234,14 +264,18 @@ export default function Page() {
               latitude={dropoff.lat}
             >
               <MarkerContent>
-                <div className="grid size-7 place-items-center rounded-full bg-rose-500 shadow-md">
-                  <House className="size-3.5 text-white" />
-                </div>
+                <View className="size-7 items-center justify-center rounded-full bg-rose-500 shadow-md">
+                  <Icon
+                    as={House}
+                    size={14}
+                    className="text-white"
+                  />
+                </View>
               </MarkerContent>
             </MapMarker>
           </Map>
-        </div>
-      </div>
-    </div>
+        </View>
+      </View>
+    </View>
   );
 }

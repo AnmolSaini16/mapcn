@@ -1,23 +1,10 @@
-"use client";
-
 import { Network, Plane, Truck } from "lucide-react-native";
+import { ScrollView, View } from "react-native";
 
 import { regionLabels, statusConfig, type Hub, type Route } from "../data";
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuBadge,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarSeparator,
-} from "@/components/ui/sidebar";
+import { Icon } from "@/components/ui/icon";
+import { Text } from "@/components/ui/text";
 
 const regionIcons: Record<Hub["region"], string> = {
   west: "W",
@@ -39,155 +26,167 @@ export function FilterSidebar({ hubs, routes }: FilterSidebarProps) {
   const groundRouteCount = routes.filter((r) => r.mode === "ground").length;
 
   return (
-    <Sidebar collapsible="offcanvas">
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-2">
-          <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-            <Network className="size-4" />
-          </div>
-          <div className="flex flex-col gap-0.5 leading-none">
-            <span className="text-sm font-medium">Logistics Network</span>
-            <span className="text-muted-foreground text-xs">
+    <View className="bg-sidebar border-sidebar-border w-72 shrink-0 border-r">
+      <View className="p-4">
+        <View className="flex-row items-center gap-2">
+          <View className="bg-sidebar-primary size-8 items-center justify-center rounded-lg">
+            <Icon
+              as={Network}
+              size={16}
+              className="text-sidebar-primary-foreground"
+            />
+          </View>
+          <View className="gap-0.5">
+            <Text className="text-sm font-medium">Logistics Network</Text>
+            <Text className="text-muted-foreground text-xs">
               Domestic Routes
-            </span>
-          </div>
-        </div>
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          <div className="bg-background rounded-md border px-2.5 py-2 text-center">
-            <p className="text-lg leading-none font-bold tabular-nums">
+            </Text>
+          </View>
+        </View>
+        <View className="mt-3 flex-row gap-2">
+          <View className="bg-background flex-1 items-center rounded-md border px-2.5 py-2">
+            <Text className="text-lg leading-none font-bold tabular-nums">
               {hubs.length}
-            </p>
-            <p className="text-muted-foreground mt-1 text-[10px]">Hubs</p>
-          </div>
-          <div className="bg-background rounded-md border px-2.5 py-2 text-center">
-            <p className="text-lg leading-none font-bold tabular-nums">
+            </Text>
+            <Text className="text-muted-foreground mt-1 text-[10px]">Hubs</Text>
+          </View>
+          <View className="bg-background flex-1 items-center rounded-md border px-2.5 py-2">
+            <Text className="text-lg leading-none font-bold tabular-nums">
               {activeCount}
-            </p>
-            <p className="text-muted-foreground mt-1 text-[10px]">Active</p>
-          </div>
-          <div className="bg-background rounded-md border px-2.5 py-2 text-center">
-            <p className="text-lg leading-none font-bold tabular-nums">
+            </Text>
+            <Text className="text-muted-foreground mt-1 text-[10px]">
+              Active
+            </Text>
+          </View>
+          <View className="bg-background flex-1 items-center rounded-md border px-2.5 py-2">
+            <Text className="text-lg leading-none font-bold tabular-nums">
               {delayedCount}
-            </p>
-            <p className="text-muted-foreground mt-1 text-[10px]">Delayed</p>
-          </div>
-        </div>
-      </SidebarHeader>
+            </Text>
+            <Text className="text-muted-foreground mt-1 text-[10px]">
+              Delayed
+            </Text>
+          </View>
+        </View>
+      </View>
 
-      <SidebarSeparator className="mx-0" />
+      <View className="bg-sidebar-border h-px" />
 
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Transport Mode</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  tooltip="Air"
-                  className="pointer-events-none"
-                >
-                  <Plane className="size-4" />
-                  <span>Air Freight</span>
-                </SidebarMenuButton>
-                <SidebarMenuBadge>{airRouteCount}</SidebarMenuBadge>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  tooltip="Ground"
-                  className="pointer-events-none"
-                >
-                  <Truck className="size-4" />
-                  <span>Ground</span>
-                </SidebarMenuButton>
-                <SidebarMenuBadge>{groundRouteCount}</SidebarMenuBadge>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+      <ScrollView className="flex-1">
+        <View className="gap-4 p-4">
+          <View className="gap-2">
+            <Text className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+              Transport Mode
+            </Text>
+            <View className="flex-row items-center justify-between py-1.5">
+              <View className="flex-row items-center gap-2">
+                <Icon
+                  as={Plane}
+                  size={16}
+                />
+                <Text className="text-sm">Air Freight</Text>
+              </View>
+              <Text className="text-muted-foreground text-xs tabular-nums">
+                {airRouteCount}
+              </Text>
+            </View>
+            <View className="flex-row items-center justify-between py-1.5">
+              <View className="flex-row items-center gap-2">
+                <Icon
+                  as={Truck}
+                  size={16}
+                />
+                <Text className="text-sm">Ground</Text>
+              </View>
+              <Text className="text-muted-foreground text-xs tabular-nums">
+                {groundRouteCount}
+              </Text>
+            </View>
+          </View>
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Status</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  tooltip={statusConfig.active.label}
-                  className="pointer-events-none"
-                >
-                  <span className="flex size-4 items-center justify-center">
-                    <span
-                      className="size-2 rounded-full"
-                      style={{ backgroundColor: statusConfig.active.color }}
-                    />
-                  </span>
-                  <span>{statusConfig.active.label}</span>
-                </SidebarMenuButton>
-                <SidebarMenuBadge>{activeCount}</SidebarMenuBadge>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  tooltip={statusConfig.delayed.label}
-                  className="pointer-events-none"
-                >
-                  <span className="flex size-4 items-center justify-center">
-                    <span
-                      className="size-2 rounded-full"
-                      style={{ backgroundColor: statusConfig.delayed.color }}
-                    />
-                  </span>
-                  <span>{statusConfig.delayed.label}</span>
-                </SidebarMenuButton>
-                <SidebarMenuBadge>{delayedCount}</SidebarMenuBadge>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+          <View className="gap-2">
+            <Text className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+              Status
+            </Text>
+            <View className="flex-row items-center justify-between py-1.5">
+              <View className="flex-row items-center gap-2">
+                <View className="size-4 items-center justify-center">
+                  <View
+                    className="size-2 rounded-full"
+                    style={{ backgroundColor: statusConfig.active.color }}
+                  />
+                </View>
+                <Text className="text-sm">{statusConfig.active.label}</Text>
+              </View>
+              <Text className="text-muted-foreground text-xs tabular-nums">
+                {activeCount}
+              </Text>
+            </View>
+            <View className="flex-row items-center justify-between py-1.5">
+              <View className="flex-row items-center gap-2">
+                <View className="size-4 items-center justify-center">
+                  <View
+                    className="size-2 rounded-full"
+                    style={{ backgroundColor: statusConfig.delayed.color }}
+                  />
+                </View>
+                <Text className="text-sm">{statusConfig.delayed.label}</Text>
+              </View>
+              <Text className="text-muted-foreground text-xs tabular-nums">
+                {delayedCount}
+              </Text>
+            </View>
+          </View>
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Region</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {(["west", "midwest", "south", "northeast"] as const).map(
-                (region) => {
-                  const hubsInRegion = hubs.filter((h) => h.region === region);
-                  return (
-                    <SidebarMenuItem key={region}>
-                      <SidebarMenuButton
-                        tooltip={regionLabels[region]}
-                        className="pointer-events-none"
-                      >
-                        <span className="bg-muted text-muted-foreground flex size-4 items-center justify-center rounded text-[9px] font-bold">
+          <View className="gap-2">
+            <Text className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+              Region
+            </Text>
+            {(["west", "midwest", "south", "northeast"] as const).map(
+              (region) => {
+                const hubsInRegion = hubs.filter((h) => h.region === region);
+                return (
+                  <View
+                    key={region}
+                    className="flex-row items-center justify-between py-1.5"
+                  >
+                    <View className="flex-row items-center gap-2">
+                      <View className="bg-muted size-4 items-center justify-center rounded">
+                        <Text className="text-muted-foreground text-[9px] font-bold">
                           {regionIcons[region]}
-                        </span>
-                        <span>{regionLabels[region]}</span>
-                      </SidebarMenuButton>
-                      <SidebarMenuBadge>{hubsInRegion.length}</SidebarMenuBadge>
-                    </SidebarMenuItem>
-                  );
-                },
-              )}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
+                        </Text>
+                      </View>
+                      <Text className="text-sm">{regionLabels[region]}</Text>
+                    </View>
+                    <Text className="text-muted-foreground text-xs tabular-nums">
+                      {hubsInRegion.length}
+                    </Text>
+                  </View>
+                );
+              },
+            )}
+          </View>
+        </View>
+      </ScrollView>
 
-      <SidebarFooter className="p-4 pt-0">
-        <p className="text-muted-foreground mb-2 text-[11px] font-medium tracking-wider uppercase">
+      <View className="p-4 pt-0">
+        <Text className="text-muted-foreground mb-2 text-[11px] font-medium tracking-wider uppercase">
           Summary
-        </p>
-        <div className="bg-background space-y-1.5 rounded-md border px-3 py-2 text-xs">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Shipments</span>
-            <span className="font-medium tabular-nums">
+        </Text>
+        <View className="bg-background gap-1.5 rounded-md border px-3 py-2">
+          <View className="flex-row justify-between">
+            <Text className="text-muted-foreground text-xs">Shipments</Text>
+            <Text className="text-xs font-medium tabular-nums">
               {totalShipments.toLocaleString()}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Routes</span>
-            <span className="font-medium tabular-nums">{routes.length}</span>
-          </div>
-        </div>
-      </SidebarFooter>
-    </Sidebar>
+            </Text>
+          </View>
+          <View className="flex-row justify-between">
+            <Text className="text-muted-foreground text-xs">Routes</Text>
+            <Text className="text-xs font-medium tabular-nums">
+              {routes.length}
+            </Text>
+          </View>
+        </View>
+      </View>
+    </View>
   );
 }

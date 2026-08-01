@@ -1,119 +1,160 @@
-"use client";
-
 import { TrendingUp } from "lucide-react-native";
-import { Area, AreaChart, Pie, PieChart } from "recharts";
+import { useId } from "react";
+import { useColorScheme, View } from "react-native";
+import Svg, { Defs, LinearGradient, Path, Stop } from "react-native-svg";
 
-import {
-  deviceCategoryChartConfig,
-  deviceCategoryData,
-  usersPerDay,
-  usersPerDayChartConfig,
-} from "../data";
+import { buildAreaPaths, buildDonutSlices } from "../chart-geometry";
+import { deviceCategoryData, usersPerDay } from "../data";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { ChartContainer } from "@/components/ui/chart";
+import { Icon } from "@/components/ui/icon";
+import { Text } from "@/components/ui/text";
 
-function MetricChart() {
+const AREA_STROKE = {
+  light: "#737373",
+  dark: "#8a8a8a",
+} as const;
+
+function MetricChart({ color }: { color: string }) {
+  const gradientId = useId().replace(/:/g, "");
+  const width = 200;
+  const height = 56;
+  const { line, area } = buildAreaPaths(
+    usersPerDay.map((day) => day.users),
+    width,
+    height,
+  );
+
   return (
-    <ChartContainer
-      config={usersPerDayChartConfig}
-      className="aspect-auto h-14 w-full"
-    >
-      <AreaChart data={usersPerDay}>
-        <defs>
-          <linearGradient
-            id="usersGradient"
+    <View className="h-14 w-full">
+      <Svg
+        width="100%"
+        height="100%"
+        viewBox={`0 0 ${String(width)} ${String(height)}`}
+        preserveAspectRatio="none"
+      >
+        <Defs>
+          <LinearGradient
+            id={gradientId}
             x1="0"
             y1="0"
             x2="0"
             y2="1"
           >
-            <stop
+            <Stop
               offset="0%"
-              stopColor="var(--color-users)"
+              stopColor={color}
               stopOpacity={0.4}
             />
-            <stop
+            <Stop
               offset="100%"
-              stopColor="var(--color-users)"
+              stopColor={color}
               stopOpacity={0}
             />
-          </linearGradient>
-        </defs>
-
-        <Area
-          type="natural"
-          dataKey="users"
-          stroke="var(--color-users)"
-          strokeWidth={1.5}
-          fill="url(#usersGradient)"
+          </LinearGradient>
+        </Defs>
+        <Path
+          d={area}
+          fill={`url(#${gradientId})`}
         />
-      </AreaChart>
-    </ChartContainer>
+        <Path
+          d={line}
+          stroke={color}
+          strokeWidth={1.5}
+          fill="none"
+        />
+      </Svg>
+    </View>
+  );
+}
+
+function DeviceCategoryChart() {
+  const size = 128;
+  const paths = buildDonutSlices(
+    deviceCategoryData.map((device) => device.value),
+    size / 2,
+    size / 2,
+    32,
+    52,
+  );
+
+  return (
+    <View className="mx-auto mt-3 h-32 w-32">
+      <Svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${String(size)} ${String(size)}`}
+      >
+        {deviceCategoryData.map((device, index) => (
+          <Path
+            key={device.name}
+            d={paths[index]}
+            fill={device.fill}
+            strokeWidth={2}
+          />
+        ))}
+      </Svg>
+    </View>
   );
 }
 
 export function OverviewCard() {
+  const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
+
   return (
-    <Card className="bg-card/80 absolute top-4 left-4 z-10 w-60 gap-1 backdrop-blur-sm">
+    <Card className="bg-card/80 absolute top-4 left-4 z-10 w-60 gap-1">
       <CardHeader>
-        <div>
-          <p className="text-muted-foreground pb-2 text-[10px] tracking-wider uppercase">
+        <View>
+          <Text className="text-muted-foreground pb-2 text-[10px] tracking-wider uppercase">
             Users in last 30 days
-          </p>
-          <p className="text-3xl leading-none font-semibold">17,234</p>
-        </div>
+          </Text>
+          <Text className="text-3xl leading-none font-semibold">17,234</Text>
+        </View>
       </CardHeader>
 
       <CardContent>
-        <MetricChart />
-        <div className="mt-2 flex items-center gap-1.5 text-xs">
-          <TrendingUp className="text-foreground size-3" />
-          <span className="text-foreground font-medium">+12.5%</span>
-          <span className="text-muted-foreground">vs previous 30 days</span>
-        </div>
+        <MetricChart color={AREA_STROKE[colorScheme]} />
+        <View className="mt-2 flex-row items-center gap-1.5">
+          <Icon
+            as={TrendingUp}
+            size={12}
+            className="text-foreground"
+          />
+          <Text className="text-foreground text-xs font-medium">+12.5%</Text>
+          <Text className="text-muted-foreground text-xs">
+            vs previous 30 days
+          </Text>
+        </View>
 
-        <div className="border-border/60 mt-4 border-t pt-4">
-          <p className="text-muted-foreground text-[10px] tracking-wider uppercase">
+        <View className="border-border/60 mt-4 border-t pt-4">
+          <Text className="text-muted-foreground text-[10px] tracking-wider uppercase">
             Device category in last 30 days
-          </p>
+          </Text>
 
-          <ChartContainer
-            config={deviceCategoryChartConfig}
-            className="mx-auto mt-3 aspect-square h-32 w-32"
-          >
-            <PieChart>
-              <Pie
-                data={deviceCategoryData}
-                dataKey="value"
-                nameKey="name"
-                innerRadius={32}
-                outerRadius={52}
-                strokeWidth={2}
-              />
-            </PieChart>
-          </ChartContainer>
+          <DeviceCategoryChart />
 
-          <div className="mt-3 grid grid-cols-3 gap-2">
+          <View className="mt-3 flex-row gap-2">
             {deviceCategoryData.map((device) => (
-              <div
+              <View
                 key={device.name}
-                className="text-center"
+                className="flex-1 items-center"
               >
-                <p className="text-muted-foreground flex items-center justify-center gap-1.5 text-[10px] tracking-wide uppercase">
-                  <span
+                <View className="flex-row items-center justify-center gap-1.5">
+                  <View
                     className="size-2 rounded-full"
                     style={{ backgroundColor: device.fill }}
                   />
-                  {device.name}
-                </p>
-                <p className="text-foreground mt-1 leading-none font-medium tabular-nums">
+                  <Text className="text-muted-foreground text-[10px] tracking-wide uppercase">
+                    {device.name}
+                  </Text>
+                </View>
+                <Text className="text-foreground mt-1 leading-none font-medium tabular-nums">
                   {device.value}%
-                </p>
-              </div>
+                </Text>
+              </View>
             ))}
-          </div>
-        </div>
+          </View>
+        </View>
       </CardContent>
     </Card>
   );

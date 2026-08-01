@@ -65,11 +65,19 @@ const footerLinks: Record<string, FooterLinkItem[]> = {
     },
   ],
   resources: [
-    { label: "MapLibre GL", href: "https://maplibre.org/", external: true },
-    { label: "shadcn/ui", href: "https://ui.shadcn.com/", external: true },
     {
-      label: "Tailwind CSS",
-      href: "https://tailwindcss.com/",
+      label: "MapLibre React Native",
+      href: "https://maplibre.org/maplibre-react-native/",
+      external: true,
+    },
+    {
+      label: "React Native Reusables",
+      href: "https://reactnativereusables.com/",
+      external: true,
+    },
+    {
+      label: "NativeWind",
+      href: "https://www.nativewind.dev/",
       external: true,
     },
   ],

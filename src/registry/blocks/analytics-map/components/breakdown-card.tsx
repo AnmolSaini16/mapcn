@@ -1,8 +1,9 @@
-"use client";
+import { View } from "react-native";
 
 import { type BreakdownRow } from "../data";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Text } from "@/components/ui/text";
 
 interface BreakdownCardProps {
   title: string;
@@ -20,33 +21,39 @@ export function BreakdownCard({ title, rows }: BreakdownCardProps) {
       </CardHeader>
 
       <CardContent>
-        <div className="text-muted-foreground mb-2 flex items-center justify-between text-[11px] tracking-wider uppercase">
-          <span>{title}</span>
-          <span>Visitors</span>
-        </div>
-        <div className="space-y-1.5">
+        <View className="mb-2 flex-row items-center justify-between">
+          <Text className="text-muted-foreground text-[11px] tracking-wider uppercase">
+            {title}
+          </Text>
+          <Text className="text-muted-foreground text-[11px] tracking-wider uppercase">
+            Visitors
+          </Text>
+        </View>
+        <View className="gap-1.5">
           {rows.map((row) => {
             const pct = maxRowValue ? (row.value / maxRowValue) * 100 : 0;
             return (
-              <div
+              <View
                 key={row.label}
-                className="relative flex items-center justify-between overflow-hidden rounded-md px-2 py-1.5 text-xs"
+                className="relative flex-row items-center justify-between overflow-hidden rounded-md px-2 py-1.5"
               >
-                <div
+                <View
                   className="bg-chart-2/20 absolute inset-y-0 left-0 rounded-md"
                   style={{ width: `${pct}%` }}
-                  aria-hidden
                 />
-                <span className="text-foreground/90 relative truncate pr-2">
+                <Text
+                  className="text-foreground/90 relative pr-2 text-xs"
+                  numberOfLines={1}
+                >
                   {row.label}
-                </span>
-                <span className="text-foreground relative font-medium tabular-nums">
+                </Text>
+                <Text className="text-foreground relative text-xs font-medium tabular-nums">
                   {row.value.toLocaleString()}
-                </span>
-              </div>
+                </Text>
+              </View>
             );
           })}
-        </div>
+        </View>
       </CardContent>
     </Card>
   );

@@ -26,7 +26,7 @@ export const statusMeta: Record<EdgeStatus, { dot: string; text: string }> = {
   },
 };
 
-/** Country borders served from a public CDN — swap in your own GeoJSON. */
+/** Country borders served from a public CDN - swap in your own GeoJSON. */
 export const WORLD_GEOJSON =
   "https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@v5.1.2/geojson/ne_110m_admin_0_countries.geojson";
 

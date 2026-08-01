@@ -74,7 +74,7 @@
       "type": "registry:block",
       "title": "Analytics Map",
       "description": "Real-time analytics overview with a world map, breakdown cards, and device stats.",
-      "dependencies": ["recharts", "lucide-react-native"],
+      "dependencies": ["react-native-svg", "lucide-react-native"],
       "registryDependencies": [
         "unkn0wndfbx/mapcn-react-native/map",
         "https://reactnativereusables.com/r/nativewind/card.json"
@@ -91,6 +91,11 @@
           "target": "app/analytics/data.ts"
         },
         {
+          "path": "src/registry/blocks/analytics-map/chart-geometry.ts",
+          "type": "registry:lib",
+          "target": "app/analytics/chart-geometry.ts"
+        },
+        {
           "path": "src/registry/blocks/analytics-map/components/overview-card.tsx",
           "type": "registry:component",
           "target": "app/analytics/components/overview-card.tsx"
@@ -99,11 +104,6 @@
           "path": "src/registry/blocks/analytics-map/components/breakdown-card.tsx",
           "type": "registry:component",
           "target": "app/analytics/components/breakdown-card.tsx"
-        },
-        {
-          "path": "src/components/ui/chart.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/chart.tsx"
         }
       ],
       "categories": ["analytics", "dashboard"],
@@ -236,8 +236,11 @@
       "type": "registry:block",
       "title": "Heatmap",
       "description": "Globe-projected heatmap visualizing earthquake density with zoom-dependent styling.",
-      "dependencies": [],
-      "registryDependencies": ["unkn0wndfbx/mapcn-react-native/map"],
+      "dependencies": ["@maplibre/maplibre-react-native"],
+      "registryDependencies": [
+        "unkn0wndfbx/mapcn-react-native/map",
+        "https://reactnativereusables.com/r/nativewind/text.json"
+      ],
       "files": [
         {
           "path": "src/registry/blocks/heatmap/page.tsx",
@@ -259,10 +262,7 @@
       "registryDependencies": [
         "unkn0wndfbx/mapcn-react-native/map",
         "https://reactnativereusables.com/r/nativewind/separator.json",
-        "https://reactnativereusables.com/r/nativewind/button.json",
-        "https://reactnativereusables.com/r/nativewind/input.json",
-        "https://reactnativereusables.com/r/nativewind/skeleton.json",
-        "https://reactnativereusables.com/r/nativewind/tooltip.json"
+        "https://reactnativereusables.com/r/nativewind/text.json"
       ],
       "files": [
         {
@@ -284,21 +284,6 @@
           "path": "src/registry/blocks/logistics-network/components/network-map.tsx",
           "type": "registry:component",
           "target": "app/logistics/components/network-map.tsx"
-        },
-        {
-          "path": "src/components/ui/sidebar.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/sidebar.tsx"
-        },
-        {
-          "path": "src/components/ui/sheet.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/sheet.tsx"
-        },
-        {
-          "path": "src/hooks/use-mobile.ts",
-          "type": "registry:hook",
-          "target": "hooks/use-mobile.ts"
         }
       ],
       "categories": ["logistics", "network"],
@@ -315,10 +300,7 @@
       "registryDependencies": [
         "unkn0wndfbx/mapcn-react-native/map",
         "https://reactnativereusables.com/r/nativewind/input.json",
-        "https://reactnativereusables.com/r/nativewind/button.json",
-        "https://reactnativereusables.com/r/nativewind/separator.json",
-        "https://reactnativereusables.com/r/nativewind/skeleton.json",
-        "https://reactnativereusables.com/r/nativewind/tooltip.json"
+        "https://reactnativereusables.com/r/nativewind/text.json"
       ],
       "files": [
         {
@@ -340,21 +322,6 @@
           "path": "src/registry/blocks/store-locator/components/locator-map.tsx",
           "type": "registry:component",
           "target": "app/store-locator/components/locator-map.tsx"
-        },
-        {
-          "path": "src/components/ui/sidebar.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/sidebar.tsx"
-        },
-        {
-          "path": "src/components/ui/sheet.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/sheet.tsx"
-        },
-        {
-          "path": "src/hooks/use-mobile.ts",
-          "type": "registry:hook",
-          "target": "hooks/use-mobile.ts"
         }
       ],
       "categories": ["store-locator", "locator"],

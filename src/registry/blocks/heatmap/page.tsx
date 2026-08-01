@@ -1,8 +1,9 @@
-"use client";
+import { GeoJSONSource, Layer } from "@maplibre/maplibre-react-native";
+import { useId } from "react";
+import { View } from "react-native";
 
-import { useEffect, useId } from "react";
-
-import { Map, useMap } from "@/registry/map";
+import { Text } from "@/components/ui/text";
+import { Map } from "@/registry/map";
 
 const EARTHQUAKE_GEOJSON_URL =
   "https://maplibre.org/maplibre-gl-js/docs/assets/earthquakes.geojson";
@@ -15,38 +16,22 @@ const HEATMAP_GRADIENT_COLORS = [
   "#d7301f",
 ];
 
-const HEATMAP_COLOR_STOPS: [number, string][] = [
-  [0.15, HEATMAP_GRADIENT_COLORS[0]],
-  [0.35, HEATMAP_GRADIENT_COLORS[1]],
-  [0.55, HEATMAP_GRADIENT_COLORS[2]],
-  [0.75, HEATMAP_GRADIENT_COLORS[3]],
-  [1, HEATMAP_GRADIENT_COLORS[4]],
-];
-
 function GlobeHeatmapLayers() {
-  const { map, isLoaded } = useMap();
   const id = useId();
   const sourceId = `heatmap-source-${id}`;
   const heatLayerId = `heatmap-layer-${id}`;
   const pointLayerId = `heatmap-point-layer-${id}`;
 
-  useEffect(() => {
-    if (!map || !isLoaded) return;
-
-    if (!map.getSource(sourceId)) {
-      map.addSource(sourceId, {
-        type: "geojson",
-        data: EARTHQUAKE_GEOJSON_URL,
-      });
-    }
-
-    if (!map.getLayer(heatLayerId)) {
-      map.addLayer({
-        id: heatLayerId,
-        type: "heatmap",
-        source: sourceId,
-        maxzoom: 6,
-        paint: {
+  return (
+    <GeoJSONSource
+      id={sourceId}
+      data={EARTHQUAKE_GEOJSON_URL}
+    >
+      <Layer
+        id={heatLayerId}
+        type="heatmap"
+        maxZoom={6}
+        paint={{
           "heatmap-weight": [
             "interpolate",
             ["linear"],
@@ -71,7 +56,16 @@ function GlobeHeatmapLayers() {
             ["heatmap-density"],
             0,
             "rgba(59, 130, 246, 0)",
-            ...HEATMAP_COLOR_STOPS.flat(),
+            0.15,
+            HEATMAP_GRADIENT_COLORS[0],
+            0.35,
+            HEATMAP_GRADIENT_COLORS[1],
+            0.55,
+            HEATMAP_GRADIENT_COLORS[2],
+            0.75,
+            HEATMAP_GRADIENT_COLORS[3],
+            1,
+            HEATMAP_GRADIENT_COLORS[4],
           ],
           "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 0, 8, 6, 34],
           "heatmap-opacity": [
@@ -83,17 +77,13 @@ function GlobeHeatmapLayers() {
             6.5,
             0.08,
           ],
-        },
-      });
-    }
-
-    if (!map.getLayer(pointLayerId)) {
-      map.addLayer({
-        id: pointLayerId,
-        type: "circle",
-        source: sourceId,
-        minzoom: 4.5,
-        paint: {
+        }}
+      />
+      <Layer
+        id={pointLayerId}
+        type="circle"
+        minZoom={4.5}
+        paint={{
           "circle-radius": [
             "interpolate",
             ["linear"],
@@ -127,56 +117,48 @@ function GlobeHeatmapLayers() {
             6.5,
             0.7,
           ],
-        },
-      });
-    }
-
-    return () => {
-      try {
-        if (map.getLayer(pointLayerId)) map.removeLayer(pointLayerId);
-        if (map.getLayer(heatLayerId)) map.removeLayer(heatLayerId);
-        if (map.getSource(sourceId)) map.removeSource(sourceId);
-      } catch {
-        // ignore
-      }
-    };
-  }, [map, isLoaded, sourceId, heatLayerId, pointLayerId]);
-
-  return null;
+        }}
+      />
+    </GeoJSONSource>
+  );
 }
-
-const gradient = `linear-gradient(to right, ${HEATMAP_GRADIENT_COLORS.join(", ")})`;
 
 export default function Page() {
   return (
-    <div className="bg-card relative h-screen">
-      <div className="relative h-full">
+    <View className="bg-card relative h-screen flex-1">
+      <View className="relative flex-1">
         <Map
-          center={[-113, 43]}
-          zoom={3.2}
-          projection={{ type: "globe" }}
-          pitch={24}
+          viewport={{
+            center: [-113, 43],
+            zoom: 3.2,
+            pitch: 24,
+          }}
           minZoom={1.2}
           maxZoom={8}
         >
           <GlobeHeatmapLayers />
         </Map>
-      </div>
+      </View>
 
-      <div className="bg-card/90 absolute top-4 left-4 z-10 rounded-lg border px-3 py-2.5 backdrop-blur-sm">
-        <p className="text-foreground text-sm font-medium">
+      <View className="bg-card/90 absolute top-4 left-4 z-10 rounded-lg border px-3 py-2.5">
+        <Text className="text-foreground text-sm font-medium">
           Global Earthquakes Heatmap
-        </p>
+        </Text>
 
-        <div
-          className="mt-3 h-2 w-full rounded-full"
-          style={{ backgroundImage: gradient }}
-        />
-        <div className="text-muted-foreground flex items-center justify-between pt-1.5 text-[10px]">
-          <span>Low</span>
-          <span>High</span>
-        </div>
-      </div>
-    </div>
+        <View className="mt-3 h-2 w-full flex-row overflow-hidden rounded-full">
+          {HEATMAP_GRADIENT_COLORS.map((color) => (
+            <View
+              key={color}
+              className="flex-1"
+              style={{ backgroundColor: color }}
+            />
+          ))}
+        </View>
+        <View className="flex-row items-center justify-between pt-1.5">
+          <Text className="text-muted-foreground text-[10px]">Low</Text>
+          <Text className="text-muted-foreground text-[10px]">High</Text>
+        </View>
+      </View>
+    </View>
   );
 }

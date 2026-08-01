@@ -8,8 +8,8 @@ import storeLocator from "../../../../public/r/store-locator.json";
 import uptimeMonitor from "../../../../public/r/uptime-monitor.json";
 import { BlockPreview } from "../BlockPreview";
 import type { HighlightedFile } from "../BlockViewerCode";
+import { MobileBlockPreview } from "../MobileBlockPreview";
 
-import { IframePreview } from "@/atoms/IframePreview";
 import { createFileTreeForRegistryItemFiles, getAllBlocks } from "@/lib/blocks";
 
 const BLOCK_SOURCES: Record<
@@ -64,8 +64,8 @@ export function BlockDisplay({ name }: BlockDisplayProps) {
       tree={tree}
       highlightedFiles={highlightedFiles}
     >
-      <IframePreview
-        src={`/view/${block.name}`}
+      <MobileBlockPreview
+        name={block.name}
         title={block.title ?? block.name}
       />
     </BlockPreview>

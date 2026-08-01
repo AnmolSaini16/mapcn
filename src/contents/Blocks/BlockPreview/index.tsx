@@ -23,7 +23,8 @@ interface BlockPreviewProps {
 
 function parsePreviewHeight(iframeHeight?: string): number {
   const parsed = Number.parseInt(iframeHeight ?? "930", 10);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 930;
+  const height = Number.isFinite(parsed) && parsed > 0 ? parsed : 930;
+  return Math.max(height, 900);
 }
 
 export function BlockPreview({

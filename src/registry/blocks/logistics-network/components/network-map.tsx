@@ -1,6 +1,5 @@
-"use client";
-
 import { useMemo } from "react";
+import { View } from "react-native";
 
 import {
   modeConfig,
@@ -11,7 +10,7 @@ import {
 } from "../data";
 
 import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Text } from "@/components/ui/text";
 import {
   Map,
   MapArc,
@@ -28,44 +27,39 @@ interface NetworkMapProps {
 
 function MapControlsCard() {
   return (
-    <div className="border-border/40 bg-background/70 absolute top-4 left-4 z-20 flex items-center gap-3 rounded-lg border px-2.5 py-1.5 backdrop-blur-sm">
-      <SidebarTrigger />
-      <Separator
-        orientation="vertical"
-        className="h-4!"
-      />
-      <div className="flex items-center gap-3 text-xs">
-        <div className="flex items-center gap-1.5">
-          <span
+    <View className="border-border/40 bg-background/70 absolute top-4 left-4 z-20 flex-row items-center gap-3 rounded-lg border px-2.5 py-1.5">
+      <View className="flex-row items-center gap-3">
+        <View className="flex-row items-center gap-1.5">
+          <View
             className="h-0.5 w-4 shrink-0 rounded-full"
             style={{ backgroundColor: modeConfig.air.color }}
           />
-          <span>{modeConfig.air.label}</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span
+          <Text className="text-xs">{modeConfig.air.label}</Text>
+        </View>
+        <View className="flex-row items-center gap-1.5">
+          <View
             className="h-0.5 w-4 shrink-0 rounded-full"
             style={{ backgroundColor: modeConfig.ground.color }}
           />
-          <span>{modeConfig.ground.label}</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span
+          <Text className="text-xs">{modeConfig.ground.label}</Text>
+        </View>
+        <View className="flex-row items-center gap-1.5">
+          <View
             className="h-0.5 w-4 shrink-0 rounded-full"
             style={{ backgroundColor: statusConfig.delayed.color }}
           />
-          <span>{statusConfig.delayed.label}</span>
-        </div>
+          <Text className="text-xs">{statusConfig.delayed.label}</Text>
+        </View>
         <Separator
           orientation="vertical"
-          className="h-4!"
+          className="h-4"
         />
-        <div className="flex items-center gap-1.5">
-          <div className="size-2.5 shrink-0 rounded-full border border-white bg-blue-500 shadow-sm" />
-          <span>Hub</span>
-        </div>
-      </div>
-    </div>
+        <View className="flex-row items-center gap-1.5">
+          <View className="size-2.5 shrink-0 rounded-full border border-white bg-blue-500 shadow-sm" />
+          <Text className="text-xs">Hub</Text>
+        </View>
+      </View>
+    </View>
   );
 }
 
@@ -93,14 +87,10 @@ export function NetworkMap({ hubs, routes }: NetworkMapProps) {
   }, [hubs, routes]);
 
   return (
-    <div className="relative h-full">
+    <View className="relative flex-1">
       <MapControlsCard />
 
-      <Map
-        center={[-98, 39]}
-        zoom={4}
-        projection={{ type: "globe" }}
-      >
+      <Map viewport={{ center: [-98, 39], zoom: 4 }}>
         <MapControls />
         <MapArc
           data={arcs}
@@ -120,22 +110,19 @@ export function NetworkMap({ hubs, routes }: NetworkMapProps) {
             latitude={hub.lat}
           >
             <MarkerContent>
-              <div className="size-3 rounded-full border-2 border-white bg-blue-500 shadow-md" />
+              <View className="size-3 rounded-full border-2 border-white bg-blue-500 shadow-md" />
             </MarkerContent>
-            <MarkerTooltip
-              offset={16}
-              className="bg-background text-foreground border px-2.5 py-1.5"
-            >
-              <p className="font-medium">{hub.city}</p>
-              <p className="text-muted-foreground mt-1">
+            <MarkerTooltip className="bg-background border-border border px-2.5 py-1.5">
+              <Text className="font-medium">{hub.city}</Text>
+              <Text className="text-muted-foreground mt-1">
                 {hub.shipments.toLocaleString()} shipments
-                <span className="mx-1">•</span>
+                <Text className="text-muted-foreground"> • </Text>
                 {regionLabels[hub.region]}
-              </p>
+              </Text>
             </MarkerTooltip>
           </MapMarker>
         ))}
       </Map>
-    </div>
+    </View>
   );
 }

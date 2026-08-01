@@ -1,12 +1,9 @@
-"use client";
-
-import { useMemo, useState, type CSSProperties } from "react";
+import { useMemo, useState } from "react";
+import { View } from "react-native";
 
 import { LocatorMap } from "./components/locator-map";
 import { StoreList } from "./components/store-list";
 import { MAP_CENTER, stores } from "./data";
-
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Page() {
   const [query, setQuery] = useState("");
@@ -24,7 +21,7 @@ export default function Page() {
   }, [query]);
 
   return (
-    <SidebarProvider style={{ "--sidebar-width": "20rem" } as CSSProperties}>
+    <View className="h-screen flex-1 flex-row">
       <StoreList
         stores={filtered}
         query={query}
@@ -33,7 +30,7 @@ export default function Page() {
         onSelect={setSelectedId}
       />
 
-      <SidebarInset>
+      <View className="min-w-0 flex-1">
         <LocatorMap
           stores={filtered}
           selectedId={selectedId}
@@ -43,7 +40,7 @@ export default function Page() {
           }}
           center={MAP_CENTER}
         />
-      </SidebarInset>
-    </SidebarProvider>
+      </View>
+    </View>
   );
 }

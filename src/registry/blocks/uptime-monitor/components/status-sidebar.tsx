@@ -1,7 +1,8 @@
-"use client";
+import { ScrollView, View } from "react-native";
 
 import { getNetworkSummary, statusMeta, type EdgeNode } from "../data";
 
+import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 
 interface StatusSidebarProps {
@@ -13,72 +14,80 @@ export function StatusSidebar({ nodes }: StatusSidebarProps) {
   const summaryMeta = statusMeta[summary.status];
 
   return (
-    <div className="bg-card flex w-56 shrink-0 flex-col overflow-hidden border-r">
-      <div className="border-b p-3">
-        <p className="text-foreground text-sm font-semibold">Edge Network</p>
+    <View className="bg-card w-56 shrink-0 flex-col overflow-hidden border-r">
+      <View className="border-b p-3">
+        <Text className="text-foreground text-sm font-semibold">
+          Edge Network
+        </Text>
 
-        <div className="mt-2 flex items-center gap-1.5">
-          <span className={cn("size-2 rounded-full", summaryMeta.dot)} />
-          <span className={cn("text-xs font-medium", summaryMeta.text)}>
+        <View className="mt-2 flex-row items-center gap-1.5">
+          <View className={cn("size-2 rounded-full", summaryMeta.dot)} />
+          <Text className={cn("text-xs font-medium", summaryMeta.text)}>
             {summary.label}
-          </span>
-        </div>
+          </Text>
+        </View>
 
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <div className="bg-background/60 rounded-md border p-2">
-            <p className="text-muted-foreground text-[10px] tracking-wide uppercase">
+        <View className="mt-3 flex-row gap-2">
+          <View className="bg-background/60 flex-1 rounded-md border p-2">
+            <Text className="text-muted-foreground text-[10px] tracking-wide uppercase">
               Uptime
-            </p>
-            <p className="text-foreground text-sm font-semibold tabular-nums">
+            </Text>
+            <Text className="text-foreground text-sm font-semibold tabular-nums">
               {summary.avgUptime.toFixed(2)}%
-            </p>
-          </div>
-          <div className="bg-background/60 rounded-md border p-2">
-            <p className="text-muted-foreground text-[10px] tracking-wide uppercase">
+            </Text>
+          </View>
+          <View className="bg-background/60 flex-1 rounded-md border p-2">
+            <Text className="text-muted-foreground text-[10px] tracking-wide uppercase">
               Edges up
-            </p>
-            <p className="text-foreground text-sm font-semibold tabular-nums">
+            </Text>
+            <Text className="text-foreground text-sm font-semibold tabular-nums">
               {summary.operational}
-              <span className="text-muted-foreground font-normal">
+              <Text className="text-muted-foreground font-normal">
                 /{summary.total}
-              </span>
-            </p>
-          </div>
-        </div>
-      </div>
+              </Text>
+            </Text>
+          </View>
+        </View>
+      </View>
 
-      <ul className="flex-1 divide-y overflow-y-auto">
+      <ScrollView className="flex-1">
         {nodes.map((node) => {
           const meta = statusMeta[node.status];
 
           return (
-            <li
+            <View
               key={node.id}
-              className="flex items-center gap-2.5 px-3 py-2"
+              className="flex-row items-center gap-2.5 border-b px-3 py-2"
             >
-              <span className={cn("size-2 shrink-0 rounded-full", meta.dot)} />
+              <View className={cn("size-2 shrink-0 rounded-full", meta.dot)} />
 
-              <div className="min-w-0 flex-1">
-                <p className="text-foreground truncate text-xs font-medium">
+              <View className="min-w-0 flex-1">
+                <Text
+                  className="text-foreground text-xs font-medium"
+                  numberOfLines={1}
+                >
                   {node.city}
-                </p>
-                <p className="text-muted-foreground truncate text-[10px]">
+                </Text>
+                <Text
+                  className="text-muted-foreground text-[10px]"
+                  numberOfLines={1}
+                >
                   {node.region}
-                </p>
-              </div>
+                </Text>
+              </View>
 
-              <div className="flex shrink-0 flex-col items-end">
-                <span className="text-muted-foreground font-mono text-[10px] uppercase">
+              <View className="shrink-0 items-end">
+                <Text className="text-muted-foreground font-mono text-[10px] uppercase">
                   {node.id}
-                </span>
-                <span className="text-foreground font-mono text-[10px] tabular-nums">
-                  {node.status === "down" ? "—" : `${node.latency}ms`}
-                </span>
-              </div>
-            </li>
+                </Text>
+                <Text className="text-foreground font-mono text-[10px] tabular-nums">
+                  {node.status === "down" ? "-" : `${node.latency}ms`}
+                </Text>
+              </View>
+            </View>
           );
         })}
-      </ul>
-    </div>
+      </ScrollView>
+    </View>
   );
 }

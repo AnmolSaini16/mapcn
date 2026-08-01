@@ -1,16 +1,14 @@
-import { type ChartConfig } from "@/components/ui/chart";
-
-export interface LocationPoint {
+export type LocationPoint = {
   city: string;
   lng: number;
   lat: number;
   size: number;
-}
+};
 
-export interface BreakdownRow {
+export type BreakdownRow = {
   label: string;
   value: number;
-}
+};
 
 export const locations: LocationPoint[] = [
   { city: "San Francisco", lng: -122.4194, lat: 37.7749, size: 16 },
@@ -67,24 +65,11 @@ export const usersPerDay = [
   { day: "30", users: 868 },
 ];
 
-export const usersPerDayChartConfig = {
-  users: {
-    label: "Users",
-    color: "var(--chart-2)",
-  },
-} satisfies ChartConfig;
-
 export const deviceCategoryData = [
-  { name: "Desktop", value: 73.3, fill: "var(--chart-1)" },
-  { name: "Mobile", value: 25.0, fill: "var(--chart-2)" },
-  { name: "Tablet", value: 1.7, fill: "var(--chart-3)" },
+  { name: "Desktop", value: 73.3, fill: "#d4d4d4" },
+  { name: "Mobile", value: 25.0, fill: "#737373" },
+  { name: "Tablet", value: 1.7, fill: "#525252" },
 ];
-
-export const deviceCategoryChartConfig = {
-  desktop: { label: "Desktop", color: "var(--chart-1)" },
-  mobile: { label: "Mobile", color: "var(--chart-2)" },
-  tablet: { label: "Tablet", color: "var(--chart-3)" },
-} satisfies ChartConfig;
 
 export const visitedPagesRows: BreakdownRow[] = [
   { label: "Home", value: 31 },

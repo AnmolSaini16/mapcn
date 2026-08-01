@@ -1,4 +1,4 @@
-"use client";
+import { View } from "react-native";
 
 import { BreakdownCard } from "./components/breakdown-card";
 import { OverviewCard } from "./components/overview-card";
@@ -10,6 +10,7 @@ import {
   browsersRows,
 } from "./data";
 
+import { Text } from "@/components/ui/text";
 import {
   Map,
   MapControls,
@@ -19,29 +20,26 @@ import {
   MarkerTooltip,
 } from "@/registry/map";
 
-const MAP_HEIGHT = "38rem";
+const MAP_HEIGHT = 608;
 
-// Country borders from a public CDN, or swap in your own GeoJSON.
 const WORLD_GEOJSON =
   "https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@v5.1.2/geojson/ne_110m_admin_0_countries.geojson";
 
 export default function Page() {
   return (
-    <div
-      className="bg-background relative min-h-screen"
-      style={{ "--map-height": MAP_HEIGHT } as React.CSSProperties}
-    >
-      <div className="bg-card relative h-(--map-height)">
+    <View className="bg-background relative min-h-screen flex-1">
+      <View
+        className="bg-card relative"
+        style={{ height: MAP_HEIGHT }}
+      >
         <Map
-          center={[-2, 16]}
-          zoom={1.4}
+          blank
+          viewport={{ center: [-2, 16], zoom: 1.4 }}
           maxZoom={4}
           minZoom={1.4}
-          scrollZoom={false}
-          dragRotate={false}
-          pitchWithRotate={false}
-          renderWorldCopies
-          blank
+          scrollEnabled={false}
+          rotateEnabled={false}
+          pitchEnabled={false}
         >
           <MapGeoJSON
             data={WORLD_GEOJSON}
@@ -54,52 +52,57 @@ export default function Page() {
               longitude={location.lng}
               latitude={location.lat}
             >
-              <MarkerContent className="group">
-                <div
-                  className="bg-chart-2/80 group-hover:bg-chart-2/90 rounded-full transition-[transform,background-color] group-hover:scale-110"
+              <MarkerContent>
+                <View
+                  className="bg-chart-2/80 rounded-full"
                   style={{
                     width: location.size * 3,
                     height: location.size * 3,
                   }}
                 />
               </MarkerContent>
-              <MarkerTooltip
-                offset={20}
-                className="bg-popover text-popover-foreground border"
-              >
-                <p className="font-medium">{location.city}</p>
-                <p className="text-muted-foreground mt-0.5">
+              <MarkerTooltip className="bg-popover border-border border">
+                <Text className="font-medium">{location.city}</Text>
+                <Text className="text-muted-foreground mt-0.5">
                   {location.size} active users
-                </p>
+                </Text>
               </MarkerTooltip>
             </MapMarker>
           ))}
         </Map>
-        <div
-          className="via-background/30 to-background pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-linear-to-b from-transparent"
-          aria-hidden
+        <View
+          className="via-background/30 to-background pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent"
+          accessibilityElementsHidden
         />
         <OverviewCard />
-      </div>
+      </View>
 
-      <div className="grid gap-4 p-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <BreakdownCard
-          title="Visited pages"
-          rows={visitedPagesRows}
-        />
-        <BreakdownCard
-          title="Referrers"
-          rows={referrersRows}
-        />
-        <BreakdownCard
-          title="Countries"
-          rows={countriesRows}
-        />
-        <BreakdownCard
-          title="Browsers"
-          rows={browsersRows}
-        />
-      </div>
-    </div>
+      <View className="flex-row flex-wrap gap-4 p-4">
+        <View className="min-w-[220px] flex-1">
+          <BreakdownCard
+            title="Visited pages"
+            rows={visitedPagesRows}
+          />
+        </View>
+        <View className="min-w-[220px] flex-1">
+          <BreakdownCard
+            title="Referrers"
+            rows={referrersRows}
+          />
+        </View>
+        <View className="min-w-[220px] flex-1">
+          <BreakdownCard
+            title="Countries"
+            rows={countriesRows}
+          />
+        </View>
+        <View className="min-w-[220px] flex-1">
+          <BreakdownCard
+            title="Browsers"
+            rows={browsersRows}
+          />
+        </View>
+      </View>
+    </View>
   );
 }

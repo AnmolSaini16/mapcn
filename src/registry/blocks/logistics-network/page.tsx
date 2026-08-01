@@ -1,24 +1,22 @@
-"use client";
+import { View } from "react-native";
 
 import { FilterSidebar } from "./components/filter-sidebar";
 import { NetworkMap } from "./components/network-map";
 import { hubs, routes } from "./data";
 
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-
 export default function Page() {
   return (
-    <SidebarProvider>
+    <View className="h-screen flex-1 flex-row">
       <FilterSidebar
         hubs={hubs}
         routes={routes}
       />
-      <SidebarInset>
+      <View className="min-w-0 flex-1">
         <NetworkMap
           hubs={hubs}
           routes={routes}
         />
-      </SidebarInset>
-    </SidebarProvider>
+      </View>
+    </View>
   );
 }
