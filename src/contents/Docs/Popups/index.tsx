@@ -5,7 +5,7 @@ import {
   DocsNote,
   DocsSection,
 } from "../Common/DocsLayout";
-import { StandalonePopupExample } from "../Common/Examples/StandalonePopupExample";
+import { StandalonePopupExample } from "../Common/Examples/Popup/Standalone";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";

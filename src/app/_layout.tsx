@@ -19,6 +19,8 @@ import "../styles/global.css";
 
 void SplashScreen.preventAutoHideAsync();
 
+export { ErrorBoundary } from "@/contents/ErrorBoundary";
+
 export default function RootLayout() {
   const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
   const [fontsLoaded] = useFonts({

@@ -1,9 +1,7 @@
 {
-  // ✅ Replie automatiquement les imports à l'ouverture d'un fichier
   "editor.foldingStrategy": "auto",
   "editor.showFoldingControls": "always",
 
-  // ✅ Supprime automatiquement les imports inutilisés lors de la sauvegarde
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.removeUnusedImports": "explicit"

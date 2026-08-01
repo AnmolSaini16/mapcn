@@ -1,6 +1,6 @@
-export { AnalyticsExample } from "../Examples/AnalyticsExample";
-export { ArcExample } from "../Examples/ArcExample";
-export { DeliveryExample } from "../Examples/DeliveryExample";
-export { EVChargingExample } from "../Examples/EVChargingExample";
-export { FlyToExample } from "../Examples/FlyToExample";
-export { TrailExample } from "../Examples/TrailExample";
+export { AnalyticsExample } from "./Analytics";
+export { ArcExample } from "./Arc";
+export { DeliveryExample } from "./Delivery";
+export { EVChargingExample } from "./EVCharging";
+export { FlyToExample } from "./FlyTo";
+export { TrailExample } from "./Trail";

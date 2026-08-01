@@ -20,6 +20,7 @@ import { Locate, Maximize, Minus, Plus, X } from "lucide-react-native";
 import type * as React from "react";
 import {
   Children,
+  cloneElement,
   createContext,
   forwardRef,
   isValidElement,
@@ -398,6 +399,40 @@ function getMarkerContent(children: ReactNode) {
   return null;
 }
 
+function getMarkerTooltips(children: ReactNode) {
+  return Children.toArray(children).filter(
+    (child) => isValidElement(child) && child.type === MarkerTooltip,
+  );
+}
+
+function composeMarkerChildren(children: ReactNode) {
+  const content = getMarkerContent(children);
+  const tooltips = getMarkerTooltips(children);
+
+  if (content) {
+    if (tooltips.length === 0) {
+      return content;
+    }
+
+    return cloneElement(content, {}, [
+      ...Children.toArray(
+        (content.props as MarkerContentProps).children,
+      ),
+      ...tooltips,
+    ]);
+  }
+
+  if (Children.count(children) > 0) {
+    return <MarkerContent>{children}</MarkerContent>;
+  }
+
+  return (
+    <MarkerContent>
+      <DefaultMarkerIcon />
+    </MarkerContent>
+  );
+}
+
 function MapMarker({
   longitude,
   latitude,
@@ -411,10 +446,10 @@ function MapMarker({
   ref: _ref,
   ...props
 }: MapMarkerProps) {
-  const content = getMarkerContent(children);
   const suppressPressRef = useRef(false);
   const tooltipControllerRef = useRef<MarkerTooltipController | null>(null);
   const [topOverlayHeight, setTopOverlayHeight] = useState(0);
+  const markerChildren = composeMarkerChildren(children);
 
   const handlePress = useCallback<
     NonNullable<React.ComponentProps<typeof Marker>["onPress"]>
@@ -490,12 +525,6 @@ function MapMarker({
     const baseY = offset?.[1] ?? 0;
     return [baseX, baseY - topOverlayHeight / 2];
   }, [offset, topOverlayHeight]);
-
-  const markerChildren = content ?? (
-    <MarkerContent>
-      {Children.count(children) > 0 ? children : <DefaultMarkerIcon />}
-    </MarkerContent>
-  );
 
   return (
     <MarkerInteractionContext.Provider value={markerInteractionValue}>
@@ -616,24 +645,22 @@ function MarkerLabel({
 
   return (
     <View
-      className={cn(
-        "absolute items-center",
-        positionClasses[position],
-        className,
-      )}
+      className={cn("absolute items-center", positionClasses[position])}
       pointerEvents="none"
       style={{ left: -96, right: -96 }}
     >
-      {typeof children === "string" || typeof children === "number" ? (
-        <Text
-          className="text-foreground text-[10px] font-medium"
-          // numberOfLines={1}
-        >
-          {children}
-        </Text>
-      ) : (
-        children
-      )}
+      <View className={cn("self-center", className)}>
+        {typeof children === "string" || typeof children === "number" ? (
+          <Text
+            className="text-foreground text-[10px] font-medium"
+            // numberOfLines={1}
+          >
+            {children}
+          </Text>
+        ) : (
+          children
+        )}
+      </View>
     </View>
   );
 }

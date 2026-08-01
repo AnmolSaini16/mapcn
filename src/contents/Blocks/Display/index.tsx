@@ -6,9 +6,9 @@ import heatmap from "../../../../public/r/heatmap.json";
 import logisticsNetwork from "../../../../public/r/logistics-network.json";
 import storeLocator from "../../../../public/r/store-locator.json";
 import uptimeMonitor from "../../../../public/r/uptime-monitor.json";
-import { BlockPreview } from "../BlockPreview";
-import type { HighlightedFile } from "../BlockViewerCode";
-import { MobileBlockPreview } from "../MobileBlockPreview";
+import { BlockPreview } from "../Preview";
+import { MobileBlockPreview } from "../Preview/Mobile";
+import type { HighlightedFile } from "../ViewerCode";
 
 import { createFileTreeForRegistryItemFiles, getAllBlocks } from "@/lib/blocks";
 

@@ -6,9 +6,9 @@ import {
   DocsNote,
   DocsSection,
 } from "../Common/DocsLayout";
-import { DraggableMarkerExample } from "../Common/Examples/DraggableMarkerExample";
-import { MarkersExample } from "../Common/Examples/MarkersExample";
-import { PopupExample } from "../Common/Examples/PopupExample";
+import { DraggableMarkerExample } from "../Common/Examples/DraggableMarker";
+import { MarkersExample } from "../Common/Examples/Markers";
+import { PopupExample } from "../Common/Examples/Popup";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";

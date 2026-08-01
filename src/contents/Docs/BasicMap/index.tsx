@@ -6,10 +6,10 @@ import {
   DocsNote,
   DocsSection,
 } from "../Common/DocsLayout";
-import { BasicMapExample } from "../Common/Examples/BasicMapExample";
-import { BlankMapExample } from "../Common/Examples/BlankMapExample";
-import { ControlledMapExample } from "../Common/Examples/ControlledMapExample";
-import { CustomStyleExample } from "../Common/Examples/CustomStyleExample";
+import { BasicMapExample } from "../Common/Examples/BasicMap";
+import { BlankMapExample } from "../Common/Examples/BlankMap";
+import { ControlledMapExample } from "../Common/Examples/ControlledMap";
+import { CustomStyleExample } from "../Common/Examples/CustomStyle";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";

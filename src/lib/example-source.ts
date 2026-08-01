@@ -1,12 +1,16 @@
-import { basicMapExampleSource } from "@/contents/Docs/Common/Examples/BasicMapExample/source";
-import { blankMapExampleSource } from "@/contents/Docs/Common/Examples/BlankMapExample/source";
-import { controlledMapExampleSource } from "@/contents/Docs/Common/Examples/ControlledMapExample/source";
-import { customStyleExampleSource } from "@/contents/Docs/Common/Examples/CustomStyleExample/source";
-import { draggableMarkerExampleSource } from "@/contents/Docs/Common/Examples/DraggableMarkerExample/source";
-import { mapControlsExampleSource } from "@/contents/Docs/Common/Examples/MapControlsExample/source";
-import { markersExampleSource } from "@/contents/Docs/Common/Examples/MarkersExample/source";
-import { popupExampleSource } from "@/contents/Docs/Common/Examples/PopupExample/source";
-import { standalonePopupExampleSource } from "@/contents/Docs/Common/Examples/StandalonePopupExample/source";
+import { interactiveArcExampleSource } from "@/contents/Docs/Common/Examples/Arc/Interactive/source";
+import { arcExampleSource } from "@/contents/Docs/Common/Examples/Arc/source";
+import { basicMapExampleSource } from "@/contents/Docs/Common/Examples/BasicMap/source";
+import { blankMapExampleSource } from "@/contents/Docs/Common/Examples/BlankMap/source";
+import { controlledMapExampleSource } from "@/contents/Docs/Common/Examples/ControlledMap/source";
+import { customStyleExampleSource } from "@/contents/Docs/Common/Examples/CustomStyle/source";
+import { draggableMarkerExampleSource } from "@/contents/Docs/Common/Examples/DraggableMarker/source";
+import { mapControlsExampleSource } from "@/contents/Docs/Common/Examples/MapControls/source";
+import { markersExampleSource } from "@/contents/Docs/Common/Examples/Markers/source";
+import { popupExampleSource } from "@/contents/Docs/Common/Examples/Popup/source";
+import { standalonePopupExampleSource } from "@/contents/Docs/Common/Examples/Popup/Standalone/source";
+import { osrmRouteExampleSource } from "@/contents/Docs/Common/Examples/Route/Osrm/source";
+import { routeExampleSource } from "@/contents/Docs/Common/Examples/Route/source";
 
 const EXAMPLE_SOURCES: Record<string, string> = {
   "basic-map-example.tsx": basicMapExampleSource,
@@ -18,6 +22,10 @@ const EXAMPLE_SOURCES: Record<string, string> = {
   "popup-example.tsx": popupExampleSource,
   "draggable-marker-example.tsx": draggableMarkerExampleSource,
   "standalone-popup-example.tsx": standalonePopupExampleSource,
+  "route-example.tsx": routeExampleSource,
+  "osrm-route-example.tsx": osrmRouteExampleSource,
+  "arc-example.tsx": arcExampleSource,
+  "interactive-arc-example.tsx": interactiveArcExampleSource,
 };
 
 export function getExampleSource(filename: string): string {

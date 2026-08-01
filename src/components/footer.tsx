@@ -89,6 +89,7 @@ type FooterLinkItem = {
   external?: boolean;
 };
 
+/* FIXME: fix this function */
 function FooterLink({ label, href, external }: FooterLinkItem) {
   const linkClassName = "text-muted-foreground active:text-foreground text-sm";
 

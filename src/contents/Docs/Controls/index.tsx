@@ -5,7 +5,7 @@ import {
   DocsNote,
   DocsSection,
 } from "../Common/DocsLayout";
-import { MapControlsExample } from "../Common/Examples/MapControlsExample";
+import { MapControlsExample } from "../Common/Examples/MapControls";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";

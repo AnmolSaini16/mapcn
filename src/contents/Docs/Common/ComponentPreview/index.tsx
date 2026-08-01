@@ -1,4 +1,4 @@
-import { ComponentPreviewClient } from "./ComponentPreviewClient";
+import { ComponentPreviewClient } from "./Client";
 
 interface ComponentPreviewProps {
   children: React.ReactNode;

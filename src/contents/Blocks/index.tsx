@@ -1,6 +1,6 @@
 import { ScrollView, StyleProp, View, ViewStyle } from "react-native";
 
-import { BlockDisplay } from "./BlockDisplay";
+import { BlockDisplay } from "./Display";
 
 import { Footer } from "@/components/footer";
 import {
