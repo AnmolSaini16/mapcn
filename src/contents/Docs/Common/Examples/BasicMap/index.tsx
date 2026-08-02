@@ -4,7 +4,7 @@ import { Map } from "@/registry/map";
 
 export function BasicMapExample() {
   return (
-    <View className="h-[420px] w-full">
+    <View className="h-full w-full">
       <Map
         viewport={{
           center: [-74.006, 40.7128],

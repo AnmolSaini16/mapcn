@@ -57,7 +57,7 @@ export function CustomStyleExample() {
     "Default (Carto)";
 
   return (
-    <View className="relative h-[420px] w-full">
+    <View className="relative h-full w-full">
       <Map
         viewport={{
           center: [-0.1276, 51.5074],

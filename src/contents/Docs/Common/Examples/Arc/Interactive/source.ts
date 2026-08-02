@@ -124,7 +124,7 @@ export function InteractiveArcExample() {
   }, []);
 
   return (
-    <View className="relative h-[420px] w-full">
+    <View className="relative h-full w-full">
       <Map
         viewport={{
           center: [20, 20],
@@ -184,14 +184,14 @@ export function InteractiveArcExample() {
             latitude={selected.popupLngLat.latitude}
             closeButton
             closeOnClick={false}
-            className="p-0"
+            className="max-w-none p-0"
             onClose={() => {
               setSelected(null);
             }}
           >
-            <View className="flex-row items-center gap-2 px-2.5 py-1.5 pr-8">
+            <View className="flex-row items-center gap-2 py-1.5 pl-2.5 pr-7">
               <View
-                className="size-1.5 rounded-full"
+                className="size-1.5 shrink-0 rounded-full"
                 style={{
                   backgroundColor:
                     selected.lane.mode === "air"
@@ -199,10 +199,16 @@ export function InteractiveArcExample() {
                       : modeColors.sea,
                 }}
               />
-              <Text className="text-xs font-medium">
+              <Text
+                className="text-xs font-medium"
+                numberOfLines={1}
+              >
                 {selected.lane.origin} → {selected.lane.destination}
               </Text>
-              <Text className="text-muted-foreground border-border border-l pl-2 text-xs">
+              <Text
+                className="text-muted-foreground border-border shrink-0 border-l pl-2 text-xs"
+                numberOfLines={1}
+              >
                 {selected.lane.volume}
               </Text>
             </View>

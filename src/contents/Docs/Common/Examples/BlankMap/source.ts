@@ -5,7 +5,7 @@ import { Map, MapGeoJSON } from "@/components/ui/map";
 
 export function BlankMapExample() {
   return (
-    <View className="h-[420px] w-full">
+    <View className="h-full w-full">
       <Map
         blank
         viewport={{

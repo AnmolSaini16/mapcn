@@ -1,4 +1,4 @@
-import { type Href, Link } from "expo-router";
+import { type Href, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import type { LucideProps } from "lucide-react-native";
 import { Pressable, useColorScheme, View } from "react-native";
@@ -36,14 +36,13 @@ function XIcon({ size = 16, color = "currentColor" }: LucideProps) {
   );
 }
 
-/* TODO: add social links */
 const socialLinks = [
   {
     label: "GitHub",
-    href: "https://github.com/AnmolSaini16/mapcn",
+    href: "https://github.com/unkn0wndfbx",
     icon: GitHubIcon,
   },
-  { label: "X", href: "https://x.com/anmold_s", icon: XIcon },
+  { label: "X", href: "https://x.com/thdev_web", icon: XIcon },
 ] as const;
 
 const footerLinks: Record<string, FooterLinkItem[]> = {
@@ -55,12 +54,12 @@ const footerLinks: Record<string, FooterLinkItem[]> = {
   community: [
     {
       label: "GitHub",
-      href: "https://github.com/AnmolSaini16/mapcn",
+      href: "https://github.com/unkn0wndfbx/mapcn-react-native",
       external: true,
     },
     {
       label: "Sponsor",
-      href: "https://github.com/sponsors/AnmolSaini16",
+      href: "https://github.com/sponsors/unkn0wndfbx",
       external: true,
     },
   ],
@@ -89,32 +88,27 @@ type FooterLinkItem = {
   external?: boolean;
 };
 
-/* FIXME: fix this function */
 function FooterLink({ label, href, external }: FooterLinkItem) {
+  const router = useRouter();
   const linkClassName = "text-muted-foreground active:text-foreground text-sm";
-
-  if (external ?? (typeof href === "string" && href.startsWith("http"))) {
-    return (
-      <Pressable
-        accessibilityLabel={label}
-        onPress={() => {
-          void WebBrowser.openBrowserAsync(href as string);
-        }}
-      >
-        <Text className={linkClassName}>{label}</Text>
-      </Pressable>
-    );
-  }
+  const isExternal =
+    external ?? (typeof href === "string" && href.startsWith("http"));
 
   return (
-    <Link
-      href={href}
-      asChild
+    <Text
+      accessibilityRole="link"
+      className={linkClassName}
+      onPress={() => {
+        if (isExternal) {
+          void WebBrowser.openBrowserAsync(href as string);
+          return;
+        }
+
+        router.push(href);
+      }}
     >
-      <Pressable accessibilityLabel={label}>
-        <Text className={linkClassName}>{label}</Text>
-      </Pressable>
-    </Link>
+      {label}
+    </Text>
   );
 }
 

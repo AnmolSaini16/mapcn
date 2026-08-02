@@ -1,12 +1,11 @@
-import { View } from "react-native";
+export const geojsonExampleSource = `import { View } from "react-native";
 
 import { WORLD_GEOJSON } from "@/lib/use-world-data";
-import { Map, MapGeoJSON } from "@/registry/map";
+import { Map, MapGeoJSON } from "@/components/ui/map";
 
-export function BlankMapExample() {
+export function GeoJSONExample() {
   return (
     <View className="h-full w-full">
-      {/* `blank` is a transparent canvas - add your own layers on top. */}
       <Map
         blank
         viewport={{
@@ -15,8 +14,12 @@ export function BlankMapExample() {
         }}
         style={{ flex: 1 }}
       >
-        <MapGeoJSON data={WORLD_GEOJSON} />
+        <MapGeoJSON
+          data={WORLD_GEOJSON}
+          linePaint={false}
+        />
       </Map>
     </View>
   );
 }
+`;

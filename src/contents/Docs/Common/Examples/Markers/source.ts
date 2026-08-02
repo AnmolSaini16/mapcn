@@ -30,7 +30,7 @@ export function MarkersExample() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
   return (
-    <View className="h-[420px] w-full">
+    <View className="h-full w-full">
       <Map
         viewport={{
           center: [-73.98, 40.76],

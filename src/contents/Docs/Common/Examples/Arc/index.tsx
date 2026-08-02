@@ -30,7 +30,7 @@ const arcs = destinations.map((dest) => ({
 
 export function ArcExample() {
   return (
-    <View className="h-[420px] w-full">
+    <View className="h-full w-full">
       <Map
         viewport={{
           center: [hub.lng, hub.lat],

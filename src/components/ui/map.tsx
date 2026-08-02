@@ -260,6 +260,13 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     return nativeMapRef.current;
   }, [map]);
 
+  const [initialViewState] = useState(() => ({
+    center: viewport?.center ?? ([0, 0] as [number, number]),
+    zoom: viewport?.zoom ?? 1,
+    bearing: viewport?.bearing ?? 0,
+    pitch: viewport?.pitch ?? 0,
+  }));
+
   const cameraState = {
     center: viewport?.center ?? currentViewport.center,
     zoom: viewport?.zoom ?? currentViewport.zoom,
@@ -356,7 +363,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
               cameraRef.current = instance;
               setCamera(instance);
             }}
-            {...cameraState}
+            {...(isControlled ? cameraState : { initialViewState })}
           />
           {isStyleLoaded ? children : null}
         </MapLibreMap>
@@ -415,9 +422,7 @@ function composeMarkerChildren(children: ReactNode) {
     }
 
     return cloneElement(content, {}, [
-      ...Children.toArray(
-        (content.props as MarkerContentProps).children,
-      ),
+      ...Children.toArray((content.props as MarkerContentProps).children),
       ...tooltips,
     ]);
   }

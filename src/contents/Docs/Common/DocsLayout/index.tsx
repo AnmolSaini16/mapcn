@@ -52,8 +52,8 @@ interface DocsLayoutProps {
   title: string;
   description: string;
   children: React.ReactNode;
-  prev?: { title: string; href: string };
-  next?: { title: string; href: string };
+  prev?: { title: string; href: Href };
+  next?: { title: string; href: Href };
   toc?: TocItem[];
 }
 
@@ -310,6 +310,7 @@ export function DocsLink({ href, children, external }: DocsLinkProps) {
   );
 }
 
+/* FIXME: fix this component */
 export function DocsCode({
   children,
   className,

@@ -13,7 +13,7 @@ export function ControlledMapExample() {
   });
 
   return (
-    <View className="relative h-[420px] w-full">
+    <View className="relative h-full w-full">
       <Map
         viewport={viewport}
         onViewportChange={setViewport}
