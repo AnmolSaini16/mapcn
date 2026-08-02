@@ -1,10 +1,16 @@
-import Link from "next/link";
+import { Link } from "expo-router";
+import { View } from "react-native";
 
 import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
 import { siteNavigation } from "@/lib/site-navigation";
 import { cn } from "@/lib/utils";
 
-export function MainNav({ className, ...props }: React.ComponentProps<"nav">) {
+type MainNavProps = {
+  className?: string;
+};
+
+export function MainNav({ className }: MainNavProps) {
   const navItems = siteNavigation
     .find((group) => group.title === "Pages")
     ?.items.filter((item) => item.title !== "Home");
@@ -12,22 +18,21 @@ export function MainNav({ className, ...props }: React.ComponentProps<"nav">) {
   if (!navItems?.length) return null;
 
   return (
-    <nav
-      className={cn("flex items-center gap-0.5", className)}
-      {...props}
-    >
+    <View className={cn("flex flex-row items-center gap-0.5", className)}>
       {navItems.map((item) => (
-        <Button
-          key={item.href}
-          variant="ghost"
+        <Link
+          key={item.title}
+          href={item.href}
           asChild
-          size="sm"
         >
-          <Link href={item.href}>
-            <span>{item.title}</span>
-          </Link>
-        </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+          >
+            <Text>{item.title}</Text>
+          </Button>
+        </Link>
       ))}
-    </nav>
+    </View>
   );
 }

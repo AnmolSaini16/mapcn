@@ -1,5 +1,4 @@
-import { BlocksPage } from "@/contents/Blocks";
-
 export default function BlocksScreen() {
-  return <BlocksPage />;
+  return null;
+  // return <BlocksPage />; TODO: Add blocks page
 }

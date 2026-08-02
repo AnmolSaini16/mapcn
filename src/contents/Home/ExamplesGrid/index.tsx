@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 
 import {
   AnalyticsExample,
@@ -9,9 +9,18 @@ import {
   TrailExample,
 } from "./Examples";
 
+import { cn } from "@/lib/utils";
+
 export function ExamplesGrid() {
   return (
-    <View className="gap-5">
+    <View
+      className={cn(
+        "gap-5",
+        Platform.select({
+          web: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
+        }),
+      )}
+    >
       <AnalyticsExample />
       <TrailExample />
       <ArcExample />

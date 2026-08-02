@@ -3,6 +3,7 @@ import * as WebBrowser from "expo-web-browser";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import * as React from "react";
 import {
+  Platform,
   Pressable,
   ScrollView,
   View,
@@ -310,7 +311,6 @@ export function DocsLink({ href, children, external }: DocsLinkProps) {
   );
 }
 
-/* FIXME: fix this component */
 export function DocsCode({
   children,
   className,
@@ -320,8 +320,11 @@ export function DocsCode({
 }) {
   return (
     <Text
+      {...(Platform.OS === "web"
+        ? ({ dataSet: { slot: "docs-code" } } as object)
+        : {})}
       className={cn(
-        "bg-muted rounded-md px-1.5 py-0.5 font-mono text-sm",
+        "bg-muted relative rounded-md px-1.5 py-0.5 font-mono text-sm",
         className,
       )}
     >

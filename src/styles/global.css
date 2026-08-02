@@ -158,24 +158,6 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
-  .maplibregl-popup-content {
-    @apply rounded-none! bg-transparent! p-0! shadow-none!;
-  }
-  .maplibregl-popup-tip {
-    @apply hidden!;
-  }
-  .maplibregl-ctrl-attrib {
-    @apply bg-background! text-muted-foreground! border-border! rounded-md! border! shadow-sm!;
-  }
-  .maplibregl-ctrl-attrib a {
-    @apply text-muted-foreground!;
-  }
-  .maplibregl-ctrl-attrib a:hover {
-    @apply text-foreground!;
-  }
-  .maplibregl-ctrl-attrib-button {
-    @apply bg-transparent! dark:invert;
-  }
 }
 
 .container {
@@ -232,6 +214,17 @@ html.dark .shiki span {
 html .shiki:focus,
 html .shiki:focus-visible {
   outline: none;
+}
+
+[data-slot="docs-code"] {
+  display: inline !important;
+  background-color: var(--muted) !important;
+  border-radius: var(--radius-md) !important;
+  padding: 0.125rem 0.375rem !important;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
 code {

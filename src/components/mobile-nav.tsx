@@ -143,7 +143,7 @@ export function MobileNav() {
         variant="ghost"
         size="icon"
         accessibilityLabel="Open docs menu"
-        className="shrink-0"
+        className="shrink-0 lg:hidden"
         onPress={() => {
           setOpen(true);
         }}
