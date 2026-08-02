@@ -1,9 +1,9 @@
-import { router, Stack, useLocalSearchParams } from "expo-router";
-import { ScrollView, TextInput } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
 
-import { Text } from "@/components/ui/text";
+import { ErrorBoundary } from "../_layout";
+
+import { LlmMarkdownView } from "@/components/llm-markdown-view";
 import { createLlmItemMarkdown, getRegistryItem } from "@/lib/llm-content";
-import { cn } from "@/lib/utils";
 
 export default function LlmItemScreen() {
   const { slug } = useLocalSearchParams<{
@@ -14,12 +14,7 @@ export default function LlmItemScreen() {
 
   // Equivalent to Next.js notFound()
   if (!itemName || slug.length > 1) {
-    return (
-      <>
-        <Stack.Screen options={{ title: "Not Found" }} />
-        <Text>404</Text>
-      </>
-    );
+    return <ErrorBoundary />;
   }
 
   const item = getRegistryItem(itemName);
@@ -31,19 +26,5 @@ export default function LlmItemScreen() {
 
   const markdown = createLlmItemMarkdown(item);
 
-  return (
-    <ScrollView>
-      <TextInput
-        value={markdown}
-        multiline
-        editable={false}
-        scrollEnabled={false}
-        showSoftInputOnFocus={false}
-        className={cn(
-          "text-foreground p-4 text-base leading-6",
-          "web:outline-none web:select-text",
-        )}
-      />
-    </ScrollView>
-  );
+  return <LlmMarkdownView markdown={markdown} />;
 }

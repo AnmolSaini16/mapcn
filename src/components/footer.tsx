@@ -1,7 +1,7 @@
 import { type Href, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import type { LucideProps } from "lucide-react-native";
-import { Pressable, useColorScheme, View } from "react-native";
+import { Platform, Pressable, useColorScheme, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
 import { Logo } from "./logo";
@@ -100,6 +100,10 @@ function FooterLink({ label, href, external }: FooterLinkItem) {
       className={linkClassName}
       onPress={() => {
         if (isExternal) {
+          if (Platform.OS === "web") {
+            window.open(href as string, "_blank");
+            return;
+          }
           void WebBrowser.openBrowserAsync(href as string);
           return;
         }

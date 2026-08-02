@@ -3,16 +3,16 @@ import { View } from "react-native";
 
 import { CodeBlock } from "../Common/CodeBlock";
 import { ComponentPreview } from "../Common/ComponentPreview";
+import { AdvancedUsageExample } from "../Common/Examples/AdvancedUsage";
+import { CustomLayerExample } from "../Common/Examples/CustomLayer";
+import { LayerMarkersExample } from "../Common/Examples/LayerMarkers";
 import {
   DocsCode,
   DocsLayout,
   DocsLink,
   DocsNote,
   DocsSection,
-} from "../Common/DocsLayout";
-import { AdvancedUsageExample } from "../Common/Examples/AdvancedUsage";
-import { CustomLayerExample } from "../Common/Examples/CustomLayer";
-import { LayerMarkersExample } from "../Common/Examples/LayerMarkers";
+} from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";

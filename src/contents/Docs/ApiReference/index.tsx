@@ -6,7 +6,7 @@ import {
   DocsNote,
   DocsPropTable,
   DocsSection,
-} from "../Common/DocsLayout";
+} from "../Common/Layout";
 
 import {
   mapArcProps,

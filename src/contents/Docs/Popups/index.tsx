@@ -1,11 +1,6 @@
 import { ComponentPreview } from "../Common/ComponentPreview";
-import {
-  DocsCode,
-  DocsLayout,
-  DocsNote,
-  DocsSection,
-} from "../Common/DocsLayout";
 import { StandalonePopupExample } from "../Common/Examples/Popup/Standalone";
+import { DocsCode, DocsLayout, DocsNote, DocsSection } from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";

@@ -1,7 +1,7 @@
 import * as WebBrowser from "expo-web-browser";
 import type { LucideProps } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
-import { useColorScheme } from "react-native";
+import { Platform, useColorScheme } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
 import { Button } from "@/components/ui/button";
@@ -100,6 +100,10 @@ export function GitHubButton({ withCount = true }: GitHubButtonProps) {
   const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
 
   const openRepository = useCallback(() => {
+    if (Platform.OS === "web") {
+      window.open(GITHUB_REPO_URL, "_blank");
+      return;
+    }
     void WebBrowser.openBrowserAsync(GITHUB_REPO_URL);
   }, []);
 

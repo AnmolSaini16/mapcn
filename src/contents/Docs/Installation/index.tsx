@@ -1,12 +1,12 @@
 import { CodeBlock } from "../Common/CodeBlock";
+import { InstallCommand } from "../Common/InstallCommand";
 import {
   DocsCode,
   DocsLayout,
   DocsLink,
   DocsNote,
   DocsSection,
-} from "../Common/DocsLayout";
-import { InstallCommand } from "../Common/InstallCommand";
+} from "../Common/Layout";
 
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";

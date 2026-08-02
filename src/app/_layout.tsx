@@ -13,6 +13,7 @@ import { useColorScheme, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Header } from "@/components/header";
+import "@/lib/appearance-polyfill";
 import { NAV_THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import "../styles/global.css";
@@ -52,7 +53,12 @@ export default function RootLayout() {
           <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
           <Header />
           <View className="flex-1">
-            <Stack screenOptions={{ headerShown: false }}>
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: "transparent" },
+              }}
+            >
               <Stack.Screen
                 name="index"
                 options={{ gestureEnabled: false }}

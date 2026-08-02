@@ -1,14 +1,14 @@
 import { ComponentPreview } from "../Common/ComponentPreview";
+import { DraggableMarkerExample } from "../Common/Examples/DraggableMarker";
+import { MarkersExample } from "../Common/Examples/Markers";
+import { PopupExample } from "../Common/Examples/Popup";
 import {
   DocsCode,
   DocsLayout,
   DocsLink,
   DocsNote,
   DocsSection,
-} from "../Common/DocsLayout";
-import { DraggableMarkerExample } from "../Common/Examples/DraggableMarker";
-import { MarkersExample } from "../Common/Examples/Markers";
-import { PopupExample } from "../Common/Examples/Popup";
+} from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";

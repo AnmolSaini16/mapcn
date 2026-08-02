@@ -1,12 +1,7 @@
 import { ComponentPreview } from "../Common/ComponentPreview";
-import {
-  DocsCode,
-  DocsLayout,
-  DocsLink,
-  DocsSection,
-} from "../Common/DocsLayout";
 import { RouteExample } from "../Common/Examples/Route";
 import { OsrmRouteExample } from "../Common/Examples/Route/Osrm";
+import { DocsCode, DocsLayout, DocsLink, DocsSection } from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";

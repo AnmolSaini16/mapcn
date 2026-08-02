@@ -1,6 +1,6 @@
 import { ComponentPreview } from "../Common/ComponentPreview";
-import { DocsCode, DocsLayout, DocsSection } from "../Common/DocsLayout";
 import { ClusterExample } from "../Common/Examples/Cluster";
+import { DocsCode, DocsLayout, DocsSection } from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";

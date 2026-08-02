@@ -1,7 +1,7 @@
 import { ComponentPreview } from "../Common/ComponentPreview";
-import { DocsCode, DocsLayout, DocsSection } from "../Common/DocsLayout";
 import { GeoJSONExample } from "../Common/Examples/GeoJson";
 import { MapOverlayExample } from "../Common/Examples/MapOverlay";
+import { DocsCode, DocsLayout, DocsSection } from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";

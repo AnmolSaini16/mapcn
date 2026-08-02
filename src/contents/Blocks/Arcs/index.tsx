@@ -1,12 +1,12 @@
 import { Text } from "@/components/ui/text";
 import { ComponentPreview } from "@/contents/Docs/Common/ComponentPreview";
+import { ArcExample } from "@/contents/Docs/Common/Examples/Arc";
+import { InteractiveArcExample } from "@/contents/Docs/Common/Examples/Arc/Interactive";
 import {
   DocsCode,
   DocsLayout,
   DocsSection,
-} from "@/contents/Docs/Common/DocsLayout";
-import { ArcExample } from "@/contents/Docs/Common/Examples/Arc";
-import { InteractiveArcExample } from "@/contents/Docs/Common/Examples/Arc/Interactive";
+} from "@/contents/Docs/Common/Layout";
 import { getExampleSource } from "@/lib/example-source";
 
 export function ArcsPage() {

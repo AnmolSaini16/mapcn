@@ -1,11 +1,6 @@
 import { ComponentPreview } from "../Common/ComponentPreview";
-import {
-  DocsCode,
-  DocsLayout,
-  DocsNote,
-  DocsSection,
-} from "../Common/DocsLayout";
 import { MapControlsExample } from "../Common/Examples/MapControls";
+import { DocsCode, DocsLayout, DocsNote, DocsSection } from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";

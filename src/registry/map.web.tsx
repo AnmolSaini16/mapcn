@@ -8,7 +8,7 @@ import {
 } from "react";
 import { View, type StyleProp, type ViewStyle } from "react-native";
 
-import { Text } from "@/components/ui/text";
+import { WebMapPreviewPlaceholder } from "@/atoms/WebMapPreviewPlaceholder";
 import { cn } from "@/lib/utils";
 
 type Theme = "light" | "dark";
@@ -87,19 +87,10 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
       }}
     >
       <View
-        className={cn(
-          "bg-muted flex-1 items-center justify-center gap-2 px-6",
-          className,
-        )}
+        className={cn("flex-1", className)}
         style={style}
       >
-        <Text className="text-foreground text-center text-sm font-medium">
-          Map preview
-        </Text>
-        <Text className="text-muted-foreground text-center text-xs">
-          Map previews run on iOS and Android. Open this app in a simulator or
-          device to see the live map.
-        </Text>
+        <WebMapPreviewPlaceholder />
         <View
           className="absolute h-0 w-0 overflow-hidden opacity-0"
           pointerEvents="none"

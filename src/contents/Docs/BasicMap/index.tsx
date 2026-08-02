@@ -1,15 +1,15 @@
 import { ComponentPreview } from "../Common/ComponentPreview";
+import { BasicMapExample } from "../Common/Examples/BasicMap";
+import { BlankMapExample } from "../Common/Examples/BlankMap";
+import { ControlledMapExample } from "../Common/Examples/ControlledMap";
+import { CustomStyleExample } from "../Common/Examples/CustomStyle";
 import {
   DocsCode,
   DocsLayout,
   DocsLink,
   DocsNote,
   DocsSection,
-} from "../Common/DocsLayout";
-import { BasicMapExample } from "../Common/Examples/BasicMap";
-import { BlankMapExample } from "../Common/Examples/BlankMap";
-import { ControlledMapExample } from "../Common/Examples/ControlledMap";
-import { CustomStyleExample } from "../Common/Examples/CustomStyle";
+} from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";

@@ -16,6 +16,14 @@ import { DocsScrollProvider, useDocsScroll } from "./docs-scroll-context";
 import { DocsToc } from "./DocsToc";
 
 import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 
@@ -141,10 +149,10 @@ export function DocsLayout({
 
   return (
     <DocsScrollProvider value={scrollContextValue}>
-      <View className="flex-1 flex-row">
+      <View className="flex-1 flex-row bg-background">
         <ScrollView
           ref={scrollRef}
-          className="min-w-0 flex-1"
+          className="min-w-0 flex-1 bg-background"
           contentContainerClassName="flex-grow pb-20"
           showsVerticalScrollIndicator={false}
           onScroll={handleScroll}
@@ -343,6 +351,53 @@ interface DocsPropTableProps {
 }
 
 export function DocsPropTable({ props }: DocsPropTableProps) {
+  if (Platform.OS === "web") {
+    return (
+      <View className="my-6 overflow-hidden rounded-lg border border-border">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-surface">
+              <TableHead className="h-10 px-4 text-xs font-medium">
+                Prop
+              </TableHead>
+              <TableHead className="h-10 px-4 text-xs font-medium">
+                Type
+              </TableHead>
+              <TableHead className="h-10 px-4 text-xs font-medium">
+                Default
+              </TableHead>
+              <TableHead className="h-10 px-4 text-xs font-medium">
+                Description
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {props.map((prop) => (
+              <TableRow key={prop.name}>
+                <TableCell className="px-4 py-3 align-top">
+                  <DocsCode className="text-[13px]">{prop.name}</DocsCode>
+                </TableCell>
+                <TableCell className="px-4 py-3 align-top whitespace-normal">
+                  <DocsCode className="text-foreground/70 text-xs">
+                    {prop.type}
+                  </DocsCode>
+                </TableCell>
+                <TableCell className="px-4 py-3 align-top">
+                  <DocsCode className="text-foreground/70 text-xs whitespace-normal">
+                    {prop.default ?? "-"}
+                  </DocsCode>
+                </TableCell>
+                <TableCell className="text-foreground/70 min-w-[180px] px-4 py-3 text-sm leading-relaxed whitespace-normal">
+                  {prop.description}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </View>
+    );
+  }
+
   return (
     <View className="my-6 overflow-hidden rounded-lg border border-border">
       {props.map((prop, index) => (
