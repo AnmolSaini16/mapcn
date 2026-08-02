@@ -199,16 +199,18 @@
 }
 
 /* Shiki dual theme support for code blocks */
-html .shiki,
-html .shiki span {
+.shiki,
+.shiki span {
   color: var(--shiki-light) !important;
-  background-color: var(--color-code);
+  background-color: var(--color-code) !important;
 }
 
+.dark .shiki,
+.dark .shiki span,
 html.dark .shiki,
 html.dark .shiki span {
   color: var(--shiki-dark) !important;
-  background-color: var(--color-code);
+  background-color: var(--color-code) !important;
 }
 
 html .shiki:focus,

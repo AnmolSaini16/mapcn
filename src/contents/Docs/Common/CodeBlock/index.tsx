@@ -1,6 +1,12 @@
 import { Check, Copy } from "lucide-react-native";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Platform, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+  useColorScheme,
+} from "react-native";
 
 import { CodeSurface } from "@/components/code-surface";
 import { Button } from "@/components/ui/button";
@@ -8,6 +14,7 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { copyText } from "@/lib/clipboard";
 import { highlightCode } from "@/lib/highlight";
+import { THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
 const CODE_LINE_HEIGHT = 20;
@@ -25,6 +32,9 @@ export function CodeBlock({
   showCopyButton = true,
   showLineNumbers = true,
 }: CodeBlockProps) {
+  const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
+  const codeBackgroundColor =
+    colorScheme === "dark" ? THEME.dark.code : THEME.light.code;
   const [highlighted, setHighlighted] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const codeLines = useMemo(
@@ -65,7 +75,10 @@ export function CodeBlock({
   }, [code]);
 
   return (
-    <View className="border-border bg-code w-full overflow-hidden rounded-xl border">
+    <View
+      className="border-border w-full overflow-hidden rounded-xl border"
+      style={{ backgroundColor: codeBackgroundColor }}
+    >
       <View className="bg-surface border-border h-11 flex-row items-center border-b px-3">
         <Text className="text-muted-foreground flex-1 font-mono text-xs font-medium uppercase tracking-wider">
           {language}
@@ -91,11 +104,18 @@ export function CodeBlock({
         <CodeSurface
           className="max-h-[30rem] overflow-auto"
           html={highlighted}
+          style={{ backgroundColor: codeBackgroundColor }}
         />
       ) : (
-        <View className="bg-code flex-row">
+        <View
+          className="flex-row"
+          style={{ backgroundColor: codeBackgroundColor }}
+        >
           {showLineNumbers ? (
-            <View className="border-border bg-code z-10 border-r px-3 py-4">
+            <View
+              className="border-border z-10 border-r px-3 py-4"
+              style={{ backgroundColor: codeBackgroundColor }}
+            >
               {codeLines.map((_, index) => (
                 <View
                   key={index}

@@ -30,6 +30,8 @@ export const THEME = {
     chart3: "#6b6b6b",
     chart4: "#575757",
     chart5: "#404040",
+    surface: "#f8f8f8",
+    code: "#f8f8f8",
   },
   dark: {
     background: "#252525",
@@ -56,6 +58,8 @@ export const THEME = {
     chart3: "#6b6b6b",
     chart4: "#575757",
     chart5: "#404040",
+    surface: "#151515",
+    code: "#151515",
   },
 };
 

@@ -22,14 +22,14 @@ export default function DocsLayout() {
 
   if (isMobile) {
     return (
-      <View className="flex flex-1">
+      <View className="flex flex-1 bg-background">
         <DocsStack />
       </View>
     );
   }
 
   return (
-    <View className="flex flex-1">
+    <View className="flex flex-1 bg-background">
       <SidebarProvider className="container min-h-min px-0">
         <DocsSidebar />
         <SidebarInset className="size-full">

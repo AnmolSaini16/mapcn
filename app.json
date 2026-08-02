@@ -21,6 +21,9 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
+      "name": "Mapcn React Native",
+      "shortName": "MapcnReactNative",
+      "lang": "en",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },

@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { GitHubButton } from "./github-button";
@@ -18,7 +18,8 @@ export function Header({ className }: HeaderProps) {
   return (
     <View
       className={cn(
-        "bg-background/85 supports-backdrop-filter:bg-background/70 z-50 w-full backdrop-blur",
+        "bg-background/85 supports-backdrop-filter:bg-background/70 w-full backdrop-blur",
+        Platform.select({ web: "z-50" }),
         className,
       )}
     >
@@ -30,9 +31,7 @@ export function Header({ className }: HeaderProps) {
             className="bg-primary/15 ml-2.5 hidden h-4! lg:block"
             orientation="vertical"
           />
-
           <MainNav className="hidden lg:flex" />
-
           <View className="ml-auto flex flex-row items-center gap-1.5">
             {/* <CommandSearch /> TODO: Add command search */}
             <GitHubButton />
