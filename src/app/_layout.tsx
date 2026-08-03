@@ -22,7 +22,6 @@ void SplashScreen.preventAutoHideAsync();
 
 export { ErrorBoundary } from "@/contents/ErrorBoundary";
 
-/* TODO: add the icon everywhere in the project settings */
 export default function RootLayout() {
   const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
   const [fontsLoaded] = useFonts({

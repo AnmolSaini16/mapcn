@@ -1,4 +1,5 @@
 import { Link, type Href } from "expo-router";
+import Head from "expo-router/head";
 import * as WebBrowser from "expo-web-browser";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import * as React from "react";
@@ -25,6 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Text } from "@/components/ui/text";
+import { formatPageTitle } from "@/lib/site-metadata";
 import { cn } from "@/lib/utils";
 
 export function slugify(text: string): string {
@@ -149,6 +151,9 @@ export function DocsLayout({
 
   return (
     <DocsScrollProvider value={scrollContextValue}>
+      <Head>
+        <title>{formatPageTitle(title)}</title>
+      </Head>
       <View className="flex-1 flex-row bg-background">
         <ScrollView
           ref={scrollRef}
@@ -297,7 +302,11 @@ export function DocsLink({ href, children, external }: DocsLinkProps) {
         accessibilityRole="link"
         className="text-foreground font-medium underline underline-offset-4"
         onPress={() => {
-          void WebBrowser.openBrowserAsync(href);
+          if (Platform.OS === "web") {
+            window.open(href as string, "_blank");
+          } else {
+            void WebBrowser.openBrowserAsync(href);
+          }
         }}
       >
         {children}
