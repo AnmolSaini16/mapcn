@@ -1573,6 +1573,17 @@ type MapArcProps<T extends MapArcDatum = MapArcDatum> = {
    * cross the antimeridian via the shorter great-circle direction. (default: 0.2)
    */
   curvature?: number;
+  /**
+   * How each arc's geometry is computed.
+   * - `"bezier"` bows the arc by `curvature` in lng/lat space — a decorative
+   *   curve that is not geographically accurate.
+   * - `"greatCircle"` samples the true shortest path on the sphere (the
+   *   orthodrome); `curvature` is ignored in this mode.
+   *
+   * Both modes unwrap longitudes so the arc crosses the antimeridian via the
+   * short way around the globe. (default: "bezier")
+   */
+  path?: "bezier" | "greatCircle";
   /** Number of samples used to render each curve. Higher = smoother. (default: 64) */
   samples?: number;
   /**
@@ -1620,12 +1631,87 @@ const DEFAULT_ARC_LAYOUT: MapArcLineLayout = {
   "line-cap": "round",
 };
 
+function buildGreatCircleCoordinates(
+  from: [number, number],
+  to: [number, number],
+  samples: number,
+): [number, number][] {
+  const [lng1, lat1] = from;
+  const [lngTo, lat2] = to;
+  // Unwrap the destination longitude so |dx| <= 180, matching
+  // buildArcCoordinates. This keeps antimeridian-crossing arcs consistent
+  // with the bezier mode: the path bows the short way around the globe.
+  const rawDx = lngTo - lng1;
+  const lng2 = rawDx > 180 ? lngTo - 360 : rawDx < -180 ? lngTo + 360 : lngTo;
+
+  const toRad = Math.PI / 180;
+  const toDeg = 180 / Math.PI;
+  const φ1 = lat1 * toRad;
+  const λ1 = lng1 * toRad;
+  const φ2 = lat2 * toRad;
+  const λ2 = lng2 * toRad;
+
+  // Cartesian unit vectors for the two endpoints.
+  const x1 = Math.cos(φ1) * Math.cos(λ1);
+  const y1 = Math.cos(φ1) * Math.sin(λ1);
+  const z1 = Math.sin(φ1);
+  const x2 = Math.cos(φ2) * Math.cos(λ2);
+  const y2v = Math.cos(φ2) * Math.sin(λ2);
+  const z2 = Math.sin(φ2);
+
+  // Angular distance between the endpoints (clamped for float safety).
+  const dot = Math.min(1, Math.max(-1, x1 * x2 + y1 * y2v + z1 * z2));
+  const d = Math.acos(dot);
+  const sinD = Math.sin(d);
+
+  const segments = Math.max(2, Math.floor(samples));
+
+  // Degenerate cases: coincident points (d ~ 0) or near-antipodal points
+  // (sin(d) ~ 0, great circle not unique). Slerp is undefined here, so fall
+  // back to the unwrapped straight segment. Guarantees no NaN.
+  if (d < 1e-9 || sinD < 1e-9) {
+    return [from, [lng2, lat2]];
+  }
+
+  const points: [number, number][] = [];
+  let prevLng: number | null = null;
+  for (let i = 0; i <= segments; i += 1) {
+    const f = i / segments;
+    const A = Math.sin((1 - f) * d) / sinD;
+    const B = Math.sin(f * d) / sinD;
+    const x = A * x1 + B * x2;
+    const y = A * y1 + B * y2v;
+    const z = A * z1 + B * z2;
+    const lat = Math.atan2(z, Math.hypot(x, y)) * toDeg;
+    let lng = Math.atan2(y, x) * toDeg;
+    // atan2 rewraps each point into [-180, 180], which would create jumps in
+    // the linestring across the antimeridian. Unwrap per-sample relative to
+    // the previous point so the longitudes stay continuous.
+    if (prevLng !== null) {
+      while (lng - prevLng > 180) lng -= 360;
+      while (lng - prevLng < -180) lng += 360;
+    }
+    prevLng = lng;
+    points.push([lng, lat]);
+  }
+
+  // Pin exact endpoints to avoid floating-point drift from the slerp/atan2
+  // round trip.
+  points[0] = from;
+  points[points.length - 1] = [lng2, lat2];
+  return points;
+}
+
 function buildArcCoordinates(
   from: [number, number],
   to: [number, number],
   curvature: number,
   samples: number,
+  path: "bezier" | "greatCircle" = "bezier",
 ): [number, number][] {
+  if (path === "greatCircle") {
+    return buildGreatCircleCoordinates(from, to, samples);
+  }
   const [x0, y0] = from;
   const [xTo, y2] = to;
   // Unwrap the destination longitude so |dx| <= 180. This makes arcs that
@@ -1665,6 +1751,7 @@ function MapArc<T extends MapArcDatum = MapArcDatum>({
   data,
   id: propId,
   curvature = DEFAULT_ARC_CURVATURE,
+  path = "bezier",
   samples = DEFAULT_ARC_SAMPLES,
   paint,
   layout,
@@ -1706,12 +1793,12 @@ function MapArc<T extends MapArcDatum = MapArcDatum>({
           properties,
           geometry: {
             type: "LineString",
-            coordinates: buildArcCoordinates(from, to, curvature, samples),
+            coordinates: buildArcCoordinates(from, to, curvature, samples, path),
           },
         };
       }),
     }),
-    [data, curvature, samples],
+    [data, curvature, samples, path],
   );
 
   const latestRef = useRef({ data, onClick, onHover });
