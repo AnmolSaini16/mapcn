@@ -623,7 +623,14 @@ export default function ApiReferencePage() {
               type: "number",
               default: "0.2",
               description:
-                "How far the arc bows away from a straight line. 0 renders a straight line, higher values bend more, negative values bend to the opposite side.",
+                "How far the arc bows away from a straight line. 0 renders a straight line, higher values bend more, negative values bend to the opposite side. Ignored when path is greatCircle.",
+            },
+            {
+              name: "path",
+              type: '"bezier" | "greatCircle"',
+              default: '"bezier"',
+              description:
+                "How the arc geometry is computed. bezier bows the line by curvature in lng/lat space (decorative). greatCircle samples the true shortest path on the sphere (curvature is ignored). Both unwrap longitudes to cross the antimeridian the short way.",
             },
             {
               name: "samples",

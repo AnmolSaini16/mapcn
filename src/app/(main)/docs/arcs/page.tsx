@@ -1,6 +1,7 @@
 import { DocsLayout, DocsSection, DocsCode } from "../_components/docs";
 import { ComponentPreview } from "../_components/component-preview";
 import { ArcExample } from "../_components/examples/arc-example";
+import { GreatCircleArcExample } from "../_components/examples/great-circle-arc-example";
 import { InteractiveArcExample } from "../_components/examples/interactive-arc-example";
 import { getExampleSource } from "../_components/get-example-source";
 import { Metadata } from "next";
@@ -11,6 +12,9 @@ export const metadata: Metadata = {
 
 export default function ArcsPage() {
   const arcSource = getExampleSource("arc-example.tsx");
+  const greatCircleArcSource = getExampleSource(
+    "great-circle-arc-example.tsx",
+  );
   const interactiveArcSource = getExampleSource("interactive-arc-example.tsx");
 
   return (
@@ -22,6 +26,7 @@ export default function ArcsPage() {
       toc={[
         { title: "Basic Arc", slug: "basic-arc" },
         { title: "Interactive Arcs", slug: "interactive-arcs" },
+        { title: "Great Circle Paths", slug: "great-circle-paths" },
       ]}
     >
       <DocsSection>
@@ -55,6 +60,25 @@ export default function ArcsPage() {
         </p>
         <ComponentPreview code={interactiveArcSource}>
           <InteractiveArcExample />
+        </ComponentPreview>
+      </DocsSection>
+
+      <DocsSection title="Great Circle Paths">
+        <p>
+          By default arcs are decorative Bézier curves bowed by{" "}
+          <DocsCode>curvature</DocsCode> in longitude/latitude space. Set{" "}
+          <DocsCode>path=&quot;greatCircle&quot;</DocsCode> to render the true
+          shortest path over the sphere (the orthodrome) instead. This is the
+          route an aircraft actually flies, so long-haul connections bend
+          toward the poles — the same London hub as above, but a London → New
+          York flight now arcs up over Greenland instead of straight across the
+          Atlantic. In this mode{" "}
+          <DocsCode>curvature</DocsCode> is ignored, while{" "}
+          <DocsCode>samples</DocsCode> still controls smoothness. Great circles
+          look most natural on the <DocsCode>globe</DocsCode> projection.
+        </p>
+        <ComponentPreview code={greatCircleArcSource}>
+          <GreatCircleArcExample />
         </ComponentPreview>
       </DocsSection>
     </DocsLayout>
