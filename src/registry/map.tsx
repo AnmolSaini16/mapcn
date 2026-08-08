@@ -21,22 +21,13 @@ import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-/* If you want to self host the worker - 
-  Create a folder "workers" in your public folder
-  Copy "maplibre-gl-worker.mjs" & "maplibre-gl-shared.mjs"
-  from node_modules/maplibre-gl/dist/
+// Override the worker URL with NEXT_PUBLIC_MAPLIBRE_WORKER_URL
+// to self-host the MapLibre worker. Otherwise, use the CDN worker
+const workerUrl =
+  process.env.NEXT_PUBLIC_MAPLIBRE_WORKER_URL ??
+  `https://unpkg.com/maplibre-gl@${MapLibreGL.getVersion()}/dist/maplibre-gl-worker.mjs`;
 
-  And uncomment the following line - 
-*/
-
-// MapLibreGL.setWorkerUrl("/workers/maplibre-gl-worker.mjs");
-
-/* -------------------------------------------------------------------------------- */
-
-// Automatically resolves the worker from a CDN based on the installed version.
-MapLibreGL.setWorkerUrl(
-  `https://unpkg.com/maplibre-gl@${MapLibreGL.getVersion()}/dist/maplibre-gl-worker.mjs`,
-);
+MapLibreGL.setWorkerUrl(workerUrl);
 
 const defaultStyles = {
   dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
