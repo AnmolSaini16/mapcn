@@ -1,6 +1,6 @@
 "use client";
 
-import MapLibreGL, { type PopupOptions, type MarkerOptions } from "maplibre-gl";
+import * as MapLibreGL from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type * as GeoJSON from "geojson";
 import {
@@ -20,6 +20,23 @@ import { createPortal } from "react-dom";
 import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+
+/* If you want to self host the worker - 
+  Create a folder "workers" in your public folder
+  Copy "maplibre-gl-worker.mjs" & "maplibre-gl-shared.mjs"
+  from node_modules/maplibre-gl/dist/
+
+  And uncomment the following line - 
+*/
+
+// MapLibreGL.setWorkerUrl("/workers/maplibre-gl-worker.mjs");
+
+/* -------------------------------------------------------------------------------- */
+
+// Automatically resolves the worker from a CDN based on the installed version.
+MapLibreGL.setWorkerUrl(
+  `https://unpkg.com/maplibre-gl@${MapLibreGL.getVersion()}/dist/maplibre-gl-worker.mjs`,
+);
 
 const defaultStyles = {
   dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
@@ -443,7 +460,7 @@ type MapMarkerProps = {
   onDrag?: (lngLat: { lng: number; lat: number }) => void;
   /** Callback when marker drag ends (requires draggable: true) */
   onDragEnd?: (lngLat: { lng: number; lat: number }) => void;
-} & Omit<MarkerOptions, "element">;
+} & Omit<MapLibreGL.MarkerOptions, "element">;
 
 function MapMarker({
   longitude,
@@ -624,7 +641,7 @@ type MarkerPopupProps = {
   className?: string;
   /** Show a close button in the popup (default: false) */
   closeButton?: boolean;
-} & Omit<PopupOptions, "className" | "closeButton">;
+} & Omit<MapLibreGL.PopupOptions, "className" | "closeButton">;
 
 function MarkerPopup({
   children,
@@ -691,7 +708,7 @@ type MarkerTooltipProps = {
   children: ReactNode;
   /** Additional CSS classes for the tooltip container */
   className?: string;
-} & Omit<PopupOptions, "className" | "closeButton" | "closeOnClick">;
+} & Omit<MapLibreGL.PopupOptions, "className" | "closeButton" | "closeOnClick">;
 
 function MarkerTooltip({
   children,
@@ -1017,7 +1034,7 @@ type MapPopupProps = {
   className?: string;
   /** Show a close button in the popup (default: false) */
   closeButton?: boolean;
-} & Omit<PopupOptions, "className" | "closeButton">;
+} & Omit<MapLibreGL.PopupOptions, "className" | "closeButton">;
 
 function MapPopup({
   longitude,
