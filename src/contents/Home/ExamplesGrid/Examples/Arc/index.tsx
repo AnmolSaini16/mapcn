@@ -35,7 +35,10 @@ export function ArcExample() {
   );
 
   return (
-    <ExampleCard className="aspect-square min-h-[280px]">
+    <ExampleCard
+      className="aspect-square min-h-[280px]"
+      previewImage="/images/previews/home-arc.png"
+    >
       <ExampleMap
         viewport={{
           center: [-0.1276, 41.5074],

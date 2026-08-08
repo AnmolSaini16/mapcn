@@ -33,7 +33,10 @@ export function RoutesPage() {
         <Text className="leading-7">
           Draw a route with numbered stop markers along the path.
         </Text>
-        <ComponentPreview code={routeSource}>
+        <ComponentPreview
+          code={routeSource}
+          previewImage="/images/previews/route.png"
+        >
           <RouteExample />
         </ComponentPreview>
       </DocsSection>
@@ -53,6 +56,7 @@ export function RoutesPage() {
         <ComponentPreview
           code={osrmRouteSource}
           className="h-[500px]"
+          previewImage="/images/previews/osrm-route.png"
         >
           <OsrmRouteExample />
         </ComponentPreview>

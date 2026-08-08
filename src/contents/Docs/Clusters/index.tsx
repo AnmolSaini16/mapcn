@@ -29,7 +29,10 @@ export function ClustersPage() {
           Click on clusters to zoom in. Click individual points to see details
           in a popup.
         </Text>
-        <ComponentPreview code={clusterSource}>
+        <ComponentPreview
+          code={clusterSource}
+          previewImage="/images/previews/cluster.png"
+        >
           <ClusterExample />
         </ComponentPreview>
       </DocsSection>

@@ -1,5 +1,4 @@
 import { Link, type Href } from "expo-router";
-import Head from "expo-router/head";
 import * as WebBrowser from "expo-web-browser";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import * as React from "react";
@@ -16,6 +15,7 @@ import {
 import { DocsScrollProvider, useDocsScroll } from "./docs-scroll-context";
 import { DocsToc } from "./DocsToc";
 
+import { PageHead } from "@/components/page-head";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -26,7 +26,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Text } from "@/components/ui/text";
-import { formatPageTitle } from "@/lib/site-metadata";
 import { cn } from "@/lib/utils";
 
 export function slugify(text: string): string {
@@ -151,9 +150,10 @@ export function DocsLayout({
 
   return (
     <DocsScrollProvider value={scrollContextValue}>
-      <Head>
-        <title>{formatPageTitle(title)}</title>
-      </Head>
+      <PageHead
+        title={title}
+        description={description}
+      />
       <View className="flex-1 flex-row bg-background">
         <ScrollView
           ref={scrollRef}
@@ -230,6 +230,17 @@ export function DocsLayout({
 interface DocsSectionProps {
   title?: string;
   children: React.ReactNode;
+}
+
+export function DocsListItem({ children }: { children: React.ReactNode }) {
+  return (
+    <View className="flex-row items-start gap-2 pl-1">
+      <Text className="leading-7">{"\u2022"}</Text>
+      <View className="min-w-0 flex-1">
+        <Text className="leading-7">{children}</Text>
+      </View>
+    </View>
+  );
 }
 
 export function DocsSection({ title, children }: DocsSectionProps) {
@@ -396,7 +407,7 @@ export function DocsPropTable({ props }: DocsPropTableProps) {
                     {prop.default ?? "-"}
                   </DocsCode>
                 </TableCell>
-                <TableCell className="text-foreground/70 min-w-[180px] px-4 py-3 text-sm leading-relaxed whitespace-normal">
+                <TableCell className="text-foreground/70 min-w-45 px-4 py-3 text-sm leading-relaxed whitespace-normal">
                   {prop.description}
                 </TableCell>
               </TableRow>

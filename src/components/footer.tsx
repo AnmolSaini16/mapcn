@@ -7,6 +7,7 @@ import Svg, { Path } from "react-native-svg";
 import { Logo } from "./logo";
 
 import { Text } from "@/components/ui/text";
+import { PRIVACY_POLICY_PATH, SITE_GITHUB_REPO } from "@/lib/site-metadata";
 import { THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
@@ -54,7 +55,7 @@ const footerLinks: Record<string, FooterLinkItem[]> = {
   community: [
     {
       label: "GitHub",
-      href: "https://github.com/unkn0wndfbx/mapcn-react-native",
+      href: SITE_GITHUB_REPO,
       external: true,
     },
     {
@@ -63,7 +64,13 @@ const footerLinks: Record<string, FooterLinkItem[]> = {
       external: true,
     },
   ],
+  legal: [{ label: "Privacy Policy", href: PRIVACY_POLICY_PATH }],
   resources: [
+    {
+      label: "mapcn (web)",
+      href: "https://mapcn.dev",
+      external: true,
+    },
     {
       label: "MapLibre React Native",
       href: "https://maplibre.org/maplibre-react-native/",
@@ -158,8 +165,21 @@ export function Footer({ className }: FooterProps) {
           <View className="gap-4">
             <Logo className="w-fit" />
             <Text className="text-muted-foreground max-w-xs text-sm leading-relaxed">
-              Free & open-source, ready-to-use, customizable map components for
-              React Native.
+              React Native map components forked from{" "}
+              <Text
+                accessibilityRole="link"
+                className="text-muted-foreground text-sm underline"
+                onPress={() => {
+                  if (Platform.OS === "web") {
+                    window.open("https://mapcn.dev", "_blank");
+                    return;
+                  }
+                  void WebBrowser.openBrowserAsync("https://mapcn.dev");
+                }}
+              >
+                mapcn
+              </Text>
+              , the web-only original.
             </Text>
             <View className="flex-row items-center gap-4">
               {socialLinks.map((social) => (
@@ -192,6 +212,10 @@ export function Footer({ className }: FooterProps) {
             <FooterLinkSection
               title="Resources"
               links={[...footerLinks.resources]}
+            />
+            <FooterLinkSection
+              title="Legal"
+              links={[...footerLinks.legal]}
             />
           </View>
         </View>

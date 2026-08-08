@@ -35,7 +35,10 @@ export function GeoJSONPage() {
           box, no styling required. Here it loads world map onto a{" "}
           <DocsCode>blank</DocsCode> map.
         </Text>
-        <ComponentPreview code={geojsonSource}>
+        <ComponentPreview
+          code={geojsonSource}
+          previewImage="/images/previews/geojson.png"
+        >
           <GeoJSONExample />
         </ComponentPreview>
       </DocsSection>
@@ -45,7 +48,10 @@ export function GeoJSONPage() {
           Overlay shapes and regions on a map - highlight an area, outline a
           zone, or trace a boundary.
         </Text>
-        <ComponentPreview code={overlaySource}>
+        <ComponentPreview
+          code={overlaySource}
+          previewImage="/images/previews/map-overlay.png"
+        >
           <MapOverlayExample />
         </ComponentPreview>
       </DocsSection>

@@ -1,4 +1,6 @@
-import { CodeBlock } from "../Common/CodeBlock";
+import { View } from "react-native";
+
+import { ComponentPreview } from "../Common/ComponentPreview";
 import { InstallCommand } from "../Common/InstallCommand";
 import {
   DocsCode,
@@ -8,7 +10,6 @@ import {
   DocsSection,
 } from "../Common/Layout";
 
-import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { Map, MapControls } from "@/registry/map";
 
@@ -99,17 +100,21 @@ export function InstallationPage() {
 
       <DocsSection title="Usage">
         <Text className="leading-7">Import and use the map component:</Text>
-        <CodeBlock code={usageCode} />
-        <Card className="h-80 overflow-hidden rounded-lg p-0">
-          <Map
-            viewport={{
-              center: [-74.006, 40.7128],
-              zoom: 11,
-            }}
-          >
-            <MapControls />
-          </Map>
-        </Card>
+        <ComponentPreview
+          code={usageCode}
+          previewImage="/images/previews/installation.png"
+        >
+          <View className="h-full w-full overflow-hidden">
+            <Map
+              viewport={{
+                center: [-74.006, 40.7128],
+                zoom: 11,
+              }}
+            >
+              <MapControls />
+            </Map>
+          </View>
+        </ComponentPreview>
       </DocsSection>
 
       <DocsNote>

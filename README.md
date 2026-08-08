@@ -6,6 +6,7 @@
 </p>
 
 <p align="center">
+  <a href="https://mapcn-react-native.vercel.app/">Demo</a> ·
   <a href="https://github.com/AnmolSaini16/mapcn">Upstream mapcn</a> ·
   <a href="https://mapcn.dev">mapcn.dev</a> ·
   <a href="ATTRIBUTION.md">Attribution</a>
@@ -16,6 +17,8 @@
 ## About this fork
 
 This repository is a fork of [AnmolSaini16/mapcn](https://github.com/AnmolSaini16/mapcn), the web version of mapcn. It ports the component API and design language to React Native and Expo using `@maplibre/maplibre-react-native`.
+
+Live demo: [mapcn-react-native.vercel.app](https://mapcn-react-native.vercel.app/)
 
 Original project: [mapcn.dev](https://mapcn.dev)
 

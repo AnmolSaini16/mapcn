@@ -11,6 +11,7 @@ interface ComponentPreviewClientProps {
   children: React.ReactNode;
   code: string;
   className?: string;
+  previewImage?: string;
 }
 
 export function ComponentPreviewClient({

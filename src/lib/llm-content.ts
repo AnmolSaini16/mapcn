@@ -102,9 +102,10 @@ export function createLlmIndexMarkdown() {
 
   return `# mapcn-react-native
 
-mapcn-react-native is a free, open-source shadcn-style registry of ready-to-use React Native map components and blocks. It is built on MapLibre React Native, styled with NativeWind, and intended for projects that already use React Native Reusables.
+mapcn-react-native is a free, open-source shadcn-style registry of ready-to-use React Native map components and blocks. It is a fork of [mapcn](https://github.com/AnmolSaini16/mapcn), which was web-only - this package ports it to Expo and React Native. Built on MapLibre React Native, styled with NativeWind, and intended for projects that already use React Native Reusables.
 
 Website: ${homepage}
+Upstream: https://mapcn.dev · https://github.com/AnmolSaini16/mapcn
 Install via GitHub registry: ${code("unkn0wndfbx/mapcn-react-native/<item>")}
 
 ## Install the base map component

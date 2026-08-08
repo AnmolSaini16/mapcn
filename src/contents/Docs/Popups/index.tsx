@@ -29,7 +29,10 @@ export function PopupsPage() {
           <DocsCode>closeOnClick={false}</DocsCode> when you need to dismiss the
           popup only from your own UI.
         </DocsNote>
-        <ComponentPreview code={popupSource}>
+        <ComponentPreview
+          code={popupSource}
+          previewImage="/images/previews/standalone-popup.png"
+        >
           <StandalonePopupExample />
         </ComponentPreview>
       </DocsSection>

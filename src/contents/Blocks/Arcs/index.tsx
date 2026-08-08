@@ -40,7 +40,10 @@ export function ArcsPage() {
           <DocsCode>to</DocsCode> coordinates as{" "}
           <DocsCode>[longitude, latitude]</DocsCode> tuples.
         </Text>
-        <ComponentPreview code={arcSource}>
+        <ComponentPreview
+          code={arcSource}
+          previewImage="/images/previews/arc.png"
+        >
           <ArcExample />
         </ComponentPreview>
       </DocsSection>
@@ -54,7 +57,10 @@ export function ArcsPage() {
           expression on <DocsCode>line-color</DocsCode> to style arcs by
           category. Here, air and sea lanes are styled differently.
         </Text>
-        <ComponentPreview code={interactiveArcSource}>
+        <ComponentPreview
+          code={interactiveArcSource}
+          previewImage="/images/previews/interactive-arc.png"
+        >
           <InteractiveArcExample />
         </ComponentPreview>
       </DocsSection>

@@ -87,7 +87,10 @@ const truckPosition = route[Math.floor(route.length * 0.6)];
 
 export function DeliveryExample() {
   return (
-    <ExampleCard className="aspect-square min-h-[280px]">
+    <ExampleCard
+      className="aspect-square min-h-[280px]"
+      previewImage="/images/previews/home-delivery.png"
+    >
       <ExampleMap
         viewport={{
           center: [-0.105, 51.511],

@@ -40,7 +40,10 @@ export function BasicMapPage() {
           child components. Give the map a sized container - native maps need an
           explicit height.
         </Text>
-        <ComponentPreview code={basicMapSource}>
+        <ComponentPreview
+          code={basicMapSource}
+          previewImage="/images/previews/basic-map.png"
+        >
           <BasicMapExample />
         </ComponentPreview>
       </DocsSection>
@@ -52,7 +55,10 @@ export function BasicMapPage() {
           viewport externally. This is useful when you need to sync the map
           state with your application or respond to viewport changes.
         </Text>
-        <ComponentPreview code={controlledMapSource}>
+        <ComponentPreview
+          code={controlledMapSource}
+          previewImage="/images/previews/controlled-map.png"
+        >
           <ControlledMapExample />
         </ComponentPreview>
       </DocsSection>
@@ -75,7 +81,10 @@ export function BasicMapPage() {
           Here, a <DocsCode>MapGeoJSON</DocsCode> layer renders world country
           borders on top of the transparent canvas.
         </Text>
-        <ComponentPreview code={blankMapSource}>
+        <ComponentPreview
+          code={blankMapSource}
+          previewImage="/images/previews/blank-map.png"
+        >
           <BlankMapExample />
         </ComponentPreview>
       </DocsSection>
@@ -94,7 +103,10 @@ export function BasicMapPage() {
           animation uses the <DocsCode>camera</DocsCode> from{" "}
           <DocsCode>useMap</DocsCode>.
         </Text>
-        <ComponentPreview code={customStyleSource}>
+        <ComponentPreview
+          code={customStyleSource}
+          previewImage="/images/previews/custom-style.png"
+        >
           <CustomStyleExample />
         </ComponentPreview>
       </DocsSection>

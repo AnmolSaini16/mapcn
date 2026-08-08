@@ -39,7 +39,10 @@ export function FlyToExample() {
   const active = destinations[activeIndex];
 
   return (
-    <ExampleCard className="aspect-square min-h-[280px]">
+    <ExampleCard
+      className="aspect-square min-h-[280px]"
+      previewImage="/images/previews/home-fly-to.png"
+    >
       <ExampleMap
         viewport={{
           center: destinations[0].center,

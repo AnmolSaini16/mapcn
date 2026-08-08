@@ -52,7 +52,10 @@ export function MarkersPage() {
         <Text className="leading-7">
           Simple markers with tooltips and popups showing location information.
         </Text>
-        <ComponentPreview code={markersSource}>
+        <ComponentPreview
+          code={markersSource}
+          previewImage="/images/previews/markers.png"
+        >
           <MarkersExample />
         </ComponentPreview>
       </DocsSection>
@@ -65,6 +68,7 @@ export function MarkersPage() {
         <ComponentPreview
           code={popupSource}
           className="h-[500px]"
+          previewImage="/images/previews/marker-popup.png"
         >
           <PopupExample />
         </ComponentPreview>
@@ -83,7 +87,10 @@ export function MarkersPage() {
           <DocsCode>draggable</DocsCode> markers use MapLibre{" "}
           <DocsCode>ViewAnnotation</DocsCode> under the hood.
         </DocsNote>
-        <ComponentPreview code={draggableMarkerSource}>
+        <ComponentPreview
+          code={draggableMarkerSource}
+          previewImage="/images/previews/draggable-marker.png"
+        >
           <DraggableMarkerExample />
         </ComponentPreview>
       </DocsSection>

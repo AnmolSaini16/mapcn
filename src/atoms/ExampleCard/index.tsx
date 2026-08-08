@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 
 type ExampleCardProps = {
   className?: string;
+  previewImage?: string;
 };
 
 export function ExampleCard({

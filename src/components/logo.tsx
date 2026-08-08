@@ -4,6 +4,7 @@ import { Pressable, View } from "react-native";
 
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { SITE_NAME } from "@/lib/site-metadata";
 import { cn } from "@/lib/utils";
 
 type LogoProps = {
@@ -19,9 +20,7 @@ export function Logo({ className, onPress, isLink = true }: LogoProps) {
         as={MapPin}
         size={16}
       />
-      <Text className="text-lg font-bold leading-none">
-        mapcn for react native
-      </Text>
+      <Text className="text-lg font-bold leading-none">{SITE_NAME}</Text>
     </>
   );
 

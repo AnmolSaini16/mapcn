@@ -123,7 +123,10 @@ export function EVChargingExample() {
   const [selectedStation, setSelectedStation] = useState<string | null>(null);
 
   return (
-    <ExampleCard className="aspect-square min-h-[280px]">
+    <ExampleCard
+      className="aspect-square min-h-[280px]"
+      previewImage="/images/previews/home-ev-charging.png"
+    >
       <ExampleMap
         viewport={{
           center: [-122.434, 37.776],

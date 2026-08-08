@@ -67,6 +67,7 @@ export function BlockDisplay({ name }: BlockDisplayProps) {
       <MobileBlockPreview
         name={block.name}
         title={block.title ?? block.name}
+        previewImage={`/images/previews/blocks/${block.name}.png`}
       />
     </BlockPreview>
   );

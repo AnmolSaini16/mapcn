@@ -1,7 +1,12 @@
 import { Box, Code, Layers, Moon, Puzzle, Zap } from "lucide-react-native";
 import { View } from "react-native";
 
-import { DocsLayout, DocsLink, DocsSection } from "../Common/Layout";
+import {
+  DocsLayout,
+  DocsLink,
+  DocsListItem,
+  DocsSection,
+} from "../Common/Layout";
 
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
@@ -42,22 +47,14 @@ const features = [
   },
 ];
 
-function DocsListItem({ children }: { children: React.ReactNode }) {
-  return (
-    <View className="flex-row gap-2 pl-1">
-      <Text className="leading-7">{"\u2022"}</Text>
-      <Text className="flex-1 leading-0.5">{children}</Text>
-    </View>
-  );
-}
-
 export function IntroductionPage() {
   return (
     <DocsLayout
       title="Introduction"
-      description="Copy-paste map components for React Native and Expo."
+      description="React Native map components forked from mapcn, the web-only original."
       next={{ title: "Installation", href: "/docs/installation" }}
       toc={[
+        { title: "About this fork", slug: "about-this-fork" },
         { title: "Philosophy", slug: "philosophy" },
         { title: "Why mapcn?", slug: "why-mapcn" },
         { title: "Any Map Style", slug: "any-map-style" },
@@ -65,9 +62,17 @@ export function IntroductionPage() {
       ]}
     >
       <DocsSection>
-        <Text className="leading-0.5">
-          <Text className="font-medium">mapcn react native</Text> provides
-          customizable map components for Expo and React Native. Built on{" "}
+        <Text className="leading-7">
+          <Text className="font-medium">mapcn react native</Text> is the React
+          Native and Expo port of{" "}
+          <DocsLink
+            href="https://github.com/AnmolSaini16/mapcn"
+            external
+          >
+            mapcn
+          </DocsLink>
+          , which was built for the web only. This package brings the same
+          component API and design language to mobile, powered by{" "}
           <DocsLink
             href="https://maplibre.org/maplibre-react-native/"
             external
@@ -89,6 +94,33 @@ export function IntroductionPage() {
             React Native Reusables
           </DocsLink>
           .
+        </Text>
+      </DocsSection>
+
+      <DocsSection title="About this fork">
+        <Text className="leading-7">
+          <DocsLink
+            href="https://github.com/AnmolSaini16/mapcn"
+            external
+          >
+            mapcn
+          </DocsLink>{" "}
+          is a web-only component library for React, built with MapLibre GL JS,
+          Tailwind CSS, and shadcn/ui. This project forks that work and adapts
+          it for React Native and Expo using{" "}
+          <Text className="font-mono text-sm">
+            @maplibre/maplibre-react-native
+          </Text>
+          , packaged as a shadcn-style registry you can install into your app.
+        </Text>
+        <Text className="leading-7">
+          Original web project:{" "}
+          <DocsLink
+            href="https://mapcn.dev"
+            external
+          >
+            mapcn.dev
+          </DocsLink>
         </Text>
       </DocsSection>
 

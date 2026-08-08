@@ -57,3 +57,5 @@ yarn-error.*
 .vercel
 example
 /temp
+
+**/service_account.json

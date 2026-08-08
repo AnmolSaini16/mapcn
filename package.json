@@ -34,7 +34,7 @@
     "expo": "~57.0.8",
     "expo-clipboard": "~57.0.1",
     "expo-constants": "~57.0.7",
-    "expo-dev-client": "~57.0.9",
+    "expo-dev-client": "~57.0.10",
     "expo-device": "~57.0.1",
     "expo-font": "~57.0.1",
     "expo-glass-effect": "~57.0.1",

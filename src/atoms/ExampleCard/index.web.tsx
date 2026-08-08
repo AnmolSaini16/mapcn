@@ -6,10 +6,12 @@ import { cn } from "@/lib/utils";
 
 type ExampleCardProps = {
   className?: string;
+  previewImage?: string;
 };
 
 export function ExampleCard({
   className,
+  previewImage,
 }: PropsWithChildren<ExampleCardProps>) {
   return (
     <View
@@ -18,7 +20,10 @@ export function ExampleCard({
         className,
       )}
     >
-      <WebMapPreviewPlaceholder className="absolute inset-0" />
+      <WebMapPreviewPlaceholder
+        className="absolute inset-0"
+        previewImage={previewImage}
+      />
     </View>
   );
 }

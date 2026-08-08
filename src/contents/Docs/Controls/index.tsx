@@ -30,7 +30,10 @@ export function ControlsPage() {
           <DocsCode>onFullscreenRequest</DocsCode> - wire it to your own
           full-screen UI (modal, screen navigation, etc.).
         </DocsNote>
-        <ComponentPreview code={controlsSource}>
+        <ComponentPreview
+          code={controlsSource}
+          previewImage="/images/previews/controls.png"
+        >
           <MapControlsExample />
         </ComponentPreview>
       </DocsSection>

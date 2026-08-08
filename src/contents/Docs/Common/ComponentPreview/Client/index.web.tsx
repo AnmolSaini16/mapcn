@@ -12,11 +12,13 @@ interface ComponentPreviewClientProps {
   children: React.ReactNode;
   code: string;
   className?: string;
+  previewImage?: string;
 }
 
 export function ComponentPreviewClient({
   code,
   className,
+  previewImage,
 }: ComponentPreviewClientProps) {
   const [expanded, setExpanded] = useState(false);
 
@@ -28,7 +30,7 @@ export function ComponentPreviewClient({
           className,
         )}
       >
-        <WebMapPreviewPlaceholder />
+        <WebMapPreviewPlaceholder previewImage={previewImage} />
       </View>
 
       <View className="relative w-full overflow-hidden">

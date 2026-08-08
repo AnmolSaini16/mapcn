@@ -69,12 +69,100 @@ const ARIA_LEVEL: Partial<Record<TextVariant, string>> = {
   h4: "4",
 };
 
+const TEXT_SIZE_PX: Record<string, number> = {
+  "text-xs": 12,
+  "text-sm": 14,
+  "text-base": 16,
+  "text-lg": 18,
+  "text-xl": 20,
+  "text-2xl": 24,
+  "text-3xl": 30,
+  "text-4xl": 36,
+  "text-5xl": 48,
+};
+
+const LEADING_FIXED_PX: Record<string, number> = {
+  "leading-3": 12,
+  "leading-4": 16,
+  "leading-5": 20,
+  "leading-6": 24,
+  "leading-7": 28,
+  "leading-8": 32,
+  "leading-9": 36,
+  "leading-10": 40,
+};
+
+const LEADING_MULTIPLIER: Record<string, number> = {
+  "leading-none": 1,
+  "leading-tight": 1.25,
+  "leading-snug": 1.375,
+  "leading-normal": 1.5,
+  "leading-relaxed": 1.625,
+  "leading-loose": 2,
+};
+
+const LEADING_CLASS_RE =
+  /\bleading-(?:none|tight|snug|normal|relaxed|loose|\d+(?:\.\d+)?)\b/g;
+
+function getNativeLineHeight(className: string): number | undefined {
+  const tokens = className.split(/\s+/).filter(Boolean);
+
+  for (const token of tokens) {
+    const fixed = LEADING_FIXED_PX[token];
+    if (fixed !== undefined) {
+      return fixed;
+    }
+  }
+
+  let fontSize = 16;
+  for (const token of tokens) {
+    const size = TEXT_SIZE_PX[token];
+    if (size !== undefined) {
+      fontSize = size;
+    }
+  }
+
+  for (const token of tokens) {
+    const multiplier = LEADING_MULTIPLIER[token];
+    if (multiplier !== undefined) {
+      return Math.round(fontSize * multiplier);
+    }
+  }
+
+  return undefined;
+}
+
+function resolveNativeLeading(className: string | undefined): {
+  className: string | undefined;
+  lineHeight: number | undefined;
+} {
+  if (Platform.OS === "web" || !className) {
+    return { className, lineHeight: undefined };
+  }
+
+  const lineHeight = getNativeLineHeight(className);
+  if (lineHeight === undefined) {
+    return { className, lineHeight: undefined };
+  }
+
+  const cleaned = className
+    .replace(LEADING_CLASS_RE, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return {
+    className: cleaned.length > 0 ? cleaned : undefined,
+    lineHeight,
+  };
+}
+
 const TextClassContext = React.createContext<string | undefined>(undefined);
 
 function Text({
   className,
   asChild = false,
   variant = "default",
+  style,
   ...props
 }: React.ComponentProps<typeof RNText> &
   React.RefAttributes<typeof RNText> &
@@ -83,11 +171,16 @@ function Text({
   }) {
   const textClass = React.useContext(TextClassContext);
   const Component = asChild ? Slot : RNText;
+  const mergedClassName = cn(textVariants({ variant }), textClass, className);
+  const { className: resolvedClassName, lineHeight } =
+    resolveNativeLeading(mergedClassName);
+
   return (
     <Component
-      className={cn(textVariants({ variant }), textClass, className)}
+      className={resolvedClassName}
       role={variant ? ROLE[variant] : undefined}
       aria-level={variant ? ARIA_LEVEL[variant] : undefined}
+      style={lineHeight !== undefined ? [{ lineHeight }, style] : style}
       {...props}
     />
   );

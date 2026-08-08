@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import { View } from "react-native";
 
 import { CodeBlock } from "../Common/CodeBlock";
@@ -10,21 +9,13 @@ import {
   DocsCode,
   DocsLayout,
   DocsLink,
+  DocsListItem,
   DocsNote,
   DocsSection,
 } from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";
-
-function DocsListItem({ children }: { children: ReactNode }) {
-  return (
-    <View className="flex-row gap-2 pl-1">
-      <Text className="leading-7">{"\u2022"}</Text>
-      <Text className="flex-1 leading-0.5">{children}</Text>
-    </View>
-  );
-}
 
 const refCode = `import { Map, type MapRef } from "@/components/ui/map";
 import { useRef } from "react";
@@ -153,7 +144,10 @@ export function AdvancedUsagePage() {
           map&apos;s pitch and bearing, and read the live{" "}
           <DocsCode>viewport</DocsCode> values.
         </Text>
-        <ComponentPreview code={advancedSource}>
+        <ComponentPreview
+          code={advancedSource}
+          previewImage="/images/previews/advanced-controls.png"
+        >
           <AdvancedUsageExample />
         </ComponentPreview>
       </DocsSection>
@@ -164,7 +158,10 @@ export function AdvancedUsagePage() {
           <DocsCode>GeoJSONSource</DocsCode> and <DocsCode>Layer</DocsCode>. The
           example shows NYC parks with press interactions.
         </Text>
-        <ComponentPreview code={customLayerSource}>
+        <ComponentPreview
+          code={customLayerSource}
+          previewImage="/images/previews/custom-layer.png"
+        >
           <CustomLayerExample />
         </ComponentPreview>
       </DocsSection>
@@ -176,7 +173,10 @@ export function AdvancedUsagePage() {
           approach renders markers on the native map canvas, providing
           significantly better performance.
         </Text>
-        <ComponentPreview code={layerMarkersSource}>
+        <ComponentPreview
+          code={layerMarkersSource}
+          previewImage="/images/previews/layer-markers.png"
+        >
           <LayerMarkersExample />
         </ComponentPreview>
       </DocsSection>
