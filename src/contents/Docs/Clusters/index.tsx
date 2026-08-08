@@ -14,6 +14,7 @@ export function ClustersPage() {
       description="Visualize large datasets with automatic point clustering."
       prev={{ title: "GeoJSON", href: "/docs/geojson" }}
       next={{ title: "Advanced", href: "/docs/advanced-usage" }}
+      toc={[{ title: "Basic Example", slug: "basic-example" }]}
     >
       <DocsSection>
         <Text className="leading-7">

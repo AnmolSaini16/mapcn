@@ -14,6 +14,7 @@ export function PopupsPage() {
       description="Display popups anywhere on the map without markers."
       prev={{ title: "Markers", href: "/docs/markers" }}
       next={{ title: "Routes", href: "/docs/routes" }}
+      toc={[{ title: "Basic Example", slug: "basic-example" }]}
     >
       <DocsSection>
         <Text className="leading-7">
@@ -29,6 +30,9 @@ export function PopupsPage() {
           <DocsCode>closeOnClick={false}</DocsCode> when you need to dismiss the
           popup only from your own UI.
         </DocsNote>
+      </DocsSection>
+
+      <DocsSection title="Basic Example">
         <ComponentPreview
           code={popupSource}
           previewImage="/images/previews/standalone-popup.png"

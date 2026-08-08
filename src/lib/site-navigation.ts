@@ -4,7 +4,10 @@ import {
   CornerDownRight,
   Layers2,
   LucideIcon,
+  Shield,
 } from "lucide-react-native";
+
+import { PRIVACY_POLICY_PATH } from "@/lib/site-metadata";
 
 export interface MainNavItem {
   href: Href;
@@ -56,10 +59,22 @@ const navItems: SiteNavigationItem[] = [
   { title: "Blocks", href: "/blocks", icon: CornerDownRight },
 ];
 
+export const legalNavigation: SiteNavigationGroup = {
+  title: "Legal",
+  items: [
+    {
+      title: "Privacy Policy",
+      href: PRIVACY_POLICY_PATH,
+      icon: Shield,
+    },
+  ],
+};
+
 export const siteNavigation: SiteNavigationGroup[] = [
   {
     title: "Pages",
     items: navItems,
   },
   ...docsNavigation,
+  legalNavigation,
 ];

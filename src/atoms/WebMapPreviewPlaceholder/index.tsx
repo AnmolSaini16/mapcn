@@ -1,9 +1,10 @@
 import { Image } from "expo-image";
-import { ImageIcon } from "lucide-react-native";
+import { ImageIcon, Smartphone } from "lucide-react-native";
 import { useState } from "react";
 import { Linking, Platform, StyleSheet, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { SITE_APP_STORE_URL, SITE_PLAY_STORE_URL } from "@/lib/site-metadata";
@@ -13,6 +14,7 @@ type WebMapPreviewPlaceholderProps = {
   className?: string;
   title?: string;
   previewImage?: string;
+  layout?: "overlay" | "aside";
 };
 
 function PlayStoreIcon({
@@ -61,36 +63,152 @@ function openStoreUrl(url: string) {
   }
 }
 
-export function WebMapPreviewPlaceholder({
+function PreviewImage({
   className,
-  title = "Map preview",
   previewImage,
-}: WebMapPreviewPlaceholderProps) {
-  const [failedImage, setFailedImage] = useState<string | null>(null);
-  const showAppStore = SITE_APP_STORE_URL.length > 0;
-  const showPlayStore = SITE_PLAY_STORE_URL.length > 0;
-  const showStoreButtons = showAppStore || showPlayStore;
+  failedImage,
+  onImageError,
+}: {
+  className?: string;
+  previewImage?: string;
+  failedImage: string | null;
+  onImageError: (image: string) => void;
+}) {
   const showImage = Boolean(previewImage) && failedImage !== previewImage;
 
   return (
-    <View className={cn("bg-muted relative flex-1 overflow-hidden", className)}>
+    <View className={cn("bg-muted relative overflow-hidden", className)}>
       {showImage && previewImage ? (
         <Image
           source={previewImage}
           contentFit="cover"
           transition={200}
           onError={() => {
-            setFailedImage(previewImage);
+            onImageError(previewImage);
           }}
           style={StyleSheet.absoluteFill}
           accessibilityLabel="Map preview screenshot"
         />
       ) : (
-        <View className="flex-1 items-center justify-center text-muted-foreground">
+        <View className="absolute inset-0 items-center justify-center text-muted-foreground">
           <ImageIcon className="size-10 opacity-75" />
         </View>
       )}
+    </View>
+  );
+}
 
+function StoreButtons({ variant }: { variant: "overlay" | "aside" }) {
+  const showAppStore = SITE_APP_STORE_URL.length > 0;
+  const showPlayStore = SITE_PLAY_STORE_URL.length > 0;
+
+  if (!showAppStore && !showPlayStore) {
+    return null;
+  }
+
+  const buttonClassName =
+    variant === "overlay" ? "bg-white/95 dark:bg-white/90" : undefined;
+  const labelClassName = variant === "overlay" ? "text-black" : undefined;
+  const buttonVariant = variant === "overlay" ? "secondary" : "default";
+  const buttonSize = variant === "overlay" ? "sm" : "default";
+
+  return (
+    <View
+      className={cn(
+        "flex-row flex-wrap gap-2",
+        variant === "overlay" ? "items-center justify-center" : "items-center",
+      )}
+    >
+      {showAppStore ? (
+        <Button
+          variant={buttonVariant}
+          size={buttonSize}
+          className={buttonClassName}
+          onPress={() => {
+            openStoreUrl(SITE_APP_STORE_URL);
+          }}
+          accessibilityLabel="Download on the App Store"
+        >
+          <AppStoreIcon
+            size={14}
+            color={variant === "overlay" ? "#000" : "currentColor"}
+          />
+          <Text className={labelClassName}>App Store</Text>
+        </Button>
+      ) : null}
+
+      {showPlayStore ? (
+        <Button
+          variant={buttonVariant}
+          size={buttonSize}
+          className={buttonClassName}
+          onPress={() => {
+            openStoreUrl(SITE_PLAY_STORE_URL);
+          }}
+          accessibilityLabel="Get it on Google Play"
+        >
+          <PlayStoreIcon
+            size={14}
+            color={variant === "overlay" ? "#000" : "currentColor"}
+          />
+          <Text className={labelClassName}>Google Play</Text>
+        </Button>
+      ) : null}
+    </View>
+  );
+}
+
+function PreviewInfo({
+  title,
+  layout,
+}: {
+  title: string;
+  layout: "overlay" | "aside";
+}) {
+  if (layout === "aside") {
+    const showAppStore = SITE_APP_STORE_URL.length > 0;
+    const showPlayStore = SITE_PLAY_STORE_URL.length > 0;
+
+    return (
+      <View className="border-border bg-surface min-w-0 flex-1 rounded-xl border p-5 shadow-sm shadow-black/5 flex-col justify-start">
+        <View className="gap-5">
+          <View className="flex-row items-center gap-3">
+            <View className="bg-primary/10 rounded-lg p-2.5">
+              <Smartphone
+                size={20}
+                className="text-primary"
+              />
+            </View>
+            <Badge variant="secondary">
+              <Text>iOS & Android</Text>
+            </Badge>
+          </View>
+
+          <View className="gap-2.5">
+            <Text className="text-foreground text-lg font-semibold tracking-tight">
+              {title}
+            </Text>
+            <Text className="text-muted-foreground text-[15px] leading-relaxed">
+              Live map previews run on iOS and Android. Open the app to explore
+              the interactive map.
+            </Text>
+          </View>
+
+          {showAppStore || showPlayStore ? (
+            <View className="gap-2.5">
+              <Text className="text-foreground text-xs font-medium tracking-wide uppercase">
+                Get the app
+              </Text>
+              <StoreButtons variant="aside" />
+            </View>
+          ) : null}
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <>
       <View
         pointerEvents="none"
         className="absolute inset-x-0 bottom-0 h-48 bg-linear-to-t from-black/70 via-black/35 to-transparent"
@@ -114,47 +232,52 @@ export function WebMapPreviewPlaceholder({
             the interactive map.
           </Text>
         </View>
-
-        {showStoreButtons ? (
-          <View className="flex-row flex-wrap items-center justify-center gap-2">
-            {showAppStore ? (
-              <Button
-                variant="secondary"
-                size="sm"
-                className="bg-white/95 dark:bg-white/90"
-                onPress={() => {
-                  openStoreUrl(SITE_APP_STORE_URL);
-                }}
-                accessibilityLabel="Download on the App Store"
-              >
-                <AppStoreIcon
-                  size={14}
-                  color="#000"
-                />
-                <Text className="text-black">App Store</Text>
-              </Button>
-            ) : null}
-
-            {showPlayStore ? (
-              <Button
-                variant="secondary"
-                size="sm"
-                className="bg-white/95 dark:bg-white/90"
-                onPress={() => {
-                  openStoreUrl(SITE_PLAY_STORE_URL);
-                }}
-                accessibilityLabel="Get it on Google Play"
-              >
-                <PlayStoreIcon
-                  size={14}
-                  color="#000"
-                />
-                <Text className="text-black">Google Play</Text>
-              </Button>
-            ) : null}
-          </View>
-        ) : null}
+        <StoreButtons variant="overlay" />
       </View>
+    </>
+  );
+}
+
+export function WebMapPreviewPlaceholder({
+  className,
+  title = "Map preview",
+  previewImage,
+  layout = "overlay",
+}: WebMapPreviewPlaceholderProps) {
+  const [failedImage, setFailedImage] = useState<string | null>(null);
+
+  if (layout === "aside") {
+    return (
+      <View className="w-full flex-row items-stretch gap-6">
+        <PreviewImage
+          className={cn(
+            "border-border aspect-square w-1/2 min-w-0 rounded-lg border",
+            className,
+          )}
+          previewImage={previewImage}
+          failedImage={failedImage}
+          onImageError={setFailedImage}
+        />
+        <PreviewInfo
+          title={title}
+          layout="aside"
+        />
+      </View>
+    );
+  }
+
+  return (
+    <View className={cn("bg-muted relative flex-1 overflow-hidden", className)}>
+      <PreviewImage
+        className="absolute inset-0"
+        previewImage={previewImage}
+        failedImage={failedImage}
+        onImageError={setFailedImage}
+      />
+      <PreviewInfo
+        title={title}
+        layout="overlay"
+      />
     </View>
   );
 }

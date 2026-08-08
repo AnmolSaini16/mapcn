@@ -16,6 +16,7 @@ import { DocsScrollProvider, useDocsScroll } from "./docs-scroll-context";
 import { DocsToc } from "./DocsToc";
 
 import { PageHead } from "@/components/page-head";
+import { PrivacyPolicyLink } from "@/components/privacy-policy-link";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -176,8 +177,11 @@ export function DocsLayout({
             >
               {children}
             </View>
+            <View className="mt-8 border-t border-border pt-6">
+              <PrivacyPolicyLink />
+            </View>
             {(prev ?? next) && (
-              <View className="mt-auto flex-row items-center justify-between gap-4">
+              <View className="mt-6 flex-row items-center justify-between gap-4">
                 {prev ? (
                   <Link
                     href={prev.href as Href}

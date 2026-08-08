@@ -9,6 +9,7 @@ import { SITE_GITHUB_REPO, SITE_NAME } from "@/lib/site-metadata";
 
 const EFFECTIVE_DATE = "August 8, 2026";
 const APP_NAME = "mapcn-react-native";
+const ANDROID_PACKAGE = "com.unkn0wnd.fbx.mapcnreactnative";
 const DEVELOPER_NAME = "THDev";
 const CONTACT_URL = `${SITE_GITHUB_REPO}/issues`;
 
@@ -83,166 +84,167 @@ export function PrivacyPage() {
             <PrivacySection title="Introduction">
               <PrivacyParagraph>
                 This Privacy Policy describes how {DEVELOPER_NAME}{" "}
-                (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) collects,
-                uses, and shares information when you use {APP_NAME} (the
-                &quot;App&quot;) and the related website at {SITE_NAME}. The App
-                is a demo and documentation companion for React Native map
-                components built on MapLibre.
+                (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) handles
+                information when you use {APP_NAME} (the &quot;App&quot;) and
+                the related website at {SITE_NAME}. The App is a demo and
+                documentation companion for React Native map components built on
+                MapLibre.
               </PrivacyParagraph>
               <PrivacyParagraph>
-                By using the App or website, you agree to the collection and use
-                of information in accordance with this policy. If you do not
-                agree, please do not use the App or website.
-              </PrivacyParagraph>
-            </PrivacySection>
-
-            <PrivacySection title="Information We Collect">
-              <PrivacyParagraph>
-                We designed {APP_NAME} to collect as little personal information
-                as possible. Depending on how you use the App or website, the
-                following information may be processed:
-              </PrivacyParagraph>
-              <PrivacyListItem>
-                <Text className="text-muted-foreground leading-7">
-                  <Text className="text-foreground font-medium">
-                    Device information
-                  </Text>{" "}
-                  - such as device model, operating system version, and app
-                  version, which may be included in diagnostic or analytics
-                  data.
-                </Text>
-              </PrivacyListItem>
-              <PrivacyListItem>
-                <Text className="text-muted-foreground leading-7">
-                  <Text className="text-foreground font-medium">
-                    Usage information
-                  </Text>{" "}
-                  - such as pages or screens viewed, interactions with map
-                  demos, and feature usage (for example, copying install
-                  commands).
-                </Text>
-              </PrivacyListItem>
-              <PrivacyListItem>
-                <Text className="text-muted-foreground leading-7">
-                  <Text className="text-foreground font-medium">
-                    Location information
-                  </Text>{" "}
-                  - only if you explicitly enable the locate control in a map
-                  demo and grant location permission on your device. Location
-                  data is used locally to center the map and is not stored on
-                  our servers.
-                </Text>
-              </PrivacyListItem>
-              <PrivacyListItem>
-                <Text className="text-muted-foreground leading-7">
-                  <Text className="text-foreground font-medium">
-                    Network information
-                  </Text>{" "}
-                  - such as IP address, which may be processed by third-party
-                  services that provide map tiles, hosting, or analytics.
-                </Text>
-              </PrivacyListItem>
-              <PrivacyParagraph>
-                We do not require you to create an account, and we do not
-                knowingly collect names, email addresses, phone numbers, or
-                payment information through the App.
+                This policy is designed to match the data practices declared in
+                Google Play&apos;s Data safety section for the Android app.
               </PrivacyParagraph>
             </PrivacySection>
 
-            <PrivacySection title="How We Use Information">
+            <PrivacySection title="Summary of Data Practices">
               <PrivacyParagraph>
-                We use the information described above to:
+                The App collects a limited amount of data to provide map and
+                documentation features. We do not sell personal information, do
+                not show ads, and do not require you to create an account.
               </PrivacyParagraph>
               <PrivacyListItem>
-                Provide, operate, and improve the App and website
+                <Text className="text-muted-foreground leading-7">
+                  <Text className="text-foreground font-medium">
+                    Approximate location
+                  </Text>{" "}
+                  - collected when map tiles are loaded over the internet.
+                </Text>
               </PrivacyListItem>
               <PrivacyListItem>
-                Display interactive map demos and documentation
+                <Text className="text-muted-foreground leading-7">
+                  <Text className="text-foreground font-medium">
+                    Precise location
+                  </Text>{" "}
+                  - collected only if you tap the locate control and grant
+                  location permission.
+                </Text>
               </PrivacyListItem>
               <PrivacyListItem>
-                Understand aggregate usage patterns and fix technical issues
+                <Text className="text-muted-foreground leading-7">
+                  <Text className="text-foreground font-medium">
+                    No data sharing with third parties
+                  </Text>{" "}
+                  - location-related network data is processed by service
+                  providers acting on our behalf to deliver map tiles.
+                </Text>
               </PrivacyListItem>
-              <PrivacyListItem>
-                Respond to support requests when you contact us
-              </PrivacyListItem>
+            </PrivacySection>
+
+            <PrivacySection title="Approximate Location">
               <PrivacyParagraph>
-                We do not sell your personal information and we do not use your
-                data for targeted advertising.
+                When you use map features, the App sends network requests to
+                load map styles and tiles from third-party content delivery
+                networks, including CARTO (
+                <Text
+                  accessibilityRole="link"
+                  className="text-foreground underline"
+                  onPress={() => {
+                    openExternalUrl("https://carto.com/legal/privacy-policy");
+                  }}
+                >
+                  basemaps.cartocdn.com
+                </Text>
+                ) and, in some demos, OpenFreeMap (
+                <Text
+                  accessibilityRole="link"
+                  className="text-foreground underline"
+                  onPress={() => {
+                    openExternalUrl("https://openfreemap.org/");
+                  }}
+                >
+                  tiles.openfreemap.org
+                </Text>
+                ).
+              </PrivacyParagraph>
+              <PrivacyParagraph>
+                These requests may include your IP address, which can be used to
+                infer your approximate location. This data is collected to
+                provide core app functionality (displaying maps) and is required
+                for map features to work.
+              </PrivacyParagraph>
+              <PrivacyParagraph>
+                We treat these map tile providers as service providers that
+                process data on our behalf. We do not share location data with
+                third parties for advertising, marketing, or profiling.
               </PrivacyParagraph>
             </PrivacySection>
 
-            <PrivacySection title="Third-Party Services">
+            <PrivacySection title="Precise Location">
               <PrivacyParagraph>
-                The App and website rely on third-party services that may
-                collect information according to their own privacy policies:
+                Some map demos include a &quot;Find my location&quot; control.
+                If you tap it, the App requests location permission through
+                MapLibre&apos;s location APIs. If you grant permission, the App
+                reads your device&apos;s current GPS coordinates to center the
+                map on your position.
+              </PrivacyParagraph>
+              <PrivacyParagraph>
+                Precise location is optional. You can deny the permission and
+                continue using the rest of the App. Location data is processed
+                on your device in real time to move the map camera and is not
+                stored on our servers or shared with third parties.
+              </PrivacyParagraph>
+              <PrivacyParagraph>
+                You can revoke location permission at any time in your device
+                settings.
+              </PrivacyParagraph>
+            </PrivacySection>
+
+            <PrivacySection title="Data We Do Not Collect">
+              <PrivacyParagraph>
+                The App does not collect the following types of data:
               </PrivacyParagraph>
               <PrivacyListItem>
-                <Text className="text-muted-foreground leading-7">
-                  <Text className="text-foreground font-medium">MapLibre</Text>{" "}
-                  - powers native map rendering. When you use map features, map
-                  tile providers may receive requests that include your IP
-                  address and general location derived from network data.
-                </Text>
+                Personal information such as name, email address, phone number,
+                or mailing address
               </PrivacyListItem>
               <PrivacyListItem>
-                <Text className="text-muted-foreground leading-7">
-                  <Text className="text-foreground font-medium">
-                    Map tile providers
-                  </Text>{" "}
-                  - such as OpenStreetMap-based or other MapLibre-compatible
-                  tile sources configured in demos. These providers process
-                  network requests needed to load map imagery.
-                </Text>
+                Financial or payment information
               </PrivacyListItem>
               <PrivacyListItem>
-                <Text className="text-muted-foreground leading-7">
-                  <Text className="text-foreground font-medium">
-                    Vercel Analytics
-                  </Text>{" "}
-                  - used on the website to collect anonymized page views and
-                  basic interaction events. See{" "}
-                  <Text
-                    accessibilityRole="link"
-                    className="text-foreground underline"
-                    onPress={() => {
-                      openExternalUrl(
-                        "https://vercel.com/legal/privacy-policy",
-                      );
-                    }}
-                  >
-                    Vercel&apos;s Privacy Policy
-                  </Text>
-                  .
-                </Text>
+                Health, fitness, contacts, calendar, photos, videos, audio, or
+                files
               </PrivacyListItem>
               <PrivacyListItem>
-                <Text className="text-muted-foreground leading-7">
-                  <Text className="text-foreground font-medium">
-                    Google Play
-                  </Text>{" "}
-                  - if you install the App from Google Play, Google may collect
-                  information about your device, purchases, and app usage as
-                  described in Google&apos;s policies.
-                </Text>
+                Messages, in-app search history, or web browsing history
               </PrivacyListItem>
+              <PrivacyListItem>
+                Crash logs, diagnostics, or device identifiers for advertising
+              </PrivacyListItem>
+              <PrivacyListItem>
+                App interaction analytics on the Android app
+              </PrivacyListItem>
+            </PrivacySection>
+
+            <PrivacySection title="Website-Only Practices">
               <PrivacyParagraph>
-                We encourage you to review the privacy policies of these
-                third-party services for more details.
+                The website version of {APP_NAME} may use{" "}
+                <Text
+                  accessibilityRole="link"
+                  className="text-foreground underline"
+                  onPress={() => {
+                    openExternalUrl("https://vercel.com/legal/privacy-policy");
+                  }}
+                >
+                  Vercel Analytics
+                </Text>{" "}
+                to collect anonymized page views and basic interaction events
+                (such as copying install commands). These analytics practices
+                apply to the website only and are not part of the Android app
+                distributed on Google Play.
               </PrivacyParagraph>
             </PrivacySection>
 
             <PrivacySection title="Permissions">
               <PrivacyParagraph>
-                The App may request the following device permissions:
+                The App may request the following permissions:
               </PrivacyParagraph>
               <PrivacyListItem>
                 <Text className="text-muted-foreground leading-7">
                   <Text className="text-foreground font-medium">
                     Location (optional)
                   </Text>{" "}
-                  - requested only when you use the locate control in a map
-                  demo. You can deny this permission and continue using other
-                  features.
+                  - used only when you activate the locate control in a map
+                  demo.
                 </Text>
               </PrivacyListItem>
               <PrivacyListItem>
@@ -256,43 +258,34 @@ export function PrivacyPage() {
               </PrivacyListItem>
             </PrivacySection>
 
-            <PrivacySection title="Data Retention">
+            <PrivacySection title="Security">
               <PrivacyParagraph>
-                We do not operate user accounts and do not intentionally store
-                personal information on our own servers. Analytics and hosting
-                providers may retain data for a limited period according to
-                their own retention policies.
+                Data transmitted off your device (such as map tile requests) is
+                sent over encrypted connections (HTTPS/TLS). We do not operate
+                user accounts and do not intentionally store personal
+                information on our own servers.
+              </PrivacyParagraph>
+            </PrivacySection>
+
+            <PrivacySection title="Data Retention and Deletion">
+              <PrivacyParagraph>
+                We do not maintain user profiles or persist personal data on our
+                servers. Precise location is used ephemerally on-device and is
+                not retained by us. Map tile providers may retain network
+                request data according to their own policies.
+              </PrivacyParagraph>
+              <PrivacyParagraph>
+                Because we do not store personal data, the primary way to stop
+                data processing is to uninstall the App or stop using the
+                website. You may also contact us through GitHub if you have
+                questions about your data.
               </PrivacyParagraph>
             </PrivacySection>
 
             <PrivacySection title="Children's Privacy">
               <PrivacyParagraph>
                 The App is not directed at children under 13, and we do not
-                knowingly collect personal information from children. If you
-                believe a child has provided us with personal information,
-                please contact us and we will take steps to delete it.
-              </PrivacyParagraph>
-            </PrivacySection>
-
-            <PrivacySection title="Your Choices and Rights">
-              <PrivacyParagraph>
-                Depending on your location, you may have rights to access,
-                correct, delete, or restrict the processing of your personal
-                information. Because we collect minimal personal data and do not
-                maintain user accounts, most requests can be addressed by
-                uninstalling the App or stopping use of the website.
-              </PrivacyParagraph>
-              <PrivacyParagraph>
-                You can also manage location permissions in your device settings
-                at any time.
-              </PrivacyParagraph>
-            </PrivacySection>
-
-            <PrivacySection title="Security">
-              <PrivacyParagraph>
-                We take reasonable measures to protect information processed
-                through the App and website. However, no method of transmission
-                over the internet or electronic storage is completely secure.
+                knowingly collect personal information from children.
               </PrivacyParagraph>
             </PrivacySection>
 
@@ -300,15 +293,13 @@ export function PrivacyPage() {
               <PrivacyParagraph>
                 We may update this Privacy Policy from time to time. When we do,
                 we will revise the effective date at the top of this page.
-                Continued use of the App or website after changes become
-                effective constitutes acceptance of the updated policy.
               </PrivacyParagraph>
             </PrivacySection>
 
             <PrivacySection title="Contact Us">
               <PrivacyParagraph>
-                If you have questions about this Privacy Policy or our data
-                practices, contact us by opening an issue on GitHub:
+                If you have questions about this Privacy Policy, contact us by
+                opening an issue on GitHub:
               </PrivacyParagraph>
               <Text
                 accessibilityRole="link"
@@ -320,7 +311,7 @@ export function PrivacyPage() {
                 {CONTACT_URL}
               </Text>
               <PrivacyParagraph>
-                App package name: com.unkn0wnd.fbx.mapcnreactnative
+                Android package name: {ANDROID_PACKAGE}
               </PrivacyParagraph>
             </PrivacySection>
           </View>

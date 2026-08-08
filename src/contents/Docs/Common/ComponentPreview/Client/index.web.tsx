@@ -24,14 +24,11 @@ export function ComponentPreviewClient({
 
   return (
     <View className="gap-4">
-      <View
-        className={cn(
-          "border-border h-105 w-full overflow-hidden rounded-lg border",
-          className,
-        )}
-      >
-        <WebMapPreviewPlaceholder previewImage={previewImage} />
-      </View>
+      <WebMapPreviewPlaceholder
+        previewImage={previewImage}
+        layout="aside"
+        className={className}
+      />
 
       <View className="relative w-full overflow-hidden">
         <View className={cn(!expanded && "max-h-42 overflow-hidden")}>

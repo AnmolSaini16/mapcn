@@ -5,9 +5,10 @@ import { Platform, Pressable, useColorScheme, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
 import { Logo } from "./logo";
+import { PrivacyPolicyLink } from "./privacy-policy-link";
 
 import { Text } from "@/components/ui/text";
-import { PRIVACY_POLICY_PATH, SITE_GITHUB_REPO } from "@/lib/site-metadata";
+import { SITE_GITHUB_REPO } from "@/lib/site-metadata";
 import { THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
@@ -64,7 +65,6 @@ const footerLinks: Record<string, FooterLinkItem[]> = {
       external: true,
     },
   ],
-  legal: [{ label: "Privacy Policy", href: PRIVACY_POLICY_PATH }],
   resources: [
     {
       label: "mapcn (web)",
@@ -213,14 +213,11 @@ export function Footer({ className }: FooterProps) {
               title="Resources"
               links={[...footerLinks.resources]}
             />
-            <FooterLinkSection
-              title="Legal"
-              links={[...footerLinks.legal]}
-            />
           </View>
         </View>
 
-        <View className="border-t border-border pt-6">
+        <View className="border-t border-border gap-2 pt-6">
+          <PrivacyPolicyLink className="text-xs" />
           <Text className="text-muted-foreground text-xs">
             © {new Date().getFullYear()} mapcn react native. All rights
             reserved.

@@ -14,6 +14,7 @@ export function ControlsPage() {
       description="Add interactive controls to your map for zoom, compass, location, and fullscreen."
       prev={{ title: "Map", href: "/docs/basic-map" }}
       next={{ title: "Markers", href: "/docs/markers" }}
+      toc={[{ title: "Basic Example", slug: "basic-example" }]}
     >
       <DocsSection>
         <Text className="leading-7">
@@ -30,6 +31,9 @@ export function ControlsPage() {
           <DocsCode>onFullscreenRequest</DocsCode> - wire it to your own
           full-screen UI (modal, screen navigation, etc.).
         </DocsNote>
+      </DocsSection>
+
+      <DocsSection title="Basic Example">
         <ComponentPreview
           code={controlsSource}
           previewImage="/images/previews/controls.png"
