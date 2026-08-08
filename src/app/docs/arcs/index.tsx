@@ -1,4 +1,4 @@
-import { ArcsPage } from "@/contents/Blocks/Arcs";
+import { ArcsPage } from "@/contents/Docs/Arcs";
 
 export default function ArcsScreen() {
   return <ArcsPage />;

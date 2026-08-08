@@ -1,13 +1,13 @@
 import { type Href, useRouter } from "expo-router";
-import * as WebBrowser from "expo-web-browser";
 import type { LucideProps } from "lucide-react-native";
-import { Platform, Pressable, useColorScheme, View } from "react-native";
+import { Pressable, useColorScheme, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
 import { Logo } from "./logo";
 import { PrivacyPolicyLink } from "./privacy-policy-link";
 
 import { Text } from "@/components/ui/text";
+import { openExternalUrl } from "@/lib/link";
 import { SITE_GITHUB_REPO } from "@/lib/site-metadata";
 import { THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
@@ -107,12 +107,7 @@ function FooterLink({ label, href, external }: FooterLinkItem) {
       className={linkClassName}
       onPress={() => {
         if (isExternal) {
-          if (Platform.OS === "web") {
-            window.open(href as string, "_blank");
-            return;
-          }
-          void WebBrowser.openBrowserAsync(href as string);
-          return;
+          openExternalUrl(href as string);
         }
 
         router.push(href);
@@ -170,11 +165,7 @@ export function Footer({ className }: FooterProps) {
                 accessibilityRole="link"
                 className="text-muted-foreground text-sm underline"
                 onPress={() => {
-                  if (Platform.OS === "web") {
-                    window.open("https://mapcn.dev", "_blank");
-                    return;
-                  }
-                  void WebBrowser.openBrowserAsync("https://mapcn.dev");
+                  openExternalUrl("https://mapcn.dev");
                 }}
               >
                 mapcn
@@ -187,7 +178,7 @@ export function Footer({ className }: FooterProps) {
                   key={social.href}
                   accessibilityLabel={social.label}
                   onPress={() => {
-                    void WebBrowser.openBrowserAsync(social.href);
+                    openExternalUrl(social.href);
                   }}
                   className="active:opacity-80"
                 >

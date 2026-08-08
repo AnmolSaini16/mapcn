@@ -67,7 +67,7 @@ export function MarkersPage() {
         </Text>
         <ComponentPreview
           code={popupSource}
-          className="h-[500px]"
+          className="h-125"
           previewImage="/images/previews/marker-popup.png"
         >
           <PopupExample />

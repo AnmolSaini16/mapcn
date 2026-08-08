@@ -170,7 +170,7 @@ function PreviewInfo({
     const showPlayStore = SITE_PLAY_STORE_URL.length > 0;
 
     return (
-      <View className="border-border bg-surface min-w-0 flex-1 rounded-xl border p-5 shadow-sm shadow-black/5 flex-col justify-start">
+      <View className="border-border bg-surface min-w-0 flex-1 rounded-xl border p-5 flex-col justify-center">
         <View className="gap-5">
           <View className="flex-row items-center gap-3">
             <View className="bg-primary/10 rounded-lg p-2.5">
@@ -248,7 +248,7 @@ export function WebMapPreviewPlaceholder({
 
   if (layout === "aside") {
     return (
-      <View className="w-full flex-row items-stretch gap-6">
+      <View className="w-full flex-row items-stretch gap-6 cursor-not-allowed select-none">
         <PreviewImage
           className={cn(
             "border-border aspect-square w-1/2 min-w-0 rounded-lg border",
@@ -267,7 +267,12 @@ export function WebMapPreviewPlaceholder({
   }
 
   return (
-    <View className={cn("bg-muted relative flex-1 overflow-hidden", className)}>
+    <View
+      className={cn(
+        "bg-muted relative flex-1 overflow-hidden cursor-not-allowed select-none",
+        className,
+      )}
+    >
       <PreviewImage
         className="absolute inset-0"
         previewImage={previewImage}

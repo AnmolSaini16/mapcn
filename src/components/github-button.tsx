@@ -1,12 +1,12 @@
-import * as WebBrowser from "expo-web-browser";
 import type { LucideProps } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
-import { Platform, useColorScheme } from "react-native";
+import { useColorScheme } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
+import { openExternalUrl } from "@/lib/link";
 import { THEME } from "@/lib/theme";
 
 const GITHUB_REPO_URL = "https://github.com/unkn0wndfbx/mapcn-react-native";
@@ -100,11 +100,7 @@ export function GitHubButton({ withCount = true }: GitHubButtonProps) {
   const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
 
   const openRepository = useCallback(() => {
-    if (Platform.OS === "web") {
-      window.open(GITHUB_REPO_URL, "_blank");
-      return;
-    }
-    void WebBrowser.openBrowserAsync(GITHUB_REPO_URL);
+    openExternalUrl(GITHUB_REPO_URL);
   }, []);
 
   return (

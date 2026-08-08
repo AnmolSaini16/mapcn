@@ -1,10 +1,10 @@
-import * as WebBrowser from "expo-web-browser";
 import { PropsWithChildren } from "react";
-import { Platform, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 import { Footer } from "@/components/footer";
 import { PageHead } from "@/components/page-head";
 import { Text } from "@/components/ui/text";
+import { openExternalUrl } from "@/lib/link";
 import { SITE_GITHUB_REPO, SITE_NAME } from "@/lib/site-metadata";
 
 const EFFECTIVE_DATE = "August 8, 2026";
@@ -12,15 +12,6 @@ const APP_NAME = "mapcn-react-native";
 const ANDROID_PACKAGE = "com.unkn0wnd.fbx.mapcnreactnative";
 const DEVELOPER_NAME = "THDev";
 const CONTACT_URL = `${SITE_GITHUB_REPO}/issues`;
-
-function openExternalUrl(url: string) {
-  if (Platform.OS === "web") {
-    window.open(url, "_blank");
-    return;
-  }
-
-  void WebBrowser.openBrowserAsync(url);
-}
 
 function PrivacySection({
   title,

@@ -55,7 +55,7 @@ export function RoutesPage() {
         </Text>
         <ComponentPreview
           code={osrmRouteSource}
-          className="h-[500px]"
+          className="h-125"
           previewImage="/images/previews/osrm-route.png"
         >
           <OsrmRouteExample />
