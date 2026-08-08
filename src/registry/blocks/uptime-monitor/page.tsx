@@ -21,9 +21,9 @@ export default function Page() {
             }}
             minZoom={mapView.minZoom}
             maxZoom={mapView.maxZoom}
-            scrollEnabled={false}
-            rotateEnabled={false}
-            pitchEnabled={false}
+            dragPan={false}
+            touchRotate={false}
+            touchPitch={false}
           >
             <MapGeoJSON
               data={WORLD_GEOJSON}

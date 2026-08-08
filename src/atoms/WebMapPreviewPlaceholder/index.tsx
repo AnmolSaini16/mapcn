@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
 import { ImageIcon, Smartphone } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Linking, Platform, StyleSheet, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import { SITE_APP_STORE_URL, SITE_PLAY_STORE_URL } from "@/lib/site-metadata";
 import { cn } from "@/lib/utils";
+
+const DEFAULT_PHONE_ASPECT_RATIO = 9 / 19.5;
 
 type WebMapPreviewPlaceholderProps = {
   className?: string;
@@ -65,26 +67,48 @@ function openStoreUrl(url: string) {
 
 function PreviewImage({
   className,
+  contentFit = "cover",
   previewImage,
   failedImage,
   onImageError,
+  onImageLoad,
+  imageAspectRatio,
 }: {
   className?: string;
+  contentFit?: "cover" | "contain";
   previewImage?: string;
   failedImage: string | null;
   onImageError: (image: string) => void;
+  onImageLoad?: (aspectRatio: number) => void;
+  imageAspectRatio?: number | null;
 }) {
   const showImage = Boolean(previewImage) && failedImage !== previewImage;
+  const usesIntrinsicWidth = contentFit === "contain";
 
   return (
-    <View className={cn("bg-muted relative overflow-hidden", className)}>
+    <View
+      className={cn("bg-muted relative overflow-hidden", className)}
+      style={
+        usesIntrinsicWidth
+          ? {
+              aspectRatio: imageAspectRatio ?? DEFAULT_PHONE_ASPECT_RATIO,
+            }
+          : undefined
+      }
+    >
       {showImage && previewImage ? (
         <Image
           source={previewImage}
-          contentFit="cover"
+          contentFit={contentFit}
           transition={200}
           onError={() => {
             onImageError(previewImage);
+          }}
+          onLoad={(event) => {
+            const { width, height } = event.source;
+            if (width > 0 && height > 0) {
+              onImageLoad?.(width / height);
+            }
           }}
           style={StyleSheet.absoluteFill}
           accessibilityLabel="Map preview screenshot"
@@ -245,18 +269,28 @@ export function WebMapPreviewPlaceholder({
   layout = "overlay",
 }: WebMapPreviewPlaceholderProps) {
   const [failedImage, setFailedImage] = useState<string | null>(null);
+  const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
+  const hasFixedHeight = Boolean(className?.match(/(?:^|\s)h-/));
+
+  useEffect(() => {
+    setImageAspectRatio(null);
+  }, [previewImage]);
 
   if (layout === "aside") {
     return (
       <View className="w-full flex-row items-stretch gap-6 cursor-not-allowed select-none">
         <PreviewImage
           className={cn(
-            "border-border aspect-square w-1/2 min-w-0 rounded-lg border",
+            "border-border shrink-0 min-w-0 rounded-lg border",
+            !hasFixedHeight && "aspect-square w-1/2",
             className,
           )}
+          contentFit={hasFixedHeight ? "contain" : "cover"}
           previewImage={previewImage}
           failedImage={failedImage}
           onImageError={setFailedImage}
+          onImageLoad={setImageAspectRatio}
+          imageAspectRatio={imageAspectRatio}
         />
         <PreviewInfo
           title={title}

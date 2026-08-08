@@ -5,6 +5,7 @@ import { CodeBlock } from "../../CodeBlock";
 
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
+import { useLockParentScrollOnMapTouch } from "@/lib/parent-scroll-lock";
 import { cn } from "@/lib/utils";
 
 interface ComponentPreviewClientProps {
@@ -20,6 +21,7 @@ export function ComponentPreviewClient({
   className,
 }: ComponentPreviewClientProps) {
   const [expanded, setExpanded] = useState(false);
+  const mapTouchScrollLock = useLockParentScrollOnMapTouch();
 
   return (
     <View className="gap-4">
@@ -28,6 +30,7 @@ export function ComponentPreviewClient({
           "border-border h-105 w-full overflow-hidden rounded-lg border",
           className,
         )}
+        {...mapTouchScrollLock}
       >
         {children}
       </View>

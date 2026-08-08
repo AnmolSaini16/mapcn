@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/table";
 import { Text } from "@/components/ui/text";
 import { openExternalUrl } from "@/lib/link";
+import { ParentScrollLockProvider } from "@/lib/parent-scroll-lock";
 import { cn } from "@/lib/utils";
 
 export function slugify(text: string): string {
@@ -82,6 +83,7 @@ export function DocsLayout({
   const [sectionsBaseY, setSectionsBaseY] = React.useState(0);
   const sectionOffsets = React.useRef<Record<string, number>>({});
   const [activeSection, setActiveSection] = React.useState<string | null>(null);
+  const [scrollEnabled, setScrollEnabled] = React.useState(true);
 
   const registerSection = React.useCallback((slug: string, y: number) => {
     sectionOffsets.current[slug] = y;
@@ -151,82 +153,85 @@ export function DocsLayout({
 
   return (
     <DocsScrollProvider value={scrollContextValue}>
-      <PageHead
-        title={title}
-        description={description}
-      />
-      <View className="flex-1 flex-row bg-background">
-        <ScrollView
-          ref={scrollRef}
-          className="min-w-0 flex-1 bg-background"
-          contentContainerClassName="flex-grow pb-20"
-          showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
-        >
-          <View className="mx-auto w-full max-w-200 flex-1 px-4 pt-10 lg:px-4">
-            <DocsTitle
-              title={title}
-              description={description}
-            />
-            <View
-              className="mt-12 mb-12 gap-12"
-              onLayout={(event) => {
-                setSectionsBaseY(event.nativeEvent.layout.y);
-              }}
-            >
-              {children}
-            </View>
-            <View className="mt-8 border-t border-border pt-6">
-              <PrivacyPolicyLink />
-            </View>
-            {(prev ?? next) && (
-              <View className="mt-6 flex-row items-center justify-between gap-4">
-                {prev ? (
-                  <Link
-                    href={prev.href as Href}
-                    asChild
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="-ml-2 h-auto py-2"
-                    >
-                      <ChevronLeft size={16} />
-                      <Text>{prev.title}</Text>
-                    </Button>
-                  </Link>
-                ) : (
-                  <View />
-                )}
-                {next ? (
-                  <Link
-                    href={next.href as Href}
-                    asChild
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="-mr-2 h-auto py-2"
-                    >
-                      <Text>{next.title}</Text>
-                      <ChevronRight size={16} />
-                    </Button>
-                  </Link>
-                ) : null}
+      <ParentScrollLockProvider setScrollEnabled={setScrollEnabled}>
+        <PageHead
+          title={title}
+          description={description}
+        />
+        <View className="flex-1 flex-row bg-background">
+          <ScrollView
+            ref={scrollRef}
+            className="min-w-0 flex-1 bg-background"
+            contentContainerClassName="flex-grow pb-20"
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={scrollEnabled}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+          >
+            <View className="mx-auto w-full max-w-200 flex-1 px-4 pt-10 lg:px-4">
+              <DocsTitle
+                title={title}
+                description={description}
+              />
+              <View
+                className="mt-12 mb-12 gap-12"
+                onLayout={(event) => {
+                  setSectionsBaseY(event.nativeEvent.layout.y);
+                }}
+              >
+                {children}
               </View>
-            )}
-          </View>
-        </ScrollView>
-
-        {toc.length > 0 && (
-          <View className="hidden w-48 shrink-0 xl:flex">
-            <View className="pt-10 pb-10">
-              <DocsToc items={toc} />
+              <View className="mt-8 border-t border-border pt-6">
+                <PrivacyPolicyLink />
+              </View>
+              {(prev ?? next) && (
+                <View className="mt-6 flex-row items-center justify-between gap-4">
+                  {prev ? (
+                    <Link
+                      href={prev.href as Href}
+                      asChild
+                    >
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="-ml-2 h-auto py-2"
+                      >
+                        <ChevronLeft size={16} />
+                        <Text>{prev.title}</Text>
+                      </Button>
+                    </Link>
+                  ) : (
+                    <View />
+                  )}
+                  {next ? (
+                    <Link
+                      href={next.href as Href}
+                      asChild
+                    >
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="-mr-2 h-auto py-2"
+                      >
+                        <Text>{next.title}</Text>
+                        <ChevronRight size={16} />
+                      </Button>
+                    </Link>
+                  ) : null}
+                </View>
+              )}
             </View>
-          </View>
-        )}
-      </View>
+          </ScrollView>
+
+          {toc.length > 0 && (
+            <View className="hidden w-48 shrink-0 xl:flex">
+              <View className="pt-10 pb-10">
+                <DocsToc items={toc} />
+              </View>
+            </View>
+          )}
+        </View>
+      </ParentScrollLockProvider>
     </DocsScrollProvider>
   );
 }

@@ -89,9 +89,9 @@ export default function Page() {
         }}
         minZoom={mapConfig.view.minZoom}
         maxZoom={mapConfig.view.maxZoom}
-        scrollEnabled={false}
-        rotateEnabled={false}
-        pitchEnabled={false}
+        dragPan={false}
+        touchRotate={false}
+        touchPitch={false}
         loading={!countries}
       >
         {countries ? (

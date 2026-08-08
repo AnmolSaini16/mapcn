@@ -37,9 +37,9 @@ export default function Page() {
           viewport={{ center: [-2, 16], zoom: 1.4 }}
           maxZoom={4}
           minZoom={1.4}
-          scrollEnabled={false}
-          rotateEnabled={false}
-          pitchEnabled={false}
+          dragPan={false}
+          touchRotate={false}
+          touchPitch={false}
         >
           <MapGeoJSON
             data={WORLD_GEOJSON}
