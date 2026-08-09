@@ -1,8 +1,9 @@
 import { Link } from "expo-router";
 import { useState } from "react";
-import { ScrollView, StyleProp, View, ViewStyle } from "react-native";
+import { Platform, ScrollView, StyleProp, View, ViewStyle } from "react-native";
 
 import { ExamplesGrid } from "./ExamplesGrid";
+import { GetTheApp } from "./GetTheApp";
 
 import { Footer } from "@/components/footer";
 import {
@@ -63,14 +64,14 @@ export const HomePage = () => {
         </PageHeader>
 
         <View
-          className="animate-fade-up animate-stagger container-wide"
+          className="animate-fade-up animate-stagger mx-auto w-full flex-1 container"
           style={
             {
               "--stagger": 4.5,
             } as StyleProp<ViewStyle>
           }
         >
-          <ExamplesGrid />
+          {Platform.OS === "web" ? <GetTheApp /> : <ExamplesGrid />}
         </View>
 
         <Footer />
