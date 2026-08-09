@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/blocks</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/privacy</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/docs</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/docs/installation</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/docs/api-reference</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/docs/basic-map</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/docs/controls</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/docs/markers</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/docs/popups</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/docs/routes</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/docs/arcs</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/docs/geojson</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/docs/clusters</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/docs/advanced-usage</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/llm</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/llm/map</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/llm/analytics-map</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/llm/choropleth</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/llm/analytics-card</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/llm/delivery-tracker</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/llm/uptime-monitor</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/llm/heatmap</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/llm/logistics-network</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/llm/store-locator</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/view/analytics-map</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/view/choropleth</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/view/analytics-card</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/view/delivery-tracker</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/view/uptime-monitor</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/view/heatmap</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/view/logistics-network</loc>
+  </url>
+
+  <url>
+    <loc>https://mapcn-react-native.vercel.app/view/store-locator</loc>
+  </url>
+</urlset>

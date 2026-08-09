@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mapcn-react-native.vercel.app/sitemap.xml

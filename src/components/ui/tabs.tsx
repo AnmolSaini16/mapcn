@@ -51,8 +51,7 @@ function TabsTrigger({
             web: "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring inline-flex cursor-default whitespace-nowrap transition-[color,box-shadow] focus-visible:outline-1 focus-visible:ring-[3px] disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0",
           }),
           props.disabled && "opacity-50",
-          props.value === value &&
-            "bg-background dark:border-foreground/10 dark:bg-input/30",
+          props.value === value && "bg-background",
           className,
         )}
         {...props}

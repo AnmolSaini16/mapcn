@@ -10,6 +10,7 @@ import { Text } from "@/components/ui/text";
 import { SITE_APP_STORE_URL, SITE_PLAY_STORE_URL } from "@/lib/site-metadata";
 import { cn } from "@/lib/utils";
 
+/* TODO: add images for dark mode */
 const DEFAULT_PHONE_ASPECT_RATIO = 9 / 19.5;
 
 type WebMapPreviewPlaceholderProps = {
