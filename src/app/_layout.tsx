@@ -9,14 +9,14 @@ import { ThemeProvider } from "expo-router/react-navigation";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import { useColorScheme, View } from "react-native";
+import { Platform, useColorScheme, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Header } from "@/components/header";
 import "@/lib/appearance-polyfill";
 import { NAV_THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
-import "../styles/global.css";
+import "../styles/app.css";
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -46,8 +46,8 @@ export default function RootLayout() {
       <ThemeProvider value={NAV_THEME[colorScheme]}>
         <View
           className={cn(
-            "flex-1 bg-background will-change-variable",
-            // colorScheme === "dark" && "dark",
+            "flex-1 bg-background",
+            Platform.OS === "web" && colorScheme === "dark" && "dark",
           )}
         >
           <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
