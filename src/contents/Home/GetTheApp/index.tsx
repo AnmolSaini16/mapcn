@@ -11,16 +11,19 @@ import { StoreBadgeButton } from "@/atoms/StoreBadgeButton";
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { getPreviewImages } from "@/lib/preview-images";
 import { SITE_APP_STORE_URL, SITE_PLAY_STORE_URL } from "@/lib/site-metadata";
 import { THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
-const PREVIEW_IMAGE = "/images/previews/landing-page.png";
+const landingPagePreview = getPreviewImages("landing-page");
 const QR_SIZE = 132;
 
 export function GetTheApp() {
-  const colorScheme = useColorScheme();
-  const colors = THEME[colorScheme === "dark" ? "dark" : "light"];
+  const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
+  const colors = THEME[colorScheme];
+  const previewImage =
+    colorScheme === "dark" ? landingPagePreview.dark : landingPagePreview.light;
   const iconColor = colors.background;
   const showAppStore = SITE_APP_STORE_URL.length > 0;
   const showPlayStore = SITE_PLAY_STORE_URL.length > 0;
@@ -133,9 +136,9 @@ export function GetTheApp() {
           </View>
 
           <View className="items-center justify-center lg:w-[42%]">
-            <Phone>
+            <Phone contentTheme={colorScheme}>
               <Image
-                source={PREVIEW_IMAGE}
+                source={previewImage}
                 contentFit="cover"
                 style={{ width: "100%", height: "100%" }}
                 accessibilityLabel="Map markers preview on a phone"

@@ -8,8 +8,11 @@ import {
   DocsSection,
 } from "@/contents/Docs/Common/Layout";
 import { getExampleSource } from "@/lib/example-source";
+import { getPreviewImages } from "@/lib/preview-images";
 
 export function ArcsPage() {
+  const arcPreview = getPreviewImages("arc");
+  const interactiveArcPreview = getPreviewImages("interactive-arc");
   const arcSource = getExampleSource("arc-example.tsx");
   const interactiveArcSource = getExampleSource("interactive-arc-example.tsx");
 
@@ -42,7 +45,8 @@ export function ArcsPage() {
         </Text>
         <ComponentPreview
           code={arcSource}
-          previewImage="/images/previews/arc.png"
+          previewImage={arcPreview.light}
+          previewImageDark={arcPreview.dark}
         >
           <ArcExample />
         </ComponentPreview>
@@ -59,7 +63,8 @@ export function ArcsPage() {
         </Text>
         <ComponentPreview
           code={interactiveArcSource}
-          previewImage="/images/previews/interactive-arc.png"
+          previewImage={interactiveArcPreview.light}
+          previewImageDark={interactiveArcPreview.dark}
         >
           <InteractiveArcExample />
         </ComponentPreview>

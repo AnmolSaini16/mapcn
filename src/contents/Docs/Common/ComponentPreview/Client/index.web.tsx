@@ -13,12 +13,14 @@ interface ComponentPreviewClientProps {
   code: string;
   className?: string;
   previewImage?: string;
+  previewImageDark?: string;
 }
 
 export function ComponentPreviewClient({
   code,
   className,
   previewImage,
+  previewImageDark,
 }: ComponentPreviewClientProps) {
   const [expanded, setExpanded] = useState(false);
 
@@ -26,6 +28,7 @@ export function ComponentPreviewClient({
     <View className="gap-4">
       <WebMapPreviewPlaceholder
         previewImage={previewImage}
+        previewImageDark={previewImageDark}
         layout="aside"
         className={className}
       />

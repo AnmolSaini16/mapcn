@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { ExampleCard } from "@/atoms/ExampleCard";
 import { ExampleMap } from "@/atoms/ExampleMap";
 import { Text } from "@/components/ui/text";
+import { getPreviewImages } from "@/lib/preview-images";
 import {
   MapArc,
   MapMarker,
@@ -11,6 +12,8 @@ import {
   MarkerContent,
   MarkerLabel,
 } from "@/registry/map";
+
+const arcPreview = getPreviewImages("home-arc");
 
 const hub = { name: "London", lng: -0.1276, lat: 51.5074 };
 
@@ -37,7 +40,8 @@ export function ArcExample() {
   return (
     <ExampleCard
       className="aspect-square min-h-[280px]"
-      previewImage="/images/previews/home-arc.png"
+      previewImage={arcPreview.light}
+      previewImageDark={arcPreview.dark}
     >
       <ExampleMap
         viewport={{

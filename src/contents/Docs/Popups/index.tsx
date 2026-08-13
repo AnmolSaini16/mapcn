@@ -4,8 +4,10 @@ import { DocsCode, DocsLayout, DocsNote, DocsSection } from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";
+import { getPreviewImages } from "@/lib/preview-images";
 
 export function PopupsPage() {
+  const standalonePopupPreview = getPreviewImages("standalone-popup");
   const popupSource = getExampleSource("standalone-popup-example.tsx");
 
   return (
@@ -35,7 +37,8 @@ export function PopupsPage() {
       <DocsSection title="Basic Example">
         <ComponentPreview
           code={popupSource}
-          previewImage="/images/previews/standalone-popup.png"
+          previewImage={standalonePopupPreview.light}
+          previewImageDark={standalonePopupPreview.dark}
         >
           <StandalonePopupExample />
         </ComponentPreview>

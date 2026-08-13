@@ -11,7 +11,10 @@ import {
 } from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
+import { getPreviewImages } from "@/lib/preview-images";
 import { Map, MapControls } from "@/registry/map";
+
+const usagePreview = getPreviewImages("installation");
 
 const usageCode = `import { Map, MapControls } from "@/components/ui/map";
 import { View } from "react-native";
@@ -102,7 +105,8 @@ export function InstallationPage() {
         <Text className="leading-7">Import and use the map component:</Text>
         <ComponentPreview
           code={usageCode}
-          previewImage="/images/previews/installation.png"
+          previewImage={usagePreview.light}
+          previewImageDark={usagePreview.dark}
         >
           <View className="h-full w-full overflow-hidden">
             <Map

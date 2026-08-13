@@ -20,13 +20,13 @@ import { SITE_APP_STORE_URL, SITE_PLAY_STORE_URL } from "@/lib/site-metadata";
 import { THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
-/* TODO: add images for dark mode */
 const DEFAULT_PHONE_ASPECT_RATIO = 9 / 19.5;
 
 type WebMapPreviewPlaceholderProps = {
   className?: string;
   title?: string;
   previewImage?: string;
+  previewImageDark?: string;
   layout?: "overlay" | "aside";
 };
 
@@ -247,15 +247,34 @@ export function WebMapPreviewPlaceholder({
   className,
   title = "Map preview",
   previewImage,
+  previewImageDark,
   layout = "overlay",
 }: WebMapPreviewPlaceholderProps) {
+  const colorScheme = useColorScheme() === "dark" ? "dark" : "light";
   const [failedImage, setFailedImage] = useState<string | null>(null);
+  const [useLightFallback, setUseLightFallback] = useState(false);
   const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
   const hasFixedHeight = Boolean(className?.match(/(?:^|\s)h-/));
 
+  const activePreviewImage =
+    colorScheme === "dark" && previewImageDark && !useLightFallback
+      ? previewImageDark
+      : previewImage;
+
   useEffect(() => {
+    setFailedImage(null);
+    setUseLightFallback(false);
     setImageAspectRatio(null);
-  }, [previewImage]);
+  }, [previewImage, previewImageDark, colorScheme]);
+
+  function handleImageError(image: string) {
+    if (image === previewImageDark && previewImage) {
+      setUseLightFallback(true);
+      return;
+    }
+
+    setFailedImage(image);
+  }
 
   if (layout === "aside") {
     return (
@@ -267,9 +286,9 @@ export function WebMapPreviewPlaceholder({
             className,
           )}
           contentFit={hasFixedHeight ? "contain" : "cover"}
-          previewImage={previewImage}
+          previewImage={activePreviewImage}
           failedImage={failedImage}
-          onImageError={setFailedImage}
+          onImageError={handleImageError}
           onImageLoad={setImageAspectRatio}
           imageAspectRatio={imageAspectRatio}
         />
@@ -290,9 +309,9 @@ export function WebMapPreviewPlaceholder({
     >
       <PreviewImage
         className="absolute inset-0"
-        previewImage={previewImage}
+        previewImage={activePreviewImage}
         failedImage={failedImage}
-        onImageError={setFailedImage}
+        onImageError={handleImageError}
       />
       <PreviewInfo
         title={title}

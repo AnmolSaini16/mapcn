@@ -1,9 +1,10 @@
 import { Link } from "expo-router";
-import { Pressable, View } from "react-native";
+import { Pressable, useColorScheme, View } from "react-native";
 import Svg, { Circle, Path, Rect } from "react-native-svg";
 
 import { Text } from "@/components/ui/text";
 import { SITE_NAME } from "@/lib/site-metadata";
+import { THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
 type LogoProps = {
@@ -13,6 +14,9 @@ type LogoProps = {
 };
 
 export function Logo({ className, onPress, isLink = true }: LogoProps) {
+  const colorScheme = useColorScheme();
+  const colors = THEME[colorScheme === "dark" ? "dark" : "light"];
+
   const content = (
     <>
       <Svg
@@ -26,17 +30,17 @@ export function Logo({ className, onPress, isLink = true }: LogoProps) {
           width="32"
           height="32"
           rx="8"
-          fill="#000"
+          fill={colors.foreground}
         />
         <Path
           d="M16 6C12.134 6 9 9.134 9 13C9 18.25 16 26 16 26C16 26 23 18.25 23 13C23 9.134 19.866 6 16 6Z"
-          fill="#fff"
+          fill={colors.background}
         />
         <Circle
           cx="16"
           cy="13"
           r="3"
-          fill="#000"
+          fill={colors.foreground}
         />
       </Svg>
 

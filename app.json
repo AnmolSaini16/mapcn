@@ -2,7 +2,7 @@
   "expo": {
     "name": "mapcn-react-native",
     "slug": "mapcn-react-native",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "mapcn-react-native",
@@ -12,7 +12,8 @@
       "icon": "./assets/expo.icon",
       "bundleIdentifier": "com.unkn0wnd.fbx.mapcn-react-native",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSLocationWhenInUseUsageDescription": "Mapcn uses your location to center the map on your current position when you tap the locate button."
       }
     },
     "android": {

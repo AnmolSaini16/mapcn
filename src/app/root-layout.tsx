@@ -40,6 +40,8 @@ export default function RootLayout() {
     return null;
   }
 
+  // router.replace("/preview/landing-page");
+
   return (
     <SafeAreaProvider>
       <ThemeProvider value={NAV_THEME[colorScheme]}>

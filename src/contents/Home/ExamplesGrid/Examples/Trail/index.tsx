@@ -5,7 +5,10 @@ import { ExampleCard } from "@/atoms/ExampleCard";
 import { ExampleMap } from "@/atoms/ExampleMap";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { getPreviewImages } from "@/lib/preview-images";
 import { MapMarker, MapRoute, MarkerContent } from "@/registry/map";
+
+const trailPreview = getPreviewImages("home-trail");
 
 const trailCoordinates: [number, number][] = [
   [-73.95846730810143, 40.80035246904919],
@@ -29,7 +32,8 @@ export function TrailExample() {
   return (
     <ExampleCard
       className="aspect-square min-h-[280px]"
-      previewImage="/images/previews/home-trail.png"
+      previewImage={trailPreview.light}
+      previewImageDark={trailPreview.dark}
     >
       <View className="bg-background/95 border-border absolute top-3 left-3 z-10 rounded-lg border p-3 shadow-lg">
         <View className="mb-2 flex-row items-center gap-1.5">

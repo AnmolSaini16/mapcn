@@ -5,8 +5,11 @@ import { DocsCode, DocsLayout, DocsLink, DocsSection } from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";
+import { getPreviewImages } from "@/lib/preview-images";
 
 export function RoutesPage() {
+  const routePreview = getPreviewImages("route");
+  const osrmRoutePreview = getPreviewImages("osrm-route");
   const routeSource = getExampleSource("route-example.tsx");
   const osrmRouteSource = getExampleSource("osrm-route-example.tsx");
 
@@ -35,7 +38,8 @@ export function RoutesPage() {
         </Text>
         <ComponentPreview
           code={routeSource}
-          previewImage="/images/previews/route.png"
+          previewImage={routePreview.light}
+          previewImageDark={routePreview.dark}
         >
           <RouteExample />
         </ComponentPreview>
@@ -56,7 +60,8 @@ export function RoutesPage() {
         <ComponentPreview
           code={osrmRouteSource}
           className="h-125"
-          previewImage="/images/previews/osrm-route.png"
+          previewImage={osrmRoutePreview.light}
+          previewImageDark={osrmRoutePreview.dark}
         >
           <OsrmRouteExample />
         </ComponentPreview>

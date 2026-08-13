@@ -4,8 +4,10 @@ import { DocsCode, DocsLayout, DocsSection } from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";
+import { getPreviewImages } from "@/lib/preview-images";
 
 export function ClustersPage() {
+  const clusterPreview = getPreviewImages("cluster");
   const clusterSource = getExampleSource("cluster-example.tsx");
 
   return (
@@ -32,7 +34,8 @@ export function ClustersPage() {
         </Text>
         <ComponentPreview
           code={clusterSource}
-          previewImage="/images/previews/cluster.png"
+          previewImage={clusterPreview.light}
+          previewImageDark={clusterPreview.dark}
         >
           <ClusterExample />
         </ComponentPreview>

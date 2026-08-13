@@ -6,7 +6,10 @@ import { ExampleCard } from "@/atoms/ExampleCard";
 import { ExampleMap } from "@/atoms/ExampleMap";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { getPreviewImages } from "@/lib/preview-images";
 import { MapMarker, MarkerContent, MarkerPopup } from "@/registry/map";
+
+const evChargingPreview = getPreviewImages("home-ev-charging");
 
 type Status = "available" | "in-use" | "offline";
 
@@ -125,7 +128,8 @@ export function EVChargingExample() {
   return (
     <ExampleCard
       className="aspect-square min-h-[280px]"
-      previewImage="/images/previews/home-ev-charging.png"
+      previewImage={evChargingPreview.light}
+      previewImageDark={evChargingPreview.dark}
     >
       <ExampleMap
         viewport={{

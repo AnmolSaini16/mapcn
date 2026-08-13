@@ -16,6 +16,7 @@ import {
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";
+import { getPreviewImages } from "@/lib/preview-images";
 
 const refCode = `import { Map, type MapRef } from "@/components/ui/map";
 import { useRef } from "react";
@@ -76,6 +77,9 @@ function FlyToControl() {
 </Map>`;
 
 export function AdvancedUsagePage() {
+  const advancedControlsPreview = getPreviewImages("advanced-controls");
+  const customLayerPreview = getPreviewImages("custom-layer");
+  const layerMarkersPreview = getPreviewImages("layer-markers");
   const advancedSource = getExampleSource("advanced-usage-example.tsx");
   const customLayerSource = getExampleSource("custom-layer-example.tsx");
   const layerMarkersSource = getExampleSource("layer-markers-example.tsx");
@@ -146,7 +150,8 @@ export function AdvancedUsagePage() {
         </Text>
         <ComponentPreview
           code={advancedSource}
-          previewImage="/images/previews/advanced-controls.png"
+          previewImage={advancedControlsPreview.light}
+          previewImageDark={advancedControlsPreview.dark}
         >
           <AdvancedUsageExample />
         </ComponentPreview>
@@ -160,7 +165,8 @@ export function AdvancedUsagePage() {
         </Text>
         <ComponentPreview
           code={customLayerSource}
-          previewImage="/images/previews/custom-layer.png"
+          previewImage={customLayerPreview.light}
+          previewImageDark={customLayerPreview.dark}
         >
           <CustomLayerExample />
         </ComponentPreview>
@@ -175,7 +181,8 @@ export function AdvancedUsagePage() {
         </Text>
         <ComponentPreview
           code={layerMarkersSource}
-          previewImage="/images/previews/layer-markers.png"
+          previewImage={layerMarkersPreview.light}
+          previewImageDark={layerMarkersPreview.dark}
         >
           <LayerMarkersExample />
         </ComponentPreview>

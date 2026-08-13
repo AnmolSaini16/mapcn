@@ -11,6 +11,7 @@ import { MobileBlockPreview } from "../Preview/Mobile";
 import type { HighlightedFile } from "../ViewerCode";
 
 import { createFileTreeForRegistryItemFiles, getAllBlocks } from "@/lib/blocks";
+import { getBlockPreviewImages } from "@/lib/preview-images";
 
 const BLOCK_SOURCES: Record<
   string,
@@ -58,6 +59,8 @@ export function BlockDisplay({ name }: BlockDisplayProps) {
     };
   });
 
+  const blockPreview = getBlockPreviewImages(block.name);
+
   return (
     <BlockPreview
       block={block}
@@ -67,7 +70,8 @@ export function BlockDisplay({ name }: BlockDisplayProps) {
       <MobileBlockPreview
         name={block.name}
         title={block.title ?? block.name}
-        previewImage={`/images/previews/blocks/${block.name}.png`}
+        previewImage={blockPreview.light}
+        previewImageDark={blockPreview.dark}
       />
     </BlockPreview>
   );

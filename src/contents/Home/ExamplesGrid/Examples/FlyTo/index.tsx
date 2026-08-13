@@ -5,7 +5,10 @@ import { ExampleCard } from "@/atoms/ExampleCard";
 import { ExampleMap } from "@/atoms/ExampleMap";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
+import { getPreviewImages } from "@/lib/preview-images";
 import { MapMarker, MarkerContent, useMap } from "@/registry/map";
+
+const flyToPreview = getPreviewImages("home-fly-to");
 
 const destinations = [
   { name: "New York", center: [-74.006, 40.7128] as [number, number] },
@@ -41,7 +44,8 @@ export function FlyToExample() {
   return (
     <ExampleCard
       className="aspect-square min-h-[280px]"
-      previewImage="/images/previews/home-fly-to.png"
+      previewImage={flyToPreview.light}
+      previewImageDark={flyToPreview.dark}
     >
       <ExampleMap
         viewport={{

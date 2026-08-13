@@ -13,6 +13,7 @@ interface ComponentPreviewClientProps {
   code: string;
   className?: string;
   previewImage?: string;
+  previewImageDark?: string;
 }
 
 export function ComponentPreviewClient({

@@ -52,7 +52,7 @@
     "expo-symbols": "~57.0.1",
     "expo-system-ui": "~57.0.1",
     "expo-web-browser": "~57.0.2",
-    "lucide-react-native": "^1.27.0",
+    "lucide-react-native": "^1.31.0",
     "nativewind": "^5.0.0-preview.4",
     "radix-ui": "^1.6.0",
     "react": "19.2.3",

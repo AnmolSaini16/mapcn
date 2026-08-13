@@ -5,6 +5,7 @@ import { ExampleCard } from "@/atoms/ExampleCard";
 import { ExampleMap } from "@/atoms/ExampleMap";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
+import { getPreviewImages } from "@/lib/preview-images";
 import {
   MapMarker,
   MapRoute,
@@ -12,6 +13,8 @@ import {
   MarkerLabel,
   MarkerTooltip,
 } from "@/registry/map";
+
+const deliveryPreview = getPreviewImages("home-delivery");
 
 const store = { lng: -0.14, lat: 51.5154 };
 const home = { lng: -0.07, lat: 51.51 };
@@ -89,7 +92,8 @@ export function DeliveryExample() {
   return (
     <ExampleCard
       className="aspect-square min-h-[280px]"
-      previewImage="/images/previews/home-delivery.png"
+      previewImage={deliveryPreview.light}
+      previewImageDark={deliveryPreview.dark}
     >
       <ExampleMap
         viewport={{

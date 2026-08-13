@@ -4,8 +4,10 @@ import { DocsCode, DocsLayout, DocsNote, DocsSection } from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";
+import { getPreviewImages } from "@/lib/preview-images";
 
 export function ControlsPage() {
+  const controlsPreview = getPreviewImages("controls");
   const controlsSource = getExampleSource("map-controls-example.tsx");
 
   return (
@@ -36,7 +38,8 @@ export function ControlsPage() {
       <DocsSection title="Basic Example">
         <ComponentPreview
           code={controlsSource}
-          previewImage="/images/previews/controls.png"
+          previewImage={controlsPreview.light}
+          previewImageDark={controlsPreview.dark}
         >
           <MapControlsExample />
         </ComponentPreview>

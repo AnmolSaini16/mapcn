@@ -5,8 +5,11 @@ import { DocsCode, DocsLayout, DocsSection } from "../Common/Layout";
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";
+import { getPreviewImages } from "@/lib/preview-images";
 
 export function GeoJSONPage() {
+  const geojsonPreview = getPreviewImages("geojson");
+  const mapOverlayPreview = getPreviewImages("map-overlay");
   const geojsonSource = getExampleSource("geojson-example.tsx");
   const overlaySource = getExampleSource("map-overlay-example.tsx");
 
@@ -37,7 +40,8 @@ export function GeoJSONPage() {
         </Text>
         <ComponentPreview
           code={geojsonSource}
-          previewImage="/images/previews/geojson.png"
+          previewImage={geojsonPreview.light}
+          previewImageDark={geojsonPreview.dark}
         >
           <GeoJSONExample />
         </ComponentPreview>
@@ -50,7 +54,8 @@ export function GeoJSONPage() {
         </Text>
         <ComponentPreview
           code={overlaySource}
-          previewImage="/images/previews/map-overlay.png"
+          previewImage={mapOverlayPreview.light}
+          previewImageDark={mapOverlayPreview.dark}
         >
           <MapOverlayExample />
         </ComponentPreview>

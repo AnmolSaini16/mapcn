@@ -12,8 +12,12 @@ import {
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";
+import { getPreviewImages } from "@/lib/preview-images";
 
 export function MarkersPage() {
+  const markersPreview = getPreviewImages("markers");
+  const markerPopupPreview = getPreviewImages("marker-popup");
+  const draggableMarkerPreview = getPreviewImages("draggable-marker");
   const markersSource = getExampleSource("markers-example.tsx");
   const popupSource = getExampleSource("popup-example.tsx");
   const draggableMarkerSource = getExampleSource(
@@ -54,7 +58,8 @@ export function MarkersPage() {
         </Text>
         <ComponentPreview
           code={markersSource}
-          previewImage="/images/previews/markers.png"
+          previewImage={markersPreview.light}
+          previewImageDark={markersPreview.dark}
         >
           <MarkersExample />
         </ComponentPreview>
@@ -68,7 +73,8 @@ export function MarkersPage() {
         <ComponentPreview
           code={popupSource}
           className="h-125"
-          previewImage="/images/previews/marker-popup.png"
+          previewImage={markerPopupPreview.light}
+          previewImageDark={markerPopupPreview.dark}
         >
           <PopupExample />
         </ComponentPreview>
@@ -89,7 +95,8 @@ export function MarkersPage() {
         </DocsNote>
         <ComponentPreview
           code={draggableMarkerSource}
-          previewImage="/images/previews/draggable-marker.png"
+          previewImage={draggableMarkerPreview.light}
+          previewImageDark={draggableMarkerPreview.dark}
         >
           <DraggableMarkerExample />
         </ComponentPreview>

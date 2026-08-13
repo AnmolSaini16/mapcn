@@ -5,6 +5,7 @@ interface ComponentPreviewProps {
   code: string;
   className?: string;
   previewImage?: string;
+  previewImageDark?: string;
 }
 
 export function ComponentPreview({
@@ -12,12 +13,14 @@ export function ComponentPreview({
   code,
   className,
   previewImage,
+  previewImageDark,
 }: ComponentPreviewProps) {
   return (
     <ComponentPreviewClient
       code={code}
       className={className}
       previewImage={previewImage}
+      previewImageDark={previewImageDark}
     >
       {children}
     </ComponentPreviewClient>

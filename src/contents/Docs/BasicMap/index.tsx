@@ -13,8 +13,13 @@ import {
 
 import { Text } from "@/components/ui/text";
 import { getExampleSource } from "@/lib/example-source";
+import { getPreviewImages } from "@/lib/preview-images";
 
 export function BasicMapPage() {
+  const basicMapPreview = getPreviewImages("basic-map");
+  const controlledMapPreview = getPreviewImages("controlled-map");
+  const blankMapPreview = getPreviewImages("blank-map");
+  const customStylePreview = getPreviewImages("custom-style");
   const basicMapSource = getExampleSource("basic-map-example.tsx");
   const controlledMapSource = getExampleSource("controlled-map-example.tsx");
   const customStyleSource = getExampleSource("custom-style-example.tsx");
@@ -42,7 +47,8 @@ export function BasicMapPage() {
         </Text>
         <ComponentPreview
           code={basicMapSource}
-          previewImage="/images/previews/basic-map.png"
+          previewImage={basicMapPreview.light}
+          previewImageDark={basicMapPreview.dark}
         >
           <BasicMapExample />
         </ComponentPreview>
@@ -57,7 +63,8 @@ export function BasicMapPage() {
         </Text>
         <ComponentPreview
           code={controlledMapSource}
-          previewImage="/images/previews/controlled-map.png"
+          previewImage={controlledMapPreview.light}
+          previewImageDark={controlledMapPreview.dark}
         >
           <ControlledMapExample />
         </ComponentPreview>
@@ -83,7 +90,8 @@ export function BasicMapPage() {
         </Text>
         <ComponentPreview
           code={blankMapSource}
-          previewImage="/images/previews/blank-map.png"
+          previewImage={blankMapPreview.light}
+          previewImageDark={blankMapPreview.dark}
         >
           <BlankMapExample />
         </ComponentPreview>
@@ -105,7 +113,8 @@ export function BasicMapPage() {
         </Text>
         <ComponentPreview
           code={customStyleSource}
-          previewImage="/images/previews/custom-style.png"
+          previewImage={customStylePreview.light}
+          previewImageDark={customStylePreview.dark}
         >
           <CustomStyleExample />
         </ComponentPreview>
