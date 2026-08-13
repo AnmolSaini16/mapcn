@@ -65,12 +65,11 @@ function MobileNavSheet({ onClose }: { onClose: () => void }) {
                   paddingLeft: insets.left,
                 }}
               >
-                <View className="flex-row items-center justify-between p-4">
-                  <DialogPrimitive.Title asChild>
-                    <View>
-                      <Logo isLink={false} />
-                    </View>
+                <View className="flex flex-row items-center justify-between p-4">
+                  <DialogPrimitive.Title className="sr-only">
+                    Menu
                   </DialogPrimitive.Title>
+                  <Logo isLink={false} />
                   <DialogClose asChild>
                     <Pressable
                       className="rounded-md p-2 opacity-70 active:opacity-100"

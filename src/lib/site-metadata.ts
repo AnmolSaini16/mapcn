@@ -43,7 +43,8 @@ export const SITE_OG_IMAGE = {
 
 export const SITE_APP_STORE_URL = ""; // TODO: Add App Store URL
 
-export const SITE_PLAY_STORE_URL = ""; // TODO: Add Play Store URL
+export const SITE_PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.unkn0wnd.fbx.mapcnreactnative&pcampaignid=web_share";
 
 export const PRIVACY_POLICY_PATH = "/privacy";
 

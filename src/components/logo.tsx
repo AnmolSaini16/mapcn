@@ -1,8 +1,7 @@
 import { Link } from "expo-router";
-import { MapPin } from "lucide-react-native";
 import { Pressable, View } from "react-native";
+import Svg, { Circle, Path, Rect } from "react-native-svg";
 
-import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { SITE_NAME } from "@/lib/site-metadata";
 import { cn } from "@/lib/utils";
@@ -16,18 +15,36 @@ type LogoProps = {
 export function Logo({ className, onPress, isLink = true }: LogoProps) {
   const content = (
     <>
-      <Icon
-        as={MapPin}
-        size={16}
-      />
+      <Svg
+        width="32"
+        height="32"
+        viewBox="0 0 32 32"
+        fill="none"
+        className="size-4 md:size-6"
+      >
+        <Rect
+          width="32"
+          height="32"
+          rx="8"
+          fill="#000"
+        />
+        <Path
+          d="M16 6C12.134 6 9 9.134 9 13C9 18.25 16 26 16 26C16 26 23 18.25 23 13C23 9.134 19.866 6 16 6Z"
+          fill="#fff"
+        />
+        <Circle
+          cx="16"
+          cy="13"
+          r="3"
+          fill="#000"
+        />
+      </Svg>
+
       <Text className="text-lg font-bold leading-none">{SITE_NAME}</Text>
     </>
   );
 
-  const logoClassName = cn(
-    "inline-flex flex-row items-center gap-1.5",
-    className,
-  );
+  const logoClassName = cn("flex flex-row items-center gap-1.5", className);
 
   if (isLink) {
     return (
@@ -36,7 +53,7 @@ export function Logo({ className, onPress, isLink = true }: LogoProps) {
         asChild
         onPress={onPress}
       >
-        <Pressable className={cn(logoClassName, "h-8")}>{content}</Pressable>
+        <Pressable className={logoClassName}>{content}</Pressable>
       </Link>
     );
   }

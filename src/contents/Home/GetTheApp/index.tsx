@@ -1,161 +1,21 @@
 import { Image } from "expo-image";
 import { Smartphone } from "lucide-react-native";
-import type { ReactNode } from "react";
-import { Platform, Pressable, useColorScheme, View } from "react-native";
+import { Platform, useColorScheme, View } from "react-native";
 
 import { Phone } from "./Phone";
 
 import { AppStoreIcon } from "@/atoms/AppStoreIcon";
 import { PlayStoreIcon } from "@/atoms/PlayStoreIcon";
+import { QrCode } from "@/atoms/QrCode";
+import { StoreBadgeButton } from "@/atoms/StoreBadgeButton";
 import { Badge } from "@/components/ui/badge";
 import { Text } from "@/components/ui/text";
-import { openExternalUrl } from "@/lib/link";
 import { SITE_APP_STORE_URL, SITE_PLAY_STORE_URL } from "@/lib/site-metadata";
 import { THEME } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
 const PREVIEW_IMAGE = "/images/previews/landing-page.png";
 const QR_SIZE = 132;
-
-function getQrImageUrl(value: string, size: number): string {
-  const pixelSize = String(size * 2);
-  const params = new URLSearchParams({
-    size: `${pixelSize}x${pixelSize}`,
-    margin: "12",
-    ecc: "M",
-    data: value,
-  });
-
-  return `https://api.qrserver.com/v1/create-qr-code/?${params.toString()}`;
-}
-
-function StoreQrCard({
-  label,
-  hint,
-  url,
-}: {
-  label: string;
-  hint: string;
-  url: string;
-}) {
-  const hasUrl = url.length > 0;
-
-  const content = (
-    <>
-      <View className="rounded-xl bg-white p-2.5">
-        {hasUrl ? (
-          <Image
-            source={getQrImageUrl(url, QR_SIZE)}
-            style={{ width: QR_SIZE, height: QR_SIZE }}
-            contentFit="contain"
-            accessibilityLabel={`${label} QR code`}
-          />
-        ) : (
-          <View
-            className="items-center justify-center rounded-lg bg-zinc-100"
-            style={{ width: QR_SIZE, height: QR_SIZE }}
-          >
-            <Smartphone
-              size={28}
-              className="text-zinc-400"
-            />
-          </View>
-        )}
-      </View>
-      <View className="items-center gap-1">
-        <Text className="text-foreground text-sm font-semibold tracking-tight">
-          {label}
-        </Text>
-        <Text className="text-muted-foreground text-xs">
-          {hasUrl ? hint : "Coming soon"}
-        </Text>
-      </View>
-    </>
-  );
-
-  if (!hasUrl) {
-    return (
-      <View className="border-border/60 bg-background/80 items-center gap-3 rounded-2xl border px-5 py-5">
-        {content}
-      </View>
-    );
-  }
-
-  return (
-    <Pressable
-      accessibilityRole="link"
-      accessibilityLabel={`Open ${label}`}
-      onPress={() => {
-        openExternalUrl(url);
-      }}
-      className={cn(
-        "border-border/60 bg-background/80 items-center gap-3 rounded-2xl border px-5 py-5",
-        Platform.select({
-          web: "cursor-pointer transition-colors hover:border-foreground/25 hover:bg-background",
-        }),
-      )}
-    >
-      {content}
-    </Pressable>
-  );
-}
-
-function StoreBadgeButton({
-  label,
-  sublabel,
-  url,
-  icon,
-  accessibilityLabel,
-}: {
-  label: string;
-  sublabel: string;
-  url: string;
-  icon: ReactNode;
-  accessibilityLabel: string;
-}) {
-  const colorScheme = useColorScheme();
-  const colors = THEME[colorScheme === "dark" ? "dark" : "light"];
-  const hasUrl = url.length > 0;
-
-  return (
-    <Pressable
-      accessibilityRole="link"
-      accessibilityLabel={accessibilityLabel}
-      accessibilityState={{ disabled: !hasUrl }}
-      disabled={!hasUrl}
-      onPress={() => {
-        if (hasUrl) {
-          openExternalUrl(url);
-        }
-      }}
-      className={cn(
-        "min-h-14 min-w-46 flex-row items-center gap-3 rounded-xl px-4 py-2.5 transition-opacity",
-        hasUrl
-          ? "bg-foreground active:opacity-90"
-          : "bg-foreground/40 cursor-not-allowed",
-        Platform.select({
-          web: hasUrl ? "cursor-pointer hover:opacity-90" : undefined,
-        }),
-      )}
-    >
-      {icon}
-      <View className="gap-0.5">
-        <Text
-          className="text-[10px] leading-none font-medium tracking-wide uppercase"
-          style={{ color: colors.background }}
-        >
-          {sublabel}
-        </Text>
-        <Text
-          className="text-[15px] leading-tight font-semibold tracking-tight"
-          style={{ color: colors.background }}
-        >
-          {label}
-        </Text>
-      </View>
-    </Pressable>
-  );
-}
 
 export function GetTheApp() {
   const colorScheme = useColorScheme();
@@ -252,15 +112,17 @@ export function GetTheApp() {
                   : "Store links coming soon"}
               </Text>
               <View className="flex-row flex-wrap gap-4">
-                <StoreQrCard
+                <QrCode
                   label="App Store"
                   hint="Scan with your iPhone"
                   url={SITE_APP_STORE_URL}
+                  qrSize={QR_SIZE}
                 />
-                <StoreQrCard
+                <QrCode
                   label="Google Play"
                   hint="Scan with your Android"
                   url={SITE_PLAY_STORE_URL}
+                  qrSize={QR_SIZE}
                 />
               </View>
             </View>

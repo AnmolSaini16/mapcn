@@ -47,7 +47,7 @@ export default function RootLayout() {
         <View
           className={cn(
             "flex-1 bg-background will-change-variable",
-            colorScheme === "dark" && "dark",
+            // colorScheme === "dark" && "dark",
           )}
         >
           <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
