@@ -2,6 +2,7 @@ import { Image } from "expo-image";
 import { Smartphone } from "lucide-react-native";
 import { Platform, Pressable, View } from "react-native";
 
+import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { openExternalUrl } from "@/lib/link";
 import { cn } from "@/lib/utils";
@@ -43,7 +44,8 @@ export function QrCode({ label, hint, url, qrSize }: QrCodeProps) {
             className="items-center justify-center rounded-lg bg-zinc-100"
             style={{ width: qrSize, height: qrSize }}
           >
-            <Smartphone
+            <Icon
+              as={Smartphone}
               size={28}
               className="text-zinc-400"
             />

@@ -32,7 +32,7 @@ export function AgentPrompt() {
       accessibilityLiveRegion="polite"
       variant="ghost"
       size="sm"
-      className="border-border/50 text-muted-foreground active:text-foreground active:bg-muted/50 h-7 gap-1.5 rounded-full border px-3"
+      className="border-border text-muted-foreground active:text-foreground active:bg-muted/50 h-7 gap-1.5 rounded-full border px-3"
     >
       {copied ? (
         <Icon

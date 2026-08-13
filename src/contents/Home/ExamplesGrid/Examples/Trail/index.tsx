@@ -31,7 +31,7 @@ export function TrailExample() {
       className="aspect-square min-h-[280px]"
       previewImage="/images/previews/home-trail.png"
     >
-      <View className="bg-background/95 border-border/50 absolute top-3 left-3 z-10 rounded-lg border p-3 shadow-lg">
+      <View className="bg-background/95 border-border absolute top-3 left-3 z-10 rounded-lg border p-3 shadow-lg">
         <View className="mb-2 flex-row items-center gap-1.5">
           <Icon
             as={Bike}

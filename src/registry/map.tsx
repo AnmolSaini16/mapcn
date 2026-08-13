@@ -45,6 +45,7 @@ import {
 } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
+import { Icon } from "@/components/ui/icon";
 import { TextClassContext } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 
@@ -693,7 +694,8 @@ function PopupCloseButton({ onPress }: { onPress: () => void }) {
         onPress();
       }}
     >
-      <X
+      <Icon
+        as={X}
         className="text-foreground"
         size={14}
       />
@@ -1090,13 +1092,21 @@ function MapControls({
             label="Zoom in"
             onPress={zoomIn}
           >
-            <Plus size={16} />
+            <Icon
+              as={Plus}
+              className="text-foreground"
+              size={16}
+            />
           </ControlButton>
           <ControlButton
             label="Zoom out"
             onPress={zoomOut}
           >
-            <Minus size={16} />
+            <Icon
+              as={Minus}
+              className="text-foreground"
+              size={16}
+            />
           </ControlButton>
         </ControlGroup>
       ) : null}
@@ -1115,7 +1125,11 @@ function MapControls({
             {isLocating ? (
               <ActivityIndicator size="small" />
             ) : (
-              <Locate size={16} />
+              <Icon
+                as={Locate}
+                className="text-foreground"
+                size={16}
+              />
             )}
           </ControlButton>
         </ControlGroup>
@@ -1126,7 +1140,11 @@ function MapControls({
             label="Toggle fullscreen"
             onPress={onFullscreenRequest}
           >
-            <Maximize size={16} />
+            <Icon
+              as={Maximize}
+              className="text-foreground"
+              size={16}
+            />
           </ControlButton>
         </ControlGroup>
       ) : null}

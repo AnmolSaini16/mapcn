@@ -31,7 +31,7 @@ export function AnalyticsExample() {
       className="aspect-square min-h-[280px]"
       previewImage="/images/previews/home-analytics.png"
     >
-      <View className="bg-background/95 border-border/50 absolute top-3 left-3 z-10 rounded-lg border p-3 shadow-lg">
+      <View className="bg-background/95 border-border absolute top-3 left-3 z-10 rounded-lg border p-3 shadow-lg">
         <Text className="text-muted-foreground mb-1 text-[10px] tracking-wider uppercase">
           Active Users
         </Text>

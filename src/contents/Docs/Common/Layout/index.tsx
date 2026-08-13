@@ -17,6 +17,7 @@ import { DocsToc } from "./DocsToc";
 import { PageHead } from "@/components/page-head";
 import { PrivacyPolicyLink } from "@/components/privacy-policy-link";
 import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import {
   Table,
   TableBody,
@@ -196,7 +197,10 @@ export function DocsLayout({
                         size="sm"
                         className="-ml-2 h-auto py-2"
                       >
-                        <ChevronLeft size={16} />
+                        <Icon
+                          as={ChevronLeft}
+                          size={16}
+                        />
                         <Text>{prev.title}</Text>
                       </Button>
                     </Link>
@@ -214,7 +218,10 @@ export function DocsLayout({
                         className="-mr-2 h-auto py-2"
                       >
                         <Text>{next.title}</Text>
-                        <ChevronRight size={16} />
+                        <Icon
+                          as={ChevronRight}
+                          size={16}
+                        />
                       </Button>
                     </Link>
                   ) : null}
