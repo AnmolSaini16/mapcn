@@ -1,6 +1,7 @@
 "use client";
 
-import MapLibreGL, { type PopupOptions, type MarkerOptions } from "maplibre-gl";
+import * as MapLibreGL from "maplibre-gl";
+import type { PopupOptions, MarkerOptions } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type * as GeoJSON from "geojson";
 import {
@@ -20,6 +21,12 @@ import { createPortal } from "react-dom";
 import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+
+if (typeof window !== "undefined" && !MapLibreGL.getWorkerUrl()) {
+  MapLibreGL.setWorkerUrl(
+    `https://unpkg.com/maplibre-gl@${MapLibreGL.getVersion()}/dist/maplibre-gl-worker.mjs`,
+  );
+}
 
 const defaultStyles = {
   dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",

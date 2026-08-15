@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import type { MapMouseEvent } from "maplibre-gl";
 import { Map, MapControls, useMap } from "@/registry/map";
 import { Button } from "@/components/ui/button";
 import { Layers, X } from "lucide-react";
@@ -107,7 +108,7 @@ function CustomLayer() {
       setHoveredPark(null);
     };
 
-    const handleMouseMove = (e: maplibregl.MapMouseEvent) => {
+    const handleMouseMove = (e: MapMouseEvent) => {
       const features = map.queryRenderedFeatures(e.point, {
         layers: ["parks-fill"],
       });

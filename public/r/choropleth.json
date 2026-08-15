@@ -4,7 +4,6 @@
   "title": "Choropleth",
   "description": "World choropleth map shading countries by a metric, with a hover tooltip and legend.",
   "dependencies": [
-    "maplibre-gl",
     "next-themes"
   ],
   "registryDependencies": [

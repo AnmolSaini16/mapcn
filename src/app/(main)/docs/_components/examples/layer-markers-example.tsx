@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useId } from "react";
+import type { MapMouseEvent, MapGeoJSONFeature } from "maplibre-gl";
 import { Map, MapPopup, useMap } from "@/registry/map";
 
 // Generate random points around NYC
@@ -74,8 +75,8 @@ function MarkersLayer() {
     });
 
     const handleClick = (
-      e: maplibregl.MapMouseEvent & {
-        features?: maplibregl.MapGeoJSONFeature[];
+      e: MapMouseEvent & {
+        features?: MapGeoJSONFeature[];
       },
     ) => {
       if (!e.features?.length) return;

@@ -11,7 +11,7 @@ The repo serves dual purpose: the core map component registry (`src/registry/`) 
 - **Framework**: Next.js 16 (App Router, React 19)
 - **Language**: TypeScript (strict)
 - **Styling**: Tailwind CSS v4, shadcn/ui, Radix UI
-- **Map Engine**: MapLibre GL JS v5
+- **Map Engine**: MapLibre GL JS v6
 - **Fonts**: Geist (sans) + Geist Mono
 - **Code Highlighting**: Shiki (dual light/dark theme)
 - **Registry**: shadcn CLI for building distributable components

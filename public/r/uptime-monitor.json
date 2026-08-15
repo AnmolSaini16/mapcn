@@ -3,9 +3,7 @@
   "name": "uptime-monitor",
   "title": "Uptime Monitor",
   "description": "Status-page style map of edge network locations with live health, latency, and uptime.",
-  "dependencies": [
-    "maplibre-gl"
-  ],
+  "dependencies": [],
   "registryDependencies": [
     "@mapcn/map"
   ],

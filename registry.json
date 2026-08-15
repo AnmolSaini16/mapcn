@@ -9,7 +9,7 @@
       "title": "Map",
       "description": "A MapLibre-powered map component with markers, popups, tooltips, routes, and controls.",
       "dependencies": [
-        "maplibre-gl",
+        "maplibre-gl@^6",
         "lucide-react"
       ],
       "registryDependencies": [],
@@ -140,7 +140,6 @@
       "title": "Choropleth",
       "description": "World choropleth map shading countries by a metric, with a hover tooltip and legend.",
       "dependencies": [
-        "maplibre-gl",
         "next-themes"
       ],
       "registryDependencies": [
@@ -243,9 +242,7 @@
       "type": "registry:block",
       "title": "Uptime Monitor",
       "description": "Status-page style map of edge network locations with live health, latency, and uptime.",
-      "dependencies": [
-        "maplibre-gl"
-      ],
+      "dependencies": [],
       "registryDependencies": [
         "@mapcn/map"
       ],
