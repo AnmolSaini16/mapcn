@@ -233,3 +233,7 @@ code .line::before {
   position: sticky;
   left: 0;
 }
+
+.no-line-numbers code .line::before {
+  display: none;
+}

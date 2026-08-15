@@ -11,6 +11,15 @@ import { Metadata } from "next";
 import { Card } from "@/components/ui/card";
 import { Map, MapControls } from "@/registry/map";
 
+const cspCode = `script-src 'self' https://unpkg.com;
+worker-src 'self' blob:;`;
+
+const selfHostWorkerCode = `cp node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs \\
+   node_modules/maplibre-gl/dist/maplibre-gl-shared.mjs \\
+   public/`;
+
+const workerUrlCode = `MapLibreGL.setWorkerUrl("/maplibre-gl-worker.mjs");`;
+
 const usageCode = `import { Map, MapControls } from "@/components/ui/map";
 import { Card } from "@/components/ui/card";
 
@@ -39,6 +48,7 @@ export default function InstallationPage() {
         { title: "Prerequisites", slug: "prerequisites" },
         { title: "Installation", slug: "installation" },
         { title: "Usage", slug: "usage" },
+        { title: "Web Worker", slug: "web-worker" },
       ]}
     >
       <DocsSection title="Prerequisites">
@@ -72,12 +82,36 @@ export default function InstallationPage() {
             <MapControls />
           </Map>
         </Card>
+        <DocsNote>
+          <strong>Note:</strong> The map uses free CARTO basemap tiles by
+          default. Tiles automatically switch between light and dark themes.
+        </DocsNote>
       </DocsSection>
 
-      <DocsNote>
-        <strong>Note:</strong> The map uses free CARTO basemap tiles by default.
-        Tiles automatically switch between light and dark themes.
-      </DocsNote>
+      <DocsSection title="Web Worker">
+        <p>
+          MapLibre parses tiles in a Web Worker, which ships as a separate file,
+          so mapcn loads it from unpkg, pinned to your installed version. No
+          setup needed - under a strict CSP, the worker needs:
+        </p>
+        <CodeBlock code={cspCode} language="bash" showLineNumbers={false} />
+        <p>Your basemap host needs its own entries alongside these.</p>
+        <p>
+          To self-host it instead, copy both files into{" "}
+          <DocsCode>public/</DocsCode> - they must sit side by side:
+        </p>
+        <CodeBlock
+          code={selfHostWorkerCode}
+          language="bash"
+          showLineNumbers={false}
+        />
+        <p>Then replace the unpkg URL near the top of the component:</p>
+        <CodeBlock
+          code={workerUrlCode}
+          filename="components/ui/map.tsx"
+          showLineNumbers={false}
+        />
+      </DocsSection>
     </DocsLayout>
   );
 }
