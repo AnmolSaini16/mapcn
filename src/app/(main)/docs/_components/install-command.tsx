@@ -42,8 +42,11 @@ export function InstallCommand({ name }: InstallCommandProps) {
   return (
     <div className="bg-surface relative w-full overflow-hidden rounded-lg">
       <Tabs value={active} onValueChange={setActive} className="gap-0">
-        <div className="flex items-center justify-between border-b pr-2 pl-2">
-          <TabsList variant="line" className="h-9 bg-transparent">
+        <div className="flex items-center justify-between border-b pr-2 pl-[5px]">
+          <TabsList
+            variant="line"
+            className="h-10 bg-transparent group-data-[orientation=horizontal]/tabs:h-10"
+          >
             {tabs.map((tab) => (
               <TabsTrigger
                 key={tab.manager}
