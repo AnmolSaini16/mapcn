@@ -39,22 +39,6 @@ export default function ApiReferencePage() {
       description="Complete reference for all map components and their props."
       prev={{ title: "Installation", href: "/docs/installation" }}
       next={{ title: "Map", href: "/docs/basic-map" }}
-      toc={[
-        { title: "Component Anatomy", slug: "component-anatomy" },
-        { title: "Map", slug: "map" },
-        { title: "useMap", slug: "usemap" },
-        { title: "MapControls", slug: "mapcontrols" },
-        { title: "MapMarker", slug: "mapmarker" },
-        { title: "MarkerContent", slug: "markercontent" },
-        { title: "MarkerPopup", slug: "markerpopup" },
-        { title: "MarkerTooltip", slug: "markertooltip" },
-        { title: "MarkerLabel", slug: "markerlabel" },
-        { title: "MapPopup", slug: "mappopup" },
-        { title: "MapRoute", slug: "maproute" },
-        { title: "MapArc", slug: "maparc" },
-        { title: "MapGeoJSON", slug: "mapgeojson" },
-        { title: "MapClusterLayer", slug: "mapclusterlayer" },
-      ]}
     >
       <DocsNote>
         <strong>Note:</strong> This library is built on top of{" "}
@@ -341,11 +325,10 @@ export default function ApiReferencePage() {
           <DocsCode>closeButton</DocsCode>).
         </p>
         <DocsNote>
-          The <DocsCode>className</DocsCode> and{" "}
-          <DocsCode>closeButton</DocsCode> from MapLibre&apos;s PopupOptions are
-          excluded to prevent style conflicts. Use the component&apos;s own
-          props to style the popup. MapLibre&apos;s default popup styles are
-          reset via CSS.
+          MapLibre&apos;s own <DocsCode>className</DocsCode> and{" "}
+          <DocsCode>closeButton</DocsCode> options are excluded to prevent style
+          conflicts. Use the component&apos;s props of the same name instead.
+          MapLibre&apos;s default popup styles are reset via CSS.
         </DocsNote>
         <DocsPropTable
           props={[
@@ -389,10 +372,10 @@ export default function ApiReferencePage() {
           out).
         </p>
         <DocsNote>
-          The <DocsCode>className</DocsCode> from MapLibre&apos;s PopupOptions
-          is excluded to prevent style conflicts. Use the component&apos;s own{" "}
-          <DocsCode>className</DocsCode> prop to style the tooltip content.
-          MapLibre&apos;s default popup styles are reset via CSS.
+          MapLibre&apos;s own <DocsCode>className</DocsCode> and{" "}
+          <DocsCode>closeButton</DocsCode> options are excluded to prevent style
+          conflicts. Use the component&apos;s <DocsCode>className</DocsCode>{" "}
+          instead. MapLibre&apos;s default popup styles are reset via CSS.
         </DocsNote>
         <DocsPropTable
           props={[
@@ -456,11 +439,10 @@ export default function ApiReferencePage() {
           <DocsCode>closeButton</DocsCode>).
         </p>
         <DocsNote>
-          The <DocsCode>className</DocsCode> and{" "}
-          <DocsCode>closeButton</DocsCode> from MapLibre&apos;s PopupOptions are
-          excluded to prevent style conflicts. Use the component&apos;s own
-          props to style the popup. MapLibre&apos;s default popup styles are
-          reset via CSS.
+          MapLibre&apos;s own <DocsCode>className</DocsCode> and{" "}
+          <DocsCode>closeButton</DocsCode> options are excluded to prevent style
+          conflicts. Use the component&apos;s props of the same name instead.
+          MapLibre&apos;s default popup styles are reset via CSS.
         </DocsNote>
         <DocsPropTable
           props={[

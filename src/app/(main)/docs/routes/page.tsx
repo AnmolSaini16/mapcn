@@ -24,10 +24,6 @@ export default function RoutesPage() {
       description="Draw lines and paths connecting coordinates on the map."
       prev={{ title: "Popups", href: "/docs/popups" }}
       next={{ title: "Arcs", href: "/docs/arcs" }}
-      toc={[
-        { title: "Basic Route", slug: "basic-route" },
-        { title: "Route Planning", slug: "route-planning" },
-      ]}
     >
       <DocsSection>
         <p>
@@ -53,7 +49,7 @@ export default function RoutesPage() {
           </DocsLink>
           . Click on a route or use the buttons to switch.
         </p>
-        <ComponentPreview code={osrmRouteSource} className="h-[500px]">
+        <ComponentPreview code={osrmRouteSource} height="500px">
           <OsrmRouteExample />
         </ComponentPreview>
       </DocsSection>

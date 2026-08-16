@@ -20,7 +20,7 @@ export default function MarkersPage() {
   const markersSource = getExampleSource("markers-example.tsx");
   const popupSource = getExampleSource("popup-example.tsx");
   const draggableMarkerSource = getExampleSource(
-    "draggable-marker-example.tsx"
+    "draggable-marker-example.tsx",
   );
 
   return (
@@ -29,11 +29,6 @@ export default function MarkersPage() {
       description="Add interactive markers to your map with popups and tooltips."
       prev={{ title: "Controls", href: "/docs/controls" }}
       next={{ title: "Popups", href: "/docs/popups" }}
-      toc={[
-        { title: "Basic Example", slug: "basic-example" },
-        { title: "Rich Popups", slug: "rich-popups" },
-        { title: "Draggable Marker", slug: "draggable-marker" },
-      ]}
     >
       <DocsSection>
         <p>
@@ -67,7 +62,7 @@ export default function MarkersPage() {
           Build complex popups with images, ratings, and action buttons using
           shadcn/ui components.
         </p>
-        <ComponentPreview code={popupSource} className="h-[500px]">
+        <ComponentPreview code={popupSource} height="500px">
           <PopupExample />
         </ComponentPreview>
       </DocsSection>

@@ -19,10 +19,6 @@ export default function GeoJSONPage() {
       description="Render arbitrary GeoJSON as fill and outline layers for choropleths and region maps."
       prev={{ title: "Arcs", href: "/docs/arcs" }}
       next={{ title: "Clusters", href: "/docs/clusters" }}
-      toc={[
-        { title: "Basic GeoJSON", slug: "basic-geojson" },
-        { title: "Overlay on a Map", slug: "overlay-on-a-map" },
-      ]}
     >
       <DocsSection>
         <p>

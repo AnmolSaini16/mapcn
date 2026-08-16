@@ -18,7 +18,7 @@ export default function ControlsPage() {
       prev={{ title: "Map", href: "/docs/basic-map" }}
       next={{ title: "Markers", href: "/docs/markers" }}
     >
-      <DocsSection>
+      <DocsSection title="Basic Usage">
         <p>
           The <DocsCode>MapControls</DocsCode> component provides a set of
           interactive controls that can be positioned on any corner of the map.

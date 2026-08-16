@@ -29,12 +29,6 @@ export default function BasicMapPage() {
       description="The simplest way to add an interactive map to your application."
       prev={{ title: "API Reference", href: "/docs/api-reference" }}
       next={{ title: "Controls", href: "/docs/controls" }}
-      toc={[
-        { title: "Basic Usage", slug: "basic-usage" },
-        { title: "Controlled Mode", slug: "controlled-mode" },
-        { title: "Blank Basemap", slug: "blank-basemap" },
-        { title: "Custom Styles", slug: "custom-styles" },
-      ]}
     >
       <DocsSection title="Basic Usage">
         <p>

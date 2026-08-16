@@ -47,12 +47,6 @@ export default function IntroductionPage() {
       title="Introduction"
       description="Copy-paste map components for React."
       next={{ title: "Installation", href: "/docs/installation" }}
-      toc={[
-        { title: "Philosophy", slug: "philosophy" },
-        { title: "Why mapcn?", slug: "why-mapcn" },
-        { title: "Any Map Style", slug: "any-map-style" },
-        { title: "Features", slug: "features" },
-      ]}
     >
       <DocsSection>
         <p>

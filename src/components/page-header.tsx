@@ -69,7 +69,7 @@ function PageHeaderHeading({
   return (
     <Comp
       className={cn(
-        "animate-fade-up animate-stagger max-w-4xl font-bold tracking-tight",
+        "animate-fade-up animate-stagger text-primary max-w-4xl font-bold tracking-tight",
         size === "sm"
           ? "text-4xl font-semibold md:text-5xl"
           : "text-4xl sm:text-5xl md:text-6xl",
@@ -82,9 +82,7 @@ function PageHeaderHeading({
         } as CSSProperties
       }
     >
-      <span className="from-foreground via-foreground to-foreground/65 bg-linear-to-b bg-clip-text text-transparent">
-        {children}
-      </span>
+      {children}
     </Comp>
   );
 }

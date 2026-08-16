@@ -44,12 +44,6 @@ export default function InstallationPage() {
       description="How to install and set up mapcn in your project."
       prev={{ title: "Introduction", href: "/docs" }}
       next={{ title: "API Reference", href: "/docs/api-reference" }}
-      toc={[
-        { title: "Prerequisites", slug: "prerequisites" },
-        { title: "Installation", slug: "installation" },
-        { title: "Usage", slug: "usage" },
-        { title: "Web Worker", slug: "web-worker" },
-      ]}
     >
       <DocsSection title="Prerequisites">
         <p>

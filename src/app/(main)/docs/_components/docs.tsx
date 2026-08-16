@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Children, Fragment, isValidElement } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -32,7 +33,7 @@ interface DocsTitleProps {
 
 function DocsTitle({ title, description }: DocsTitleProps) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <h1 className="text-foreground text-3xl font-semibold tracking-tight">
         {title}
       </h1>
@@ -41,6 +42,29 @@ function DocsTitle({ title, description }: DocsTitleProps) {
       </p>
     </div>
   );
+}
+
+function collectToc(children: React.ReactNode): TocItem[] {
+  const items: TocItem[] = [];
+
+  for (const child of Children.toArray(children)) {
+    if (!isValidElement(child)) continue;
+
+    if (child.type === Fragment) {
+      const { children: nested } = child.props as {
+        children?: React.ReactNode;
+      };
+      items.push(...collectToc(nested));
+      continue;
+    }
+
+    if (child.type === DocsSection) {
+      const { title } = child.props as DocsSectionProps;
+      if (title) items.push({ title, slug: slugify(title) });
+    }
+  }
+
+  return items;
 }
 
 // DocsLayout - Full page wrapper with nav
@@ -59,8 +83,10 @@ export function DocsLayout({
   children,
   prev,
   next,
-  toc = [],
+  toc,
 }: DocsLayoutProps) {
+  const tocItems = toc ?? collectToc(children);
+
   return (
     <div className="flex size-full">
       <div className="mx-auto flex max-w-[50rem] min-w-0 flex-1 flex-col pt-10 pb-20 lg:px-4">
@@ -100,7 +126,7 @@ export function DocsLayout({
 
       <aside className="hidden w-48 shrink-0 xl:block">
         <nav className="sticky top-14 max-h-[calc(100svh-3.5rem)] overflow-y-auto pt-10 pb-10 [scrollbar-gutter:stable]">
-          {toc.length > 0 && <DocsToc items={toc} />}
+          {tocItems.length > 0 && <DocsToc items={tocItems} />}
         </nav>
       </aside>
     </div>
@@ -190,51 +216,51 @@ interface DocsPropTableProps {
     default?: string;
     description: string;
   }[];
+  title?: string;
 }
 
-export function DocsPropTable({ props }: DocsPropTableProps) {
+export function DocsPropTable({ props, title }: DocsPropTableProps) {
   return (
-    <div className="my-6 overflow-hidden rounded-lg border">
-      <Table>
-        <TableHeader>
-          <TableRow className="bg-surface">
-            <TableHead className="h-10 px-4 text-xs font-medium">
-              Prop
-            </TableHead>
-            <TableHead className="h-10 px-4 text-xs font-medium">
-              Type
-            </TableHead>
-            <TableHead className="h-10 px-4 text-xs font-medium">
-              Default
-            </TableHead>
-            <TableHead className="h-10 px-4 text-xs font-medium">
-              Description
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {props.map((prop) => (
-            <TableRow key={prop.name}>
-              <TableCell className="px-4 py-3 align-top">
-                <DocsCode className="text-[13px]">{prop.name}</DocsCode>
-              </TableCell>
-              <TableCell className="px-4 py-3 align-top whitespace-normal">
-                <DocsCode className="text-foreground/70 text-xs">
-                  {prop.type}
-                </DocsCode>
-              </TableCell>
-              <TableCell className="px-4 py-3 align-top">
-                <DocsCode className="text-foreground/70 text-xs whitespace-normal">
-                  {prop.default ?? "—"}
-                </DocsCode>
-              </TableCell>
-              <TableCell className="text-foreground/70 min-w-[180px] px-4 py-3 text-sm leading-relaxed whitespace-normal">
-                {prop.description}
-              </TableCell>
+    <div className="prop-table space-y-3 [.prop-table+&]:mt-8">
+      {title && <h3 className="text-foreground font-semibold">{title}</h3>}
+      <div className="overflow-hidden">
+        <Table className="[&_tbody_tr:last-child]:border-b [&_td:first-child]:pl-0 [&_td:last-child]:pr-0 [&_th:first-child]:pl-0 [&_th:last-child]:pr-0">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="h-10 text-xs font-medium">Prop</TableHead>
+              <TableHead className="h-10 text-xs font-medium">Type</TableHead>
+              <TableHead className="h-10 text-xs font-medium">
+                Default
+              </TableHead>
+              <TableHead className="h-10 text-xs font-medium">
+                Description
+              </TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {props.map((prop) => (
+              <TableRow key={prop.name}>
+                <TableCell className="py-3 align-top">
+                  <DocsCode className="text-[13px]">{prop.name}</DocsCode>
+                </TableCell>
+                <TableCell className="py-3 align-top whitespace-normal">
+                  <DocsCode className="text-foreground/70 text-xs">
+                    {prop.type}
+                  </DocsCode>
+                </TableCell>
+                <TableCell className="py-3 align-top">
+                  <DocsCode className="text-foreground/70 text-xs whitespace-normal">
+                    {prop.default ?? "—"}
+                  </DocsCode>
+                </TableCell>
+                <TableCell className="text-foreground/70 min-w-[180px] py-3 text-sm leading-relaxed whitespace-normal">
+                  {prop.description}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }
