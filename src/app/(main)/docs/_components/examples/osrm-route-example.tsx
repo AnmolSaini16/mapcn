@@ -1,18 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Map,
-  MapMarker,
-  MarkerContent,
-  MapRoute,
-  MarkerLabel,
-} from "@/registry/map";
-import { Loader2, Clock, Route } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Map, MapMarker, MarkerContent, MapRoute } from "@/registry/map";
+import { cn } from "@/lib/utils";
 
 const start = { name: "Amsterdam", lng: 4.9041, lat: 52.3676 };
 const end = { name: "Rotterdam", lng: 4.4777, lat: 51.9244 };
+
+// One color for every route: the selected one separates itself by weight and
+// opacity, not hue. Shared by the lines and the list, so a swatch always
+// matches its route.
+const routeColor = "#3b82f6";
+const inactiveOpacity = 0.35;
 
 interface RouteData {
   coordinates: [number, number][];
@@ -42,7 +41,7 @@ export function OsrmRouteExample() {
     async function fetchRoutes() {
       try {
         const response = await fetch(
-          `https://router.project-osrm.org/route/v1/driving/${start.lng},${start.lat};${end.lng},${end.lat}?overview=full&geometries=geojson&alternatives=true`
+          `https://router.project-osrm.org/route/v1/driving/${start.lng},${start.lat};${end.lng},${end.lat}?overview=full&geometries=geojson&alternatives=true`,
         );
         const data = await response.json();
 
@@ -56,7 +55,7 @@ export function OsrmRouteExample() {
               coordinates: route.geometry.coordinates,
               duration: route.duration,
               distance: route.distance,
-            })
+            }),
           );
           setRoutes(routeData);
         }
@@ -70,84 +69,78 @@ export function OsrmRouteExample() {
     fetchRoutes();
   }, []);
 
-  // Sort routes: non-selected first, selected last (renders on top)
-  const sortedRoutes = routes
-    .map((route, index) => ({ route, index }))
-    .sort((a, b) => {
-      if (a.index === selectedIndex) return 1;
-      if (b.index === selectedIndex) return -1;
-      return 0;
-    });
-
   return (
-    <div className="h-[500px] w-full relative">
-      <Map center={[4.69, 52.14]} zoom={8.5}>
-        {sortedRoutes.map(({ route, index }) => {
-          const isSelected = index === selectedIndex;
-          return (
-            <MapRoute
-              key={index}
-              coordinates={route.coordinates}
-              color={isSelected ? "#6366f1" : "#94a3b8"}
-              width={isSelected ? 6 : 5}
-              opacity={isSelected ? 1 : 0.6}
-              onClick={() => setSelectedIndex(index)}
-            />
-          );
-        })}
+    <div className="relative h-[500px] w-full">
+      <Map center={[4.69, 52.14]} zoom={8.5} loading={isLoading}>
+        {routes.map((route, index) => (
+          <MapRoute
+            key={index}
+            coordinates={route.coordinates}
+            active={index === selectedIndex}
+            color={routeColor}
+            width={5}
+            opacity={inactiveOpacity}
+            activeWidth={6}
+            activeOpacity={1}
+            onClick={() => setSelectedIndex(index)}
+          />
+        ))}
 
         <MapMarker longitude={start.lng} latitude={start.lat}>
           <MarkerContent>
-            <div className="size-5 rounded-full bg-green-500 border-2 border-white shadow-lg" />
-            <MarkerLabel position="top">{start.name}</MarkerLabel>
+            <div className="border-foreground bg-background size-3.5 rounded-full border-2 shadow-md" />
           </MarkerContent>
         </MapMarker>
 
         <MapMarker longitude={end.lng} latitude={end.lat}>
           <MarkerContent>
-            <div className="size-5 rounded-full bg-red-500 border-2 border-white shadow-lg" />
-            <MarkerLabel position="bottom">{end.name}</MarkerLabel>
+            <div className="bg-foreground ring-background size-3.5 rounded-full shadow-md ring-2" />
           </MarkerContent>
         </MapMarker>
       </Map>
 
       {routes.length > 0 && (
-        <div className="absolute top-3 left-3 flex flex-col gap-2">
+        <div
+          role="radiogroup"
+          aria-label="Route options"
+          className="bg-background/95 border-border/50 absolute top-3 left-3 w-48 space-y-0.5 rounded-lg border p-1 shadow-lg backdrop-blur-md"
+        >
           {routes.map((route, index) => {
             const isActive = index === selectedIndex;
-            const isFastest = index === 0;
+
             return (
-              <Button
+              <button
                 key={index}
-                variant={isActive ? "default" : "secondary"}
-                size="sm"
+                type="button"
+                role="radio"
+                aria-checked={isActive}
                 onClick={() => setSelectedIndex(index)}
-                className="justify-start gap-3"
-              >
-                <div className="flex items-center gap-1.5">
-                  <Clock className="size-3.5" />
-                  <span className="font-medium">
-                    {formatDuration(route.duration)}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs opacity-80">
-                  <Route className="size-3" />
-                  {formatDistance(route.distance)}
-                </div>
-                {isFastest && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
-                    Fastest
-                  </span>
+                className={cn(
+                  "flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors",
+                  isActive ? "bg-muted" : "hover:bg-muted/50",
                 )}
-              </Button>
+              >
+                <span
+                  className="h-4 w-0.5 shrink-0 rounded-full"
+                  style={{
+                    backgroundColor: routeColor,
+                    opacity: isActive ? 1 : inactiveOpacity,
+                  }}
+                />
+                <span
+                  className={cn(
+                    "text-sm font-medium tabular-nums",
+                    !isActive && "text-muted-foreground",
+                  )}
+                >
+                  {formatDuration(route.duration)}
+                </span>
+                <span className="text-muted-foreground ml-auto text-xs tabular-nums">
+                  {formatDistance(route.distance)}
+                </span>
+              </button>
             );
           })}
-        </div>
-      )}
-
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/50">
-          <Loader2 className="size-6 animate-spin text-muted-foreground" />
         </div>
       )}
     </div>

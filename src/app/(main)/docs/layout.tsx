@@ -10,7 +10,7 @@ export default function DocsLayout({
     <div className="flex flex-1">
       <SidebarProvider className="container min-h-min px-0">
         <DocsSidebar />
-        <main className="size-full">{children}</main>
+        <main className="flex min-w-0 flex-1">{children}</main>
       </SidebarProvider>
     </div>
   );

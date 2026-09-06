@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 
 import { mapInstallAgentPrompt } from "@/lib/llm-prompts";
 import { Button } from "@/components/ui/button";
@@ -28,12 +28,10 @@ export function AgentPrompt() {
       aria-live="polite"
       variant="ghost"
       size="xs"
-      className="border-border/50 text-muted-foreground hover:text-foreground hover:bg-muted/50 h-7 gap-1.5 rounded-full border"
+      className="text-muted-foreground hover:text-foreground border-border/50 h-7 border px-2.5"
     >
-      {copied && <Check />}
-      {copied
-        ? "Copied - paste it into your coding agent"
-        : "Building with an agent? Copy the prompt"}
+      {copied ? <Check /> : <Copy />}
+      {copied ? "Copied — paste in your agent" : "Copy prompt for agents"}
     </Button>
   );
 }

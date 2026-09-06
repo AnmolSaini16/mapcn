@@ -24,7 +24,14 @@ const anatomyCode = `<Map>
 
   <MapPopup longitude={...} latitude={...} />
   <MapControls />
-  <MapRoute coordinates={...} />
+
+  <MapRoute coordinates={...} progress={...}>
+    <RouteProgress />
+    <RouteMarker at="progress">
+      <MarkerContent />
+    </RouteMarker>
+  </MapRoute>
+
   <MapArc data={...} />
   <MapGeoJSON data={...} />
   <MapClusterLayer data={...} />
@@ -488,6 +495,17 @@ export default function ApiReferencePage() {
           used inside <DocsCode>Map</DocsCode>. Supports click and hover
           interactions for building route selection UIs.
         </p>
+        <p>
+          Pass <DocsCode>progress</DocsCode> to split the line into covered and
+          remaining sections, then style the covered part with a{" "}
+          <DocsCode>RouteProgress</DocsCode> child. For alternative routes, mark
+          one <DocsCode>active</DocsCode> — it moves above its siblings and
+          switches to the <DocsCode>active*</DocsCode> styles. Children can also
+          read the route directly with <DocsCode>useMapRoute()</DocsCode>, which
+          returns the coordinates, the traveled slice, the resolved style and{" "}
+          <DocsCode>beforeId</DocsCode>, and a{" "}
+          <DocsCode>pointAt(anchor)</DocsCode> helper.
+        </p>
         <DocsPropTable
           props={[
             {
@@ -527,6 +545,49 @@ export default function ApiReferencePage() {
                 "Dash pattern [dash length, gap length] for dashed lines.",
             },
             {
+              name: "progress",
+              type: "number",
+              description:
+                'Fraction of the route already covered (0 to 1). Drives RouteProgress and the "progress" anchor on RouteMarker.',
+            },
+            {
+              name: "active",
+              type: "boolean",
+              default: "false",
+              description:
+                "Marks this route as the selected one: it moves above sibling routes and switches to the active* styles.",
+            },
+            {
+              name: "activeColor",
+              type: "string",
+              default: "color",
+              description: "Line color while active.",
+            },
+            {
+              name: "activeWidth",
+              type: "number",
+              default: "width",
+              description: "Line width while active.",
+            },
+            {
+              name: "activeOpacity",
+              type: "number",
+              default: "opacity",
+              description: "Line opacity while active.",
+            },
+            {
+              name: "activeDashArray",
+              type: "[number, number]",
+              default: "dashArray",
+              description: "Dash pattern while active.",
+            },
+            {
+              name: "beforeId",
+              type: "string",
+              description:
+                "MapLibre layer id to insert the route layers before (z-order control).",
+            },
+            {
               name: "onClick",
               type: "() => void",
               description: "Callback when the route line is clicked.",
@@ -544,9 +605,94 @@ export default function ApiReferencePage() {
             {
               name: "interactive",
               type: "boolean",
-              default: "false",
+              default: "true",
               description:
                 "Respond to mouse events (hover, cursor, callbacks).",
+            },
+            {
+              name: "children",
+              type: "ReactNode",
+              description: "Route subcomponents (RouteProgress, RouteMarker).",
+            },
+          ]}
+        />
+      </DocsSection>
+
+      {/* RouteProgress */}
+      <DocsSection title="RouteProgress">
+        <p>
+          Draws the covered portion of the parent <DocsCode>MapRoute</DocsCode>{" "}
+          on top of the base line, ending exactly at the route&apos;s{" "}
+          <DocsCode>progress</DocsCode> fraction rather than at the nearest
+          vertex. Must be used inside <DocsCode>MapRoute</DocsCode>. Renders
+          nothing until the route has a <DocsCode>progress</DocsCode> value, and
+          inherits the route&apos;s <DocsCode>beforeId</DocsCode> so both layers
+          stay below the same boundary.
+        </p>
+        <DocsPropTable
+          props={[
+            {
+              name: "color",
+              type: "string",
+              default: "the route's color",
+              description: "Line color for the covered portion.",
+            },
+            {
+              name: "width",
+              type: "number",
+              default: "the route's width",
+              description: "Line width in pixels.",
+            },
+            {
+              name: "opacity",
+              type: "number",
+              default: "the route's opacity",
+              description: "Line opacity (0 to 1).",
+            },
+            {
+              name: "dashArray",
+              type: "[number, number]",
+              description:
+                "Dash pattern [dash length, gap length] for dashed lines.",
+            },
+          ]}
+        />
+      </DocsSection>
+
+      {/* RouteMarker */}
+      <DocsSection title="RouteMarker">
+        <p>
+          A <DocsCode>MapMarker</DocsCode> pinned to a position along the parent{" "}
+          <DocsCode>MapRoute</DocsCode>, so you never compute the coordinate
+          yourself. Must be used inside <DocsCode>MapRoute</DocsCode>. Accepts
+          every <DocsCode>MapMarker</DocsCode> prop except{" "}
+          <DocsCode>longitude</DocsCode> and <DocsCode>latitude</DocsCode>, and
+          the same children (<DocsCode>MarkerContent</DocsCode>,{" "}
+          <DocsCode>MarkerPopup</DocsCode>, <DocsCode>MarkerTooltip</DocsCode>,{" "}
+          <DocsCode>MarkerLabel</DocsCode>). Renders nothing while the route is
+          still empty — useful when coordinates arrive from an async request —
+          or, for <DocsCode>at=&quot;progress&quot;</DocsCode>, until the route
+          has a <DocsCode>progress</DocsCode> value.
+        </p>
+        <DocsPropTable
+          props={[
+            {
+              name: "at",
+              type: '"start" | "end" | "progress" | number',
+              description:
+                'Where to pin the marker. A number is a fraction along the line (0 to 1); "progress" tracks the route\'s progress value.',
+            },
+            {
+              name: "children",
+              type: "ReactNode",
+              description:
+                "Marker subcomponents (MarkerContent, MarkerPopup, MarkerTooltip, MarkerLabel).",
+            },
+            {
+              name: "...props",
+              type: "MapMarkerProps",
+              description:
+                "Any other MapMarker prop (offset, onClick, draggable, rotation, ...).",
             },
           ]}
         />

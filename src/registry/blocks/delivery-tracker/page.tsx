@@ -1,10 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Clock3, House, Store, Utensils, Truck, UserRound } from "lucide-react";
 
-import { Map, MapMarker, MapRoute, MarkerContent } from "@/registry/map";
+import {
+  Map,
+  MapMarker,
+  MapRoute,
+  MarkerContent,
+  RouteMarker,
+  RouteProgress,
+} from "@/registry/map";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -66,14 +73,6 @@ export default function Page() {
 
     fetchRoute();
   }, []);
-
-  const progressCoordinates = useMemo(() => {
-    const total = routeData?.coordinates?.length ?? 0;
-    const progressCount = Math.max(2, Math.floor(total * progressFraction));
-    return routeData?.coordinates?.slice(0, progressCount) ?? [];
-  }, [routeData]);
-
-  const courierPosition = progressCoordinates[progressCoordinates.length - 1];
 
   return (
     <div className="flex min-h-screen items-center justify-center p-8">
@@ -167,28 +166,21 @@ export default function Page() {
             maxZoom={mapView.maxZoom}
           >
             <MapRoute
-              id="delivery-full-route"
+              id="delivery-route"
               coordinates={routeData?.coordinates ?? []}
+              progress={progressFraction}
               color={remainingRouteColor}
               width={routeStyle.remaining.width}
               opacity={routeStyle.remaining.opacity}
               interactive={false}
-            />
-            <MapRoute
-              id="delivery-progress-route"
-              coordinates={progressCoordinates}
-              color={routeStyle.progress.color}
-              width={routeStyle.progress.width}
-              opacity={routeStyle.progress.opacity}
-              interactive={false}
-            />
+            >
+              <RouteProgress
+                color={routeStyle.progress.color}
+                width={routeStyle.progress.width}
+                opacity={routeStyle.progress.opacity}
+              />
 
-            {courierPosition && (
-              <MapMarker
-                longitude={courierPosition[0]}
-                latitude={courierPosition[1]}
-                offset={[0, 10]}
-              >
+              <RouteMarker at="progress" offset={[0, 10]}>
                 <MarkerContent>
                   <div
                     className="relative grid size-9 place-items-center rounded-full shadow-md"
@@ -201,8 +193,8 @@ export default function Page() {
                     </div>
                   </div>
                 </MarkerContent>
-              </MapMarker>
-            )}
+              </RouteMarker>
+            </MapRoute>
 
             <MapMarker longitude={pickup.lng} latitude={pickup.lat}>
               <MarkerContent>

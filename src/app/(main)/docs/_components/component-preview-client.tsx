@@ -43,12 +43,12 @@ export function ComponentPreviewClient({
           className={cn(
             expanded
               ? "max-h-[420px] overflow-auto"
-              : "max-h-36 overflow-hidden",
+              : "max-h-32 overflow-hidden",
           )}
           html={highlightedCode}
         />
         {!expanded && (
-          <div className="from-surface to-surface/0 pointer-events-none absolute inset-x-0 bottom-0 flex w-full items-center justify-center bg-linear-to-t pt-22 pb-4">
+          <div className="from-surface to-surface/0 pointer-events-none absolute inset-x-0 bottom-0 flex w-full items-center justify-center bg-linear-to-t pt-20 pb-4">
             <Button
               variant="outline"
               size="sm"

@@ -4,7 +4,9 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 function useActiveItem(itemIds: string[]) {
-  const [activeId, setActiveId] = React.useState<string | null>(null);
+  const [activeId, setActiveId] = React.useState<string | null>(
+    () => itemIds[0] ?? null,
+  );
 
   React.useEffect(() => {
     const observer = new IntersectionObserver(
