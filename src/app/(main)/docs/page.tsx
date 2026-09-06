@@ -1,4 +1,4 @@
-import { Zap, Moon, Puzzle, Code, Box, Layers } from "lucide-react";
+import { Zap, Puzzle, Code, Box, Layers, Palette } from "lucide-react";
 import { DocsLayout, DocsSection, DocsLink } from "./_components/docs";
 import { Metadata } from "next";
 
@@ -10,7 +10,7 @@ const features = [
       "Works out of the box with free map tiles. No API keys needed.",
   },
   {
-    icon: Moon,
+    icon: Palette,
     title: "Theme Aware",
     description: "Automatically switches between light and dark map styles.",
   },

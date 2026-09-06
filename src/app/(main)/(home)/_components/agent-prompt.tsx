@@ -28,10 +28,10 @@ export function AgentPrompt() {
       aria-live="polite"
       variant="ghost"
       size="xs"
-      className="text-muted-foreground hover:text-foreground border-border/50 h-7 border px-2.5"
+      className="text-muted-foreground hover:text-foreground h-7 px-2.5!"
     >
       {copied ? <Check /> : <Copy />}
-      {copied ? "Copied — paste in your agent" : "Copy prompt for agents"}
+      {copied ? "Copied — paste into your agent" : "Copy prompt for your agent"}
     </Button>
   );
 }

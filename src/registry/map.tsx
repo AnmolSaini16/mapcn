@@ -2664,7 +2664,6 @@ export {
   MapRoute,
   RouteProgress,
   RouteMarker,
-  useMapRoute,
   MapArc,
   MapGeoJSON,
   MapClusterLayer,

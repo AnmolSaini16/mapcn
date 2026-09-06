@@ -47,17 +47,17 @@ export function CommandSearch({ className }: { className?: string }) {
   return (
     <>
       <Button
-        variant="ghost"
+        variant="outline"
         size="sm"
         onClick={() => setOpen(true)}
         aria-label="Jump to pages, components, and docs"
         className={cn(
-          "bg-muted dark:bg-muted/40 text-muted-foreground hover:bg-muted dark:hover:bg-muted/60 hover:text-foreground mr-2.5 hidden w-36 md:flex",
+          "text-muted-foreground hover:text-foreground mr-2.5 hidden w-48 justify-start bg-transparent font-normal md:flex dark:bg-transparent",
           className,
         )}
       >
         <SearchIcon className="size-3.5" />
-        <span>Search</span>
+        <span>Search...</span>
         <Kbd className="text-muted-foreground/70 ml-auto bg-transparent">
           ⌘K
         </Kbd>

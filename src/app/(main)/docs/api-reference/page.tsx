@@ -496,15 +496,10 @@ export default function ApiReferencePage() {
           interactions for building route selection UIs.
         </p>
         <p>
-          Pass <DocsCode>progress</DocsCode> to split the line into covered and
-          remaining sections, then style the covered part with a{" "}
-          <DocsCode>RouteProgress</DocsCode> child. For alternative routes, mark
-          one <DocsCode>active</DocsCode> — it moves above its siblings and
-          switches to the <DocsCode>active*</DocsCode> styles. Children can also
-          read the route directly with <DocsCode>useMapRoute()</DocsCode>, which
-          returns the coordinates, the traveled slice, the resolved style and{" "}
-          <DocsCode>beforeId</DocsCode>, and a{" "}
-          <DocsCode>pointAt(anchor)</DocsCode> helper.
+          <DocsCode>progress</DocsCode> marks how far along the route you are;
+          add a <DocsCode>RouteProgress</DocsCode> child to draw that portion.
+          Mark one route <DocsCode>active</DocsCode> to raise it above its
+          siblings with the <DocsCode>active*</DocsCode> styles.
         </p>
         <DocsPropTable
           props={[
@@ -622,12 +617,10 @@ export default function ApiReferencePage() {
       <DocsSection title="RouteProgress">
         <p>
           Draws the covered portion of the parent <DocsCode>MapRoute</DocsCode>{" "}
-          on top of the base line, ending exactly at the route&apos;s{" "}
-          <DocsCode>progress</DocsCode> fraction rather than at the nearest
-          vertex. Must be used inside <DocsCode>MapRoute</DocsCode>. Renders
-          nothing until the route has a <DocsCode>progress</DocsCode> value, and
-          inherits the route&apos;s <DocsCode>beforeId</DocsCode> so both layers
-          stay below the same boundary.
+          on top of the base line, ending exactly at its{" "}
+          <DocsCode>progress</DocsCode> fraction. Must be used inside{" "}
+          <DocsCode>MapRoute</DocsCode>, and renders nothing until the route has
+          a <DocsCode>progress</DocsCode> value.
         </p>
         <DocsPropTable
           props={[
@@ -667,12 +660,7 @@ export default function ApiReferencePage() {
           yourself. Must be used inside <DocsCode>MapRoute</DocsCode>. Accepts
           every <DocsCode>MapMarker</DocsCode> prop except{" "}
           <DocsCode>longitude</DocsCode> and <DocsCode>latitude</DocsCode>, and
-          the same children (<DocsCode>MarkerContent</DocsCode>,{" "}
-          <DocsCode>MarkerPopup</DocsCode>, <DocsCode>MarkerTooltip</DocsCode>,{" "}
-          <DocsCode>MarkerLabel</DocsCode>). Renders nothing while the route is
-          still empty — useful when coordinates arrive from an async request —
-          or, for <DocsCode>at=&quot;progress&quot;</DocsCode>, until the route
-          has a <DocsCode>progress</DocsCode> value.
+          the same children.
         </p>
         <DocsPropTable
           props={[
@@ -713,22 +701,17 @@ export default function ApiReferencePage() {
             external
           >
             line layer
-          </DocsLink>{" "}
-          — the <DocsCode>paint</DocsCode> and <DocsCode>layout</DocsCode> props
-          accept any field from <DocsCode>LineLayerSpecification</DocsCode>{" "}
-          (e.g. <DocsCode>line-color</DocsCode>, <DocsCode>line-width</DocsCode>
-          , <DocsCode>line-opacity</DocsCode>,{" "}
-          <DocsCode>line-dasharray</DocsCode>, <DocsCode>line-blur</DocsCode>).
-        </p>
-        <p>
-          Style per arc by passing a{" "}
+          </DocsLink>
+          , so <DocsCode>paint</DocsCode> and <DocsCode>layout</DocsCode> accept
+          any field from <DocsCode>LineLayerSpecification</DocsCode>. Any paint
+          value can be a{" "}
           <DocsLink
             href="https://maplibre.org/maplibre-style-spec/expressions/"
             external
           >
             MapLibre expression
           </DocsLink>{" "}
-          as any paint value. Reference fields on each datum with{" "}
+          — reference datum fields with{" "}
           <DocsCode>{`["get", "fieldName"]`}</DocsCode>.
         </p>
 
@@ -812,26 +795,19 @@ export default function ApiReferencePage() {
           Renders arbitrary GeoJSON as fill + outline layers. Must be used
           inside <DocsCode>Map</DocsCode> — typically with the{" "}
           <DocsCode>blank</DocsCode> prop for choropleths and region/data maps.
-          Accepts a <DocsCode>FeatureCollection</DocsCode>,{" "}
-          <DocsCode>Feature</DocsCode>, <DocsCode>Geometry</DocsCode>, or a URL
-          string to fetch from. Supports a generic type parameter for typed
-          feature properties: <DocsCode>{"MapGeoJSON<MyProperties>"}</DocsCode>.
+          Supports a generic type parameter for typed feature properties:{" "}
+          <DocsCode>{"MapGeoJSON<MyProperties>"}</DocsCode>.
         </p>
         <p>
-          Fill and outline default to a theme-aware monochrome surface tone, so
-          shapes read clearly on light/dark out of the box. Override either
-          layer via <DocsCode>fillPaint</DocsCode> /{" "}
-          <DocsCode>linePaint</DocsCode> (pass <DocsCode>false</DocsCode> to
-          omit a layer), and pass{" "}
+          Fill and outline default to a theme-aware monochrome tone, so shapes
+          read clearly on light/dark out of the box. Any paint value can be a{" "}
           <DocsLink
             href="https://maplibre.org/maplibre-style-spec/expressions/"
             external
           >
-            MapLibre expressions
+            MapLibre expression
           </DocsLink>{" "}
-          as paint values for data-driven styling. Hover highlighting via{" "}
-          <DocsCode>fillHoverPaint</DocsCode> requires{" "}
-          <DocsCode>promoteId</DocsCode>.
+          for data-driven styling.
         </p>
         <DocsPropTable
           props={[

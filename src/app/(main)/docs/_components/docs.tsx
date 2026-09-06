@@ -144,9 +144,18 @@ export function DocsSection({ title, children }: DocsSectionProps) {
   return (
     <section className="scroll-m-24 space-y-5" id={id}>
       {title && (
-        <h2 className="text-foreground text-xl font-semibold tracking-tight">
-          {title}
-        </h2>
+        <div className="group flex w-fit items-baseline gap-2">
+          <h2 className="text-foreground text-xl font-semibold tracking-tight">
+            {title}
+          </h2>
+          <a
+            href={`#${id}`}
+            aria-label={`Link to ${title}`}
+            className="text-muted-foreground/60 hover:text-foreground text-xl font-semibold opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+          >
+            #
+          </a>
+        </div>
       )}
       <div className="[&_em]:text-muted-foreground space-y-4 text-base leading-7 [&_strong]:font-medium [&>ol]:list-decimal [&>ol]:space-y-2 [&>ol]:pl-5 [&>ol>li]:leading-7 [&>p]:leading-7 [&>ul]:list-disc [&>ul]:space-y-2 [&>ul]:pl-5 [&>ul>li]:leading-7">
         {children}
