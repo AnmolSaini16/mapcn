@@ -16,8 +16,7 @@
       "files": [
         {
           "path": "src/registry/map.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/map.tsx"
+          "type": "registry:ui"
         }
       ],
       "css": {
