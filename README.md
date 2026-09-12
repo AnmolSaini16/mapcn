@@ -55,3 +55,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Star History
+
+<a href="https://star-history.dera.page/#AnmolSaini16/mapcn&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://star-history.dera.page/svg?repos=AnmolSaini16/mapcn&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://star-history.dera.page/svg?repos=AnmolSaini16/mapcn&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://star-history.dera.page/svg?repos=AnmolSaini16/mapcn&type=date&legend=top-left" />
+ </picture>
+</a>
