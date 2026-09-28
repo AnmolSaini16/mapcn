@@ -28,6 +28,21 @@ if (typeof window !== "undefined" && !MapLibreGL.getWorkerUrl()) {
   );
 }
 
+if (
+  typeof window !== "undefined" &&
+  (MapLibreGL.getRTLTextPluginStatus() === "unavailable" ||
+    MapLibreGL.getRTLTextPluginStatus() === "requested")
+) {
+  try {
+    MapLibreGL.setRTLTextPlugin(
+      "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.3.0/dist/mapbox-gl-rtl-text.js",
+      true,
+    );
+  } catch {
+    // Ignore if already initialized
+  }
+}
+
 const defaultStyles = {
   dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
   light: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
