@@ -21,6 +21,7 @@ import { createPortal } from "react-dom";
 import { X, Minus, Plus, Locate, Maximize, Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import StepSlider from "@/components/ui/stepSlider";
 
 if (typeof window !== "undefined" && !MapLibreGL.getWorkerUrl()) {
   MapLibreGL.setWorkerUrl(
@@ -812,6 +813,10 @@ type MapControlsProps = {
   className?: string;
   /** Callback with user coordinates when located */
   onLocate?: (coords: { longitude: number; latitude: number }) => void;
+  /** Show pitch control slider in control panel */
+  showPitchControl?: boolean,
+  /** Show bearing control slider in control panel */
+  showBearingControl?: boolean,
 };
 
 const positionClasses = {
@@ -829,7 +834,7 @@ function ControlGroup({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ControlButton({
+export function ControlButton({
   onClick,
   label,
   children,
@@ -865,6 +870,8 @@ function MapControls({
   showCompass = false,
   showLocate = false,
   showFullscreen = false,
+  showPitchControl = false,
+  showBearingControl = false,
   className,
   onLocate,
 }: MapControlsProps) {
@@ -910,6 +917,14 @@ function MapControls({
     );
   }, [map, onLocate]);
 
+  const handlePitchUp = useCallback(() => {
+    map?.setPitch(map.getPitch() + 1)
+  }, [map])
+
+  const handlePitchDown = useCallback(() => {
+    map?.setPitch(map.getPitch() - 1)
+  }, [map])
+
   const handleFullscreen = useCallback(() => {
     const container = map?.getContainer();
     if (!container) return;
@@ -928,6 +943,11 @@ function MapControls({
         className,
       )}
     >
+      {showPitchControl && (
+        <ControlGroup>
+          <StepSlider onIncrement={handlePitchUp} onDecrement={handlePitchDown} />
+        </ControlGroup>
+      )}
       {showZoom && (
         <ControlGroup>
           <ControlButton onClick={handleZoomIn} label="Zoom in">
