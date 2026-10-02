@@ -37,6 +37,7 @@ export const docsNavigation: SiteNavigationGroup[] = [
       { title: "Routes", href: "/docs/routes", icon: Layers2 },
       { title: "Arcs", href: "/docs/arcs", icon: Layers2 },
       { title: "GeoJSON", href: "/docs/geojson", icon: Layers2 },
+      { title: "Circles", href: "/docs/circles", icon: Layers2 },
       { title: "Clusters", href: "/docs/clusters", icon: Layers2 },
       { title: "Advanced", href: "/docs/advanced-usage", icon: Layers2 },
     ],

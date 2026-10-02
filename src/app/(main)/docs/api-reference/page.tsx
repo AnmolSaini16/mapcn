@@ -33,6 +33,7 @@ const anatomyCode = `<Map>
   </MapRoute>
 
   <MapArc data={...} />
+  <MapCircle center={...} radius={...} />
   <MapGeoJSON data={...} />
   <MapClusterLayer data={...} />
 </Map>`;
@@ -784,6 +785,60 @@ export default function ApiReferencePage() {
               name: "beforeId",
               type: "string",
               description: "Insert the arc layers before this layer id.",
+            },
+          ]}
+        />
+      </DocsSection>
+
+      {/* MapCircle */}
+      <DocsSection title="MapCircle">
+        <p>
+          Renders a disk with a real-world radius in meters. Must be used inside{" "}
+          <DocsCode>Map</DocsCode>. MapLibre circle layers are sized in pixels,
+          so <DocsCode>MapCircle</DocsCode> approximates the disk as a geodesic
+          polygon and draws it with <DocsCode>MapGeoJSON</DocsCode>.
+        </p>
+        <p>
+          <DocsCode>center</DocsCode> is{" "}
+          <DocsCode>[longitude, latitude]</DocsCode>.{" "}
+          <DocsCode>radius</DocsCode> is meters. Pass{" "}
+          <DocsCode>fillPaint={`{false}`}</DocsCode> for an outline only.
+        </p>
+        <DocsPropTable
+          props={[
+            {
+              name: "center",
+              type: "[number, number]",
+              description: "Center coordinates as [longitude, latitude].",
+            },
+            {
+              name: "radius",
+              type: "number",
+              description: "Ground radius in meters.",
+            },
+            {
+              name: "steps",
+              type: "number",
+              default: "64",
+              description:
+                "Vertices used to approximate the circle. Minimum 6 (a hexagon). Higher = smoother. Non-integers and smaller values are ignored.",
+            },
+            {
+              name: "fillPaint",
+              type: "FillLayerSpecification['paint'] | false",
+              description:
+                "Paint for the fill layer, merged over MapGeoJSON's theme-aware default. Pass false to omit the fill.",
+            },
+            {
+              name: "linePaint",
+              type: "LineLayerSpecification['paint'] | false",
+              description:
+                "Paint for the outline layer, merged over MapGeoJSON's hairline default. Pass false to omit the outline.",
+            },
+            {
+              name: "beforeId",
+              type: "string",
+              description: "Insert the layers before this layer id.",
             },
           ]}
         />

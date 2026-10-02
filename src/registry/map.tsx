@@ -1999,6 +1999,104 @@ function MapGeoJSON<
   return null;
 }
 
+const CIRCLE_STEPS = 64;
+const MIN_CIRCLE_STEPS = 6;
+const EARTH_RADIUS_METERS = 6_371_000;
+
+/** Closed geodesic polygon. `center` is [longitude, latitude]; `radius` is meters. */
+function circlePolygon(
+  center: [number, number],
+  radius: number,
+  steps: number,
+): GeoJSON.Polygon {
+  const [lng, lat] = center;
+  const angularDistance = radius / EARTH_RADIUS_METERS;
+  const latRad = (lat * Math.PI) / 180;
+  const lngRad = (lng * Math.PI) / 180;
+  const ring: [number, number][] = [];
+
+  for (let i = 0; i < steps; i += 1) {
+    const bearing = (i / steps) * 2 * Math.PI;
+    const lat2 = Math.asin(
+      Math.sin(latRad) * Math.cos(angularDistance) +
+        Math.cos(latRad) * Math.sin(angularDistance) * Math.cos(bearing),
+    );
+    const lng2 =
+      lngRad +
+      Math.atan2(
+        Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(latRad),
+        Math.cos(angularDistance) - Math.sin(latRad) * Math.sin(lat2),
+      );
+    ring.push([(lng2 * 180) / Math.PI, (lat2 * 180) / Math.PI]);
+  }
+  // Repeat the first position. Recomputing bearing 2π drifts by ~1e-21 and leaves the ring open.
+  ring.push(ring[0]);
+
+  return { type: "Polygon", coordinates: [ring] };
+}
+
+type MapCircleProps = {
+  /** Center coordinates as [longitude, latitude]. */
+  center: [number, number];
+  /** Ground radius in meters. */
+  radius: number;
+  /**
+   * Vertices used to approximate the circle. Minimum 6, which is a hexagon
+   * and the coarsest shape that still reads as a circle. Higher = smoother.
+   * (default: 64)
+   */
+  steps?: number;
+  /**
+   * Paint for the fill layer. Merged on top of MapGeoJSON's theme-aware
+   * default. Pass `false` to draw the outline only.
+   */
+  fillPaint?: MapFillPaint | false;
+  /**
+   * Paint for the outline layer. Merged on top of MapGeoJSON's hairline
+   * default. Pass `false` to draw the fill only.
+   */
+  linePaint?: MapLinePaint | false;
+  /** Optional MapLibre layer id to insert the layers before (z-order control). */
+  beforeId?: string;
+};
+
+/**
+ * Renders a disk with a real-world radius. MapLibre circle layers size in
+ * pixels, so this builds a geodesic polygon and draws it with MapGeoJSON.
+ * Must be used inside `Map`.
+ */
+function MapCircle({
+  center,
+  radius,
+  steps = CIRCLE_STEPS,
+  fillPaint,
+  linePaint,
+  beforeId,
+}: MapCircleProps) {
+  const [lng, lat] = center;
+  const polygon = useMemo(
+    () =>
+      Number.isFinite(radius) &&
+      radius > 0 &&
+      Number.isInteger(steps) &&
+      steps >= MIN_CIRCLE_STEPS
+        ? circlePolygon([lng, lat], radius, steps)
+        : null,
+    [lng, lat, radius, steps],
+  );
+
+  if (!polygon) return null;
+
+  return (
+    <MapGeoJSON
+      data={polygon}
+      fillPaint={fillPaint}
+      linePaint={linePaint}
+      beforeId={beforeId}
+    />
+  );
+}
+
 /** A single arc to render inside <MapArc data={...}>. */
 type MapArcDatum = {
   /** Unique identifier for this arc. Required for hover state tracking and event payloads. */
@@ -2665,6 +2763,7 @@ export {
   RouteProgress,
   RouteMarker,
   MapArc,
+  MapCircle,
   MapGeoJSON,
   MapClusterLayer,
 };
@@ -2691,6 +2790,7 @@ export type {
   RouteMarkerProps,
   RouteAnchor,
   MapArcProps,
+  MapCircleProps,
   MapGeoJSONProps,
   MapClusterLayerProps,
 };

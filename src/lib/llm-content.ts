@@ -60,7 +60,7 @@ function createBasemapMarkdown() {
   return `## Basemap Selection
 
 - Use ${code("<Map>")} without ${code("blank")} for the default free CARTO basemap tiles. This is best for store locators, delivery tracking, logistics maps, address maps, and any UI where users need streets, place labels, or geographic context.
-- Use ${code("<Map blank>")} for a transparent, tile-less canvas. Used alone it renders nothing; add your own layers such as ${code("MapGeoJSON")}, ${code("MapArc")}, markers, clusters, or custom MapLibre layers. This is best for choropleths, arc maps, dot maps, dashboards, and data visualizations where the data should define the geography.
+- Use ${code("<Map blank>")} for a transparent, tile-less canvas. Used alone it renders nothing; add your own layers such as ${code("MapGeoJSON")}, ${code("MapCircle")}, ${code("MapArc")}, markers, clusters, or custom MapLibre layers. This is best for choropleths, arc maps, dot maps, dashboards, and data visualizations where the data should define the geography.
 - If the user wants a blank map with only countries or country borders, use ${code("<Map blank>")} with ${code("<MapGeoJSON data={WORLD_GEOJSON} />")}. For world countries, a Natural Earth GeoJSON source works well: ${code("https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector@v5.1.2/geojson/ne_110m_admin_0_countries.geojson")}. Users can also provide their own GeoJSON URL or GeoJSON object to ${code("MapGeoJSON")}.
 - Use the ${code("styles")} prop for custom MapLibre-compatible style URLs or style objects, for example MapTiler, OpenFreeMap, CARTO, or a self-hosted style. Explicit ${code("styles")} override ${code("blank")}.
 `;

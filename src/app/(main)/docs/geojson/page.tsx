@@ -18,7 +18,7 @@ export default function GeoJSONPage() {
       title="GeoJSON"
       description="Render arbitrary GeoJSON as fill and outline layers for choropleths and region maps."
       prev={{ title: "Arcs", href: "/docs/arcs" }}
-      next={{ title: "Clusters", href: "/docs/clusters" }}
+      next={{ title: "Circles", href: "/docs/circles" }}
     >
       <DocsSection>
         <p>

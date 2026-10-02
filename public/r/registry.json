@@ -7,7 +7,7 @@
       "name": "map",
       "type": "registry:ui",
       "title": "Map",
-      "description": "A MapLibre-powered map component with markers, popups, tooltips, routes, and controls.",
+      "description": "A MapLibre-powered map component with markers, popups, tooltips, routes, arcs, circles, and controls.",
       "dependencies": [
         "maplibre-gl@^6",
         "lucide-react"
@@ -77,6 +77,11 @@
             "title": "GeoJSON",
             "href": "/docs/geojson",
             "description": "GeoJSON sources and layers for custom map data."
+          },
+          {
+            "title": "Circles",
+            "href": "/docs/circles",
+            "description": "A disk with a real-world radius in meters."
           },
           {
             "title": "Clusters",
