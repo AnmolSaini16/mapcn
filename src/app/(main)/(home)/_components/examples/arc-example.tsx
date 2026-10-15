@@ -29,6 +29,7 @@ export function ArcExample() {
   return (
     <ExampleCard className="aspect-square">
       <Map
+        attributionControl={false}
         center={[-0.1276, 41.5074]}
         zoom={1}
         projection={{ type: "globe" }}

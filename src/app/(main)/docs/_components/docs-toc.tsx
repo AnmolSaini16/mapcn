@@ -60,7 +60,7 @@ export function DocsToc({ items, className }: DocsTocProps) {
 
   return (
     <nav aria-label="On this page" className={cn("flex flex-col", className)}>
-      <p className="text-muted-foreground/70 mb-3 text-[11px] font-semibold tracking-wide uppercase">
+      <p className="text-muted-foreground mb-4 text-xs font-medium">
         On This Page
       </p>
 
@@ -72,7 +72,7 @@ export function DocsToc({ items, className }: DocsTocProps) {
               key={item.slug}
               href={`#${item.slug}`}
               className={cn(
-                "py-0.5 text-sm no-underline transition-colors",
+                "py-0.5 text-[0.8rem] no-underline transition-colors",
                 isActive
                   ? "text-foreground font-medium"
                   : "text-muted-foreground hover:text-foreground",

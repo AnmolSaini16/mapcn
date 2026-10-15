@@ -1,5 +1,7 @@
 import { BookOpen, CornerDownRight, Layers2, LucideIcon } from "lucide-react";
 
+export const githubRepoUrl = "https://github.com/AnmolSaini16/mapcn";
+
 export interface MainNavItem {
   href: string;
   label: string;

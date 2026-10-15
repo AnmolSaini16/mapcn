@@ -32,6 +32,7 @@ export function FlyToExample() {
   return (
     <ExampleCard className="aspect-square">
       <Map
+        attributionControl={false}
         ref={mapRef}
         center={active.center}
         zoom={5.5}

@@ -119,6 +119,7 @@ export function EVChargingExample() {
   return (
     <ExampleCard className="aspect-square">
       <Map
+        attributionControl={false}
         center={[-122.434, 37.776]}
         zoom={11}
         scrollZoom={false}

@@ -89,9 +89,11 @@ export function DocsLayout({
 
   return (
     <div className="flex min-w-0 flex-1">
-      <div className="mx-auto flex max-w-[50rem] min-w-0 flex-1 flex-col pt-10 pb-20 lg:px-4">
+      <div className="mx-auto flex max-w-[52rem] min-w-0 flex-1 flex-col pt-10 pb-20 lg:px-12 lg:pt-12">
         <DocsTitle title={title} description={description} />
-        <div className="mt-12 mb-12 space-y-12">{children}</div>
+        <div className="mt-12 mb-12 space-y-14 [&>*:has(+[data-slot=docs-note])]:mb-6">
+          {children}
+        </div>
         {(prev || next) && (
           <div className="mt-auto flex items-center justify-between gap-4">
             {prev ? (
@@ -124,8 +126,8 @@ export function DocsLayout({
         )}
       </div>
 
-      <aside className="hidden w-48 shrink-0 xl:block">
-        <nav className="sticky top-14 max-h-[calc(100svh-3.5rem)] overflow-y-auto pt-10 pb-10 [scrollbar-gutter:stable]">
+      <aside className="hidden w-42 shrink-0 xl:block">
+        <nav className="sticky top-14 max-h-[calc(100svh-3.5rem)] overflow-y-auto pt-12 pb-10 [scrollbar-gutter:stable]">
           {tocItems.length > 0 && <DocsToc items={tocItems} />}
         </nav>
       </aside>
@@ -142,7 +144,7 @@ interface DocsSectionProps {
 export function DocsSection({ title, children }: DocsSectionProps) {
   const id = title ? slugify(title) : undefined;
   return (
-    <section className="scroll-m-24 space-y-5" id={id}>
+    <section className="scroll-m-24 space-y-4" id={id}>
       {title && (
         <div className="group flex w-fit items-baseline gap-2">
           <h2 className="text-foreground text-xl font-semibold tracking-tight">
@@ -157,7 +159,7 @@ export function DocsSection({ title, children }: DocsSectionProps) {
           </a>
         </div>
       )}
-      <div className="[&_em]:text-muted-foreground space-y-4 text-base leading-7 [&_strong]:font-medium [&>ol]:list-decimal [&>ol]:space-y-2 [&>ol]:pl-5 [&>ol>li]:leading-7 [&>p]:leading-7 [&>ul]:list-disc [&>ul]:space-y-2 [&>ul]:pl-5 [&>ul>li]:leading-7">
+      <div className="[&_em]:text-muted-foreground space-y-4 text-[15px] leading-[1.75] [&_strong]:font-medium [&>ol]:list-decimal [&>ol]:space-y-2 [&>ol]:pl-5 [&>ol>li]:leading-[1.75] [&>p]:leading-[1.75] [&>ul]:list-disc [&>ul]:space-y-2 [&>ul]:pl-5 [&>ul>li]:leading-[1.75]">
         {children}
       </div>
     </section>
@@ -171,7 +173,10 @@ interface DocsNoteProps {
 
 export function DocsNote({ children }: DocsNoteProps) {
   return (
-    <div className="bg-surface text-foreground/80 [&_strong]:text-foreground rounded-lg px-5 py-4 text-[15px] leading-relaxed [&_strong]:font-medium">
+    <div
+      data-slot="docs-note"
+      className="bg-surface text-foreground/80 [&_strong]:text-foreground rounded-lg px-5 py-4 text-[15px] leading-[1.75] [&_strong]:font-medium"
+    >
       {children}
     </div>
   );
@@ -190,7 +195,7 @@ export function DocsLink({ href, children, external }: DocsLinkProps) {
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
-      className="text-foreground font-medium underline underline-offset-4"
+      className="decoration-foreground/25 hover:text-foreground hover:decoration-foreground/60 underline decoration-1 underline-offset-[5px] transition-colors"
     >
       {children}
     </Link>

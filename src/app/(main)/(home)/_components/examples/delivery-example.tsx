@@ -88,6 +88,7 @@ export function DeliveryExample() {
   return (
     <ExampleCard className="aspect-square sm:col-span-2 sm:aspect-video lg:aspect-auto">
       <Map
+        attributionControl={false}
         center={[-0.105, 51.511]}
         zoom={12.6}
         scrollZoom={false}

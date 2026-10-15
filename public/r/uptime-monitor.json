@@ -37,6 +37,7 @@
     "iframeHeight": "720px"
   },
   "categories": [
+    "analytics",
     "monitoring",
     "status"
   ],

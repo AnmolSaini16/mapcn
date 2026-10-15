@@ -229,6 +229,7 @@
         }
       ],
       "categories": [
+        "logistics",
         "tracking",
         "delivery"
       ],
@@ -268,6 +269,7 @@
         }
       ],
       "categories": [
+        "analytics",
         "monitoring",
         "status"
       ],
@@ -378,6 +380,7 @@
         }
       ],
       "categories": [
+        "location",
         "store-locator",
         "locator"
       ],

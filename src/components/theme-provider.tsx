@@ -3,6 +3,9 @@
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
 
+/** Pressing this key anywhere outside a text field toggles the theme. */
+const THEME_HOTKEY = "t";
+
 function ThemeProvider({
   children,
   ...props
@@ -47,7 +50,7 @@ function ThemeHotkey() {
         return;
       }
 
-      if (event.key.toLowerCase() !== "t") {
+      if (event.key.toLowerCase() !== THEME_HOTKEY) {
         return;
       }
 
@@ -68,4 +71,4 @@ function ThemeHotkey() {
   return null;
 }
 
-export { ThemeProvider };
+export { ThemeProvider, THEME_HOTKEY };

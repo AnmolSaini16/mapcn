@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
+import { SiteAnalytics } from "@/components/site-analytics";
 
 import "@/styles/globals.css";
 
@@ -105,7 +105,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <ThemeProvider>
           <TooltipProvider>{children}</TooltipProvider>
-          <Analytics />
+          <SiteAnalytics />
         </ThemeProvider>
       </body>
     </html>

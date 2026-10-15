@@ -40,7 +40,7 @@ function PageHeader({
           "container mx-auto flex w-full max-w-6xl flex-col",
           size === "sm"
             ? "gap-3 py-14 md:py-18"
-            : "gap-4 py-16 md:py-20 lg:py-24 lg:pb-20",
+            : "gap-4 py-16 md:gap-5 md:py-20 lg:py-24 lg:pb-20",
           align === "center"
             ? "items-center text-center"
             : "items-start text-left",
@@ -69,7 +69,7 @@ function PageHeaderHeading({
   return (
     <Comp
       className={cn(
-        "animate-fade-up animate-stagger text-primary max-w-4xl font-bold tracking-tight",
+        "animate-fade-up animate-stagger text-primary max-w-4xl font-bold tracking-tight text-balance",
         size === "sm"
           ? "text-4xl font-semibold md:text-5xl"
           : "text-4xl sm:text-5xl md:text-6xl",
@@ -101,7 +101,7 @@ function PageHeaderDescription({
   return (
     <p
       className={cn(
-        "text-foreground/80 animate-fade-up animate-stagger max-w-2xl leading-relaxed",
+        "text-foreground/80 animate-fade-up animate-stagger max-w-2xl leading-relaxed text-pretty",
         size === "sm"
           ? "text-muted-foreground text-base sm:text-lg"
           : "sm:text-lg md:text-xl",

@@ -155,19 +155,17 @@ export default function IntroductionPage() {
       </DocsSection>
 
       <DocsSection title="Features">
-        <div className="not-prose mt-4 grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="bg-surface space-y-3 rounded-lg p-4"
+              className="bg-surface space-y-1.5 rounded-lg p-4"
             >
               <div className="flex items-center gap-2.5">
                 <feature.icon className="text-muted-foreground size-4" />
-                <h3 className="text-foreground text-base font-medium">
-                  {feature.title}
-                </h3>
+                <h3 className="text-foreground font-medium">{feature.title}</h3>
               </div>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-sm leading-relaxed">
                 {feature.description}
               </p>
             </div>

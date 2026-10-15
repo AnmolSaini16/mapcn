@@ -41,6 +41,7 @@
     "iframeHeight": "800px"
   },
   "categories": [
+    "location",
     "store-locator",
     "locator"
   ],

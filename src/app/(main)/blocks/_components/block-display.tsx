@@ -1,18 +1,18 @@
-import { getAllBlocks, createFileTreeForRegistryItemFiles } from "@/lib/blocks";
+import {
+  createFileTreeForRegistryItemFiles,
+  type RegistryBlockItem,
+} from "@/lib/blocks";
 import { getBlockFileSource } from "@/lib/get-block-file-source";
 import { highlightCode } from "@/lib/highlight";
 import { BlockPreview } from "./block-preview";
 import { IframePreview } from "./iframe-preview";
 
 interface BlockDisplayProps {
-  name: string;
+  block: RegistryBlockItem;
 }
 
-export async function BlockDisplay({ name }: BlockDisplayProps) {
-  const blocks = getAllBlocks();
-  const block = blocks.find((b) => b.name === name);
-
-  if (!block || !block.files?.length) {
+export async function BlockDisplay({ block }: BlockDisplayProps) {
+  if (!block.files?.length) {
     return null;
   }
 
@@ -29,12 +29,15 @@ export async function BlockDisplay({ name }: BlockDisplayProps) {
         content,
         highlightedContent,
       };
-    })
+    }),
   );
 
   return (
     <BlockPreview block={block} tree={tree} highlightedFiles={highlightedFiles}>
-      <IframePreview src={`/view/${block.name}`} title={block.title ?? block.name} />
+      <IframePreview
+        src={`/view/${block.name}`}
+        title={block.title ?? block.name}
+      />
     </BlockPreview>
   );
 }

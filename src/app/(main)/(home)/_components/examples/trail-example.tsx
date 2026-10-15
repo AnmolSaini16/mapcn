@@ -54,6 +54,7 @@ export function TrailExample() {
       </div>
 
       <Map
+        attributionControl={false}
         center={[-73.97, 40.782]}
         zoom={11.8}
         scrollZoom={false}

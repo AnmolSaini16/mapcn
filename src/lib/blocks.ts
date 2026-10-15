@@ -1,4 +1,5 @@
 import registry from "../../registry.json";
+import { slugToTitle } from "@/lib/utils";
 
 export interface RegistryBlockItem {
   name: string;
@@ -96,4 +97,31 @@ export function createFileTreeForRegistryItemFiles(
   }
 
   return root;
+}
+
+export interface BlockCategory {
+  slug: string;
+  title: string;
+  blocks: RegistryBlockItem[];
+}
+
+const UNCATEGORIZED = "more";
+
+export function getBlockCategories(): BlockCategory[] {
+  const groups = new Map<string, RegistryBlockItem[]>();
+
+  for (const block of getAllBlocks()) {
+    const slug = block.categories?.[0] ?? UNCATEGORIZED;
+    groups.set(slug, [...(groups.get(slug) ?? []), block]);
+  }
+
+  const uncategorized = groups.get(UNCATEGORIZED);
+  groups.delete(UNCATEGORIZED);
+  if (uncategorized) groups.set(UNCATEGORIZED, uncategorized);
+
+  return Array.from(groups, ([slug, blocks]) => ({
+    slug,
+    title: slugToTitle(slug),
+    blocks,
+  }));
 }

@@ -35,6 +35,7 @@ export function AnalyticsExample() {
       </div>
 
       <Map
+        attributionControl={false}
         center={[0, 30]}
         scrollZoom={false}
         dragRotate={false}

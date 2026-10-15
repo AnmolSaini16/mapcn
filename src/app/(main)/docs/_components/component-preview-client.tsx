@@ -43,19 +43,19 @@ export function ComponentPreviewClient({
           className={cn(
             expanded
               ? "max-h-[420px] overflow-auto"
-              : "max-h-32 overflow-hidden",
+              : "max-h-26 overflow-hidden",
           )}
           html={highlightedCode}
         />
         {!expanded && (
-          <div className="from-surface to-surface/0 pointer-events-none absolute inset-x-0 bottom-0 flex w-full items-center justify-center bg-linear-to-t pt-20 pb-4">
+          <div className="from-surface to-surface/0 pointer-events-none absolute inset-x-0 bottom-0 flex w-full items-center justify-center bg-linear-to-t pt-12 pb-3">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setExpanded(true)}
               aria-expanded={expanded}
               aria-controls={codeId}
-              className="bg-background hover:bg-muted dark:bg-background dark:hover:bg-muted pointer-events-auto"
+              className="dark:bg-background dark:hover:bg-muted pointer-events-auto"
             >
               View Code
             </Button>

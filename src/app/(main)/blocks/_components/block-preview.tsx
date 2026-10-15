@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Check, Maximize, Terminal } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { RegistryBlockItem, type FileTree } from "@/lib/blocks";
+import { type FileTree, type RegistryBlockItem } from "@/lib/blocks";
 import { trackEvent } from "@/lib/events";
 import { BlockViewerCode, type HighlightedFile } from "./block-viewer-code";
 import { Separator } from "@/components/ui/separator";
@@ -35,64 +35,76 @@ export function BlockPreview({
 
   return (
     <div
-      className="space-y-4"
+      id={name}
+      className="scroll-mt-24"
       style={
         {
           "--block-preview-height": meta?.iframeHeight ?? "930px",
         } as React.CSSProperties
       }
     >
-      <div>
-        <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
-        {description && (
-          <p className="text-muted-foreground mt-0.5 text-sm">{description}</p>
-        )}
-      </div>
+      <Tabs defaultValue="preview" className="w-full gap-4">
+        <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between xl:gap-6">
+          <div className="min-w-0">
+            <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
+            {description && (
+              <p className="text-muted-foreground mt-0.5 text-sm">
+                {description}
+              </p>
+            )}
+          </div>
 
-      <Tabs defaultValue="preview" className="w-full">
-        <div className="flex items-center justify-between">
-          <TabsList className="h-8!">
-            <TabsTrigger value="preview" className="text-xs">
-              Preview
-            </TabsTrigger>
-            <TabsTrigger value="code" className="text-xs">
-              Code
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex shrink-0 items-center gap-3">
+            <TabsList className="h-8! gap-0.5 border bg-transparent p-0.5">
+              <TabsTrigger value="preview" className={tabTriggerClassName}>
+                Preview
+              </TabsTrigger>
+              <TabsTrigger value="code" className={tabTriggerClassName}>
+                Code
+              </TabsTrigger>
+            </TabsList>
 
-          <div className="hidden items-center gap-2.5 md:flex">
-            <Button
-              onClick={copyCli}
-              variant="outline"
-              aria-label="Copy CLI command"
-              size="sm"
-              className="font-mono text-xs"
-            >
-              {copiedType === "cli" ? <Check /> : <Terminal />}
-              npx shadcn add @mapcn/{name}
-            </Button>
-            <Separator orientation="vertical" className="h-4!" />
-            <Button
-              variant="outline"
-              size="icon-sm"
-              asChild
-              aria-label="Open in new tab"
-            >
-              <Link href={`/view/${name}`} target="_blank">
-                <Maximize />
-              </Link>
-            </Button>
+            <div className="hidden items-center gap-2 md:flex">
+              <Separator orientation="vertical" className="mr-1 h-5!" />
+              <Button
+                onClick={copyCli}
+                variant="outline"
+                aria-label="Copy CLI command"
+                size="sm"
+                className="font-mono text-xs"
+              >
+                {copiedType === "cli" ? <Check /> : <Terminal />}
+                npx shadcn add @mapcn/{name}
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-sm"
+                asChild
+                aria-label="Open in new tab"
+              >
+                <Link href={`/view/${name}`} target="_blank">
+                  <Maximize />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
 
-        <TabsContent value="preview" className="mt-3">
+        <TabsContent
+          value="preview"
+          forceMount
+          className="data-[state=inactive]:hidden"
+        >
           {children}
         </TabsContent>
 
-        <TabsContent value="code" className="mt-3">
+        <TabsContent value="code">
           <BlockViewerCode tree={tree} highlightedFiles={highlightedFiles} />
         </TabsContent>
       </Tabs>
     </div>
   );
 }
+
+const tabTriggerClassName =
+  "text-muted-foreground hover:text-foreground data-[state=active]:bg-accent data-[state=active]:text-foreground dark:data-[state=active]:bg-accent px-3 text-xs data-[state=active]:shadow-none! dark:data-[state=active]:border-transparent";

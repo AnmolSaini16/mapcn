@@ -22,7 +22,7 @@ export function DocsSidebar() {
 
   return (
     <Sidebar
-      className="sticky top-14 z-30 hidden h-[calc(100svh-3.5rem)] w-55 shrink-0 overscroll-none bg-transparent lg:flex"
+      className="sticky top-14 z-30 hidden h-[calc(100svh-3.5rem)] w-44 shrink-0 overscroll-none bg-transparent lg:flex"
       collapsible="none"
     >
       <SidebarContent className="pt-10">
@@ -36,7 +36,7 @@ export function DocsSidebar() {
                     <SidebarMenuButton
                       asChild
                       isActive={pathname === item.href}
-                      className="font-medium"
+                      className="text-foreground hover:bg-sidebar-accent/50 data-[active=true]:font-medium"
                     >
                       <Link
                         href={item.href}
