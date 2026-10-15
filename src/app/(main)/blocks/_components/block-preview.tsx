@@ -55,7 +55,7 @@ export function BlockPreview({
           </div>
 
           <div className="flex shrink-0 items-center gap-3">
-            <TabsList className="h-8! gap-0.5 border bg-transparent p-0.5">
+            <TabsList className="bg-background dark:border-input dark:bg-input/30 h-8! gap-0.5 rounded-md border p-0.5 shadow-xs">
               <TabsTrigger value="preview" className={tabTriggerClassName}>
                 Preview
               </TabsTrigger>
@@ -107,4 +107,4 @@ export function BlockPreview({
 }
 
 const tabTriggerClassName =
-  "text-muted-foreground hover:text-foreground data-[state=active]:bg-accent data-[state=active]:text-foreground dark:data-[state=active]:bg-accent px-3 text-xs data-[state=active]:shadow-none! dark:data-[state=active]:border-transparent";
+  "text-muted-foreground hover:text-foreground data-[state=active]:bg-accent data-[state=active]:text-foreground dark:data-[state=active]:bg-accent rounded-sm px-3 text-xs data-[state=active]:shadow-none! dark:data-[state=active]:border-transparent";

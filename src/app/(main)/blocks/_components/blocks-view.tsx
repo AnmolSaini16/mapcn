@@ -95,7 +95,7 @@ export function BlocksViewSwitch() {
     <div
       role="group"
       aria-label="Blocks layout"
-      className="flex items-center gap-0.5 rounded-lg border p-0.5"
+      className="bg-background dark:border-input dark:bg-input/30 flex items-center gap-0.5 rounded-lg border p-0.5 shadow-xs"
     >
       {options.map(({ mode, label, icon: Icon }) => (
         <button
