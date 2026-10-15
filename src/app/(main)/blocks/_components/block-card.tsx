@@ -1,4 +1,6 @@
+import Image from "next/image";
 import type { RegistryBlockItem } from "@/lib/blocks";
+import { getBlockThumbnails } from "@/lib/block-thumbnails";
 import { BlockThumbnail } from "./block-thumbnail";
 import { OpenBlockLink } from "./blocks-view";
 
@@ -8,21 +10,39 @@ interface BlockCardProps {
 
 export function BlockCard({ block }: BlockCardProps) {
   const title = block.title ?? block.name;
+  const thumbnails = getBlockThumbnails(block.name);
 
   return (
-    <article className="bg-muted/30 dark:hover:bg-muted/40 hover:bg-muted/80 has-[a:focus-visible]:border-ring has-[a:focus-visible]:ring-ring/50 relative rounded-xl border p-1.5 transition-[color,background-color,box-shadow] has-[a:focus-visible]:ring-[3px]">
+    <OpenBlockLink
+      name={block.name}
+      className="bg-muted/30 dark:hover:bg-muted/40 hover:bg-muted/80 focus-visible:border-ring focus-visible:ring-ring/50 block rounded-xl border p-1.5 transition-[color,background-color,box-shadow] outline-none focus-visible:ring-[3px]"
+    >
       <div className="bg-background overflow-hidden rounded-md border">
-        <BlockThumbnail src={`/view/${block.name}`} title={title} />
+        {thumbnails ? (
+          <div className="bg-muted/40 relative aspect-[16/10]">
+            <Image
+              src={thumbnails.light}
+              alt=""
+              fill
+              sizes={THUMBNAIL_SIZES}
+              className="object-cover dark:hidden"
+            />
+            <Image
+              src={thumbnails.dark}
+              alt=""
+              fill
+              sizes={THUMBNAIL_SIZES}
+              className="hidden object-cover dark:block"
+            />
+          </div>
+        ) : (
+          <BlockThumbnail src={`/view/${block.name}`} title={title} />
+        )}
       </div>
 
       <div className="min-w-0 px-3 pt-3.5 pb-2.5">
-        <h3 className="text-base font-medium tracking-tight">
-          <OpenBlockLink
-            name={block.name}
-            className="inline-block max-w-full truncate text-left align-top outline-none after:absolute after:inset-0 after:rounded-xl after:content-['']"
-          >
-            {title}
-          </OpenBlockLink>
+        <h3 className="truncate text-base font-medium tracking-tight">
+          {title}
         </h3>
         {block.description && (
           <p className="text-muted-foreground mt-1 truncate text-sm">
@@ -30,6 +50,8 @@ export function BlockCard({ block }: BlockCardProps) {
           </p>
         )}
       </div>
-    </article>
+    </OpenBlockLink>
   );
 }
+
+const THUMBNAIL_SIZES = "(min-width: 768px) 50vw, 100vw";

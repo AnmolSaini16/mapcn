@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "registry:build": "npx shadcn build -o ./public/r && npx tsx scripts/fix-registry-imports.ts"
+    "registry:build": "npx shadcn build -o ./public/r && npx tsx scripts/fix-registry-imports.ts",
+    "blocks:thumbnails": "npx tsx scripts/capture-block-thumbnails.ts"
   },
   "dependencies": {
     "@vercel/analytics": "^1.6.1",
@@ -33,6 +34,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "^16.2.7",
+    "playwright": "^1.64.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "shadcn": "^3.6.2",
     "tailwindcss": "^4",

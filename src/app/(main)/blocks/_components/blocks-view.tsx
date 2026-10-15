@@ -35,7 +35,6 @@ export function BlocksViewProvider({
   children: React.ReactNode;
 }) {
   const [view, setView] = useState<BlocksViewMode>("grid");
-  // Bumped on every open so the scroll runs even when the view is unchanged.
   const [openRequest, setOpenRequest] = useState(0);
   const targetRef = useRef<string | null>(null);
 
@@ -48,7 +47,6 @@ export function BlocksViewProvider({
     }
   }, []);
 
-  // A shared link like /blocks#store-locator opens that block directly.
   useEffect(() => {
     function openFromHash() {
       const name = window.location.hash.slice(1);
@@ -121,8 +119,6 @@ export function BlocksViewSwitch() {
   );
 }
 
-// A real link to /blocks#name, so the card can be opened in a new tab or have
-// its link copied. Plain clicks switch to list view in place instead.
 export function OpenBlockLink({
   name,
   children,

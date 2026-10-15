@@ -57,8 +57,6 @@ export function CommandSearch({ className }: { className?: string }) {
     };
   }, []);
 
-  // Every open and close goes through here, so a pending auto-close from a
-  // copy can never shut a palette that was reopened in the meantime.
   function handleOpenChange(open: boolean) {
     window.clearTimeout(closeTimer.current);
     setCopyStatus(null);
@@ -75,7 +73,6 @@ export function CommandSearch({ className }: { className?: string }) {
     action();
   }
 
-  // Shows the result on the item; closes the palette only after a success.
   async function copy(id: CopyId, text: string, event: Event["name"]) {
     window.clearTimeout(closeTimer.current);
     try {
