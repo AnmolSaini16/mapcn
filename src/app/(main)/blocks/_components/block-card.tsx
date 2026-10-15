@@ -12,9 +12,9 @@ export function BlockCard({ block }: BlockCardProps) {
   return (
     <OpenBlockLink
       name={block.name}
-      className="bg-muted/30 dark:hover:bg-muted/40 hover:bg-muted/80 focus-visible:border-ring focus-visible:ring-ring/50 block rounded-xl border p-1.5 transition-[color,background-color,box-shadow] outline-none focus-visible:ring-[3px]"
+      className="bg-muted/50 hover:bg-muted ring-foreground/5 focus-visible:ring-ring/50 dark:bg-muted/30 dark:hover:bg-muted/50 block rounded-2xl p-2 ring-1 transition-[background-color,box-shadow] outline-none focus-visible:ring-[3px]"
     >
-      <div className="bg-muted/40 border-border/50 relative aspect-[16/10] overflow-hidden rounded-md border">
+      <div className="bg-background ring-foreground/5 relative aspect-[16/10] overflow-hidden rounded-lg shadow-xs ring-1">
         <Image
           src={`/blocks/${block.name}-light.jpg`}
           alt=""
@@ -31,12 +31,10 @@ export function BlockCard({ block }: BlockCardProps) {
         />
       </div>
 
-      <div className="min-w-0 px-3 pt-3.5 pb-2.5">
-        <h3 className="truncate text-base font-medium tracking-tight">
-          {title}
-        </h3>
+      <div className="min-w-0 px-2 pt-3.5 pb-2">
+        <h3 className="truncate text-base font-medium">{title}</h3>
         {block.description && (
-          <p className="text-muted-foreground mt-1 truncate text-sm">
+          <p className="text-muted-foreground mt-0.5 truncate text-sm">
             {block.description}
           </p>
         )}
