@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useCopy } from "@/hooks/use-copy";
 
 interface CodeCopyButtonProps {
   text: string;
@@ -16,24 +16,27 @@ export function CodeCopyButton({
   onCopy,
   className,
 }: CodeCopyButtonProps) {
-  const [copied, setCopied] = useState(false);
+  const { status, copy } = useCopy();
 
-  const copy = async () => {
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-    onCopy?.();
+  const copyText = async () => {
+    if (await copy(text)) onCopy?.();
   };
 
   return (
     <Button
       variant="ghost"
       size="icon-sm"
-      onClick={copy}
-      aria-label={copied ? "Copied" : "Copy code"}
+      onClick={copyText}
+      aria-label={COPY_LABELS[status]}
       className={cn("text-muted-foreground bg-code", className)}
     >
-      {copied ? <Check /> : <Copy />}
+      {status === "copied" ? <Check /> : <Copy />}
     </Button>
   );
 }
+
+const COPY_LABELS = {
+  idle: "Copy code",
+  copied: "Copied",
+  failed: "Couldn't copy",
+};

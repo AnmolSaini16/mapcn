@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCopy } from "@/hooks/use-copy";
 import { trackEvent } from "@/lib/events";
 
 interface InstallCommandProps {
@@ -25,14 +26,11 @@ export function InstallCommand({ name }: InstallCommandProps) {
   }));
 
   const [active, setActive] = useState<string>(tabs[0].manager);
-  const [copied, setCopied] = useState(false);
+  const { status, copy } = useCopy();
 
-  const copy = async () => {
+  const copyCommand = async () => {
     const current = tabs.find((tab) => tab.manager === active);
-    if (!current) return;
-    await navigator.clipboard.writeText(current.command);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (!current || !(await copy(current.command))) return;
     trackEvent({
       name: "copy_install_command",
       properties: { name, packageManager: active },
@@ -60,11 +58,11 @@ export function InstallCommand({ name }: InstallCommandProps) {
           <Button
             variant="ghost"
             size="icon-sm"
-            onClick={copy}
-            aria-label={copied ? "Copied" : "Copy command"}
+            onClick={copyCommand}
+            aria-label={COPY_LABELS[status]}
             className="text-muted-foreground"
           >
-            {copied ? <Check /> : <Copy />}
+            {status === "copied" ? <Check /> : <Copy />}
           </Button>
         </div>
         {tabs.map((tab) => (
@@ -80,3 +78,9 @@ export function InstallCommand({ name }: InstallCommandProps) {
     </div>
   );
 }
+
+const COPY_LABELS = {
+  idle: "Copy command",
+  copied: "Copied",
+  failed: "Couldn't copy",
+};

@@ -65,7 +65,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: siteUrl,
+    url: "./",
     siteName: siteName,
     title: "mapcn - Beautiful maps made simple",
     description: siteDescription,
@@ -85,8 +85,9 @@ export const metadata: Metadata = {
     creator: creator,
     images: ["/banner.png"],
   },
+  // "./" resolves to each page's own path.
   alternates: {
-    canonical: siteUrl,
+    canonical: "./",
   },
   category: "technology",
 };

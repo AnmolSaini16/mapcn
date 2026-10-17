@@ -1,16 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
-import { Skeleton } from "./ui/skeleton";
 import { THEME_HOTKEY } from "./theme-provider";
 
 export function useThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
 
   const toggleTheme = useCallback(() => {
+    if (!resolvedTheme) return;
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
   }, [resolvedTheme, setTheme]);
 
@@ -18,17 +18,7 @@ export function useThemeToggle() {
 }
 
 export function ThemeToggle() {
-  const { resolvedTheme, toggleTheme } = useThemeToggle();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return <Skeleton className="size-8" />;
-  }
+  const { toggleTheme } = useThemeToggle();
 
   return (
     <Button
@@ -37,8 +27,11 @@ export function ThemeToggle() {
       aria-label="Toggle theme"
       aria-keyshortcuts={THEME_HOTKEY.toUpperCase()}
       size="icon-sm"
+      className="text-muted-foreground hover:text-foreground"
     >
-      {resolvedTheme === "dark" ? <Moon /> : <Sun />}
+      <Moon className="hidden dark:block" />
+
+      <Sun className="block dark:hidden" />
     </Button>
   );
 }

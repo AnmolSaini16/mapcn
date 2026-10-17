@@ -73,12 +73,12 @@ export function BlockViewerCode({
     <BlockViewerCodeCtx.Provider
       value={{ activeFile, setActiveFile, highlightedFiles, tree }}
     >
-      <div className="bg-background flex h-(--block-preview-height) overflow-hidden rounded-xl border">
+      <div className="bg-background ring-foreground/5 flex h-(--block-preview-height) overflow-hidden rounded-lg shadow-xs ring-1">
         <div className="w-64 shrink-0">
           <FileTreeSidebar />
         </div>
         <div className="flex min-w-0 flex-1 flex-col">
-          <div className="bg-surface flex h-12 shrink-0 items-center gap-2 border-b px-4 text-sm">
+          <div className="bg-surface flex h-12 shrink-0 items-center gap-2 border-b px-4 pr-2 text-sm">
             <span className="text-muted-foreground">{file.target}</span>
             <div className="ml-auto">
               <CodeCopyButton

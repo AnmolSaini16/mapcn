@@ -5,6 +5,7 @@ import {
   DocsNote,
   DocsSection,
 } from "../_components/docs";
+import { AgentPrompt } from "../_components/agent-prompt";
 import { CodeBlock } from "../_components/code-block";
 import { InstallCommand } from "../_components/install-command";
 import { Metadata } from "next";
@@ -44,6 +45,7 @@ export default function InstallationPage() {
       description="How to install and set up mapcn in your project."
       prev={{ title: "Introduction", href: "/docs" }}
       next={{ title: "API Reference", href: "/docs/api-reference" }}
+      action={<AgentPrompt />}
     >
       <DocsSection title="Prerequisites">
         <p>

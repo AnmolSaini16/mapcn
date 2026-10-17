@@ -9,9 +9,11 @@ type HeaderSize = "default" | "sm";
 const PageHeaderContext = createContext<{
   align: HeaderAlign;
   size: HeaderSize;
+  animated: boolean;
 }>({
   align: "center",
   size: "default",
+  animated: false,
 });
 
 function usePageHeaderContext() {
@@ -25,6 +27,8 @@ interface PageHeaderProps {
   align?: HeaderAlign;
   /** Visual scale of the header (default: "default") */
   size?: HeaderSize;
+  /** Animate header content on entry (default: false) */
+  animated?: boolean;
 }
 
 function PageHeader({
@@ -32,9 +36,10 @@ function PageHeader({
   className,
   align = "center",
   size = "default",
+  animated = false,
 }: PageHeaderProps) {
   return (
-    <PageHeaderContext.Provider value={{ align, size }}>
+    <PageHeaderContext.Provider value={{ align, size, animated }}>
       <section
         className={cn(
           "container mx-auto flex w-full max-w-6xl flex-col",
@@ -64,12 +69,13 @@ function PageHeaderHeading({
   className,
   as: Comp = "h1",
 }: PageHeaderHeadingProps) {
-  const { align, size } = usePageHeaderContext();
+  const { align, size, animated } = usePageHeaderContext();
 
   return (
     <Comp
       className={cn(
-        "animate-fade-up animate-stagger text-primary max-w-4xl font-bold tracking-tight text-balance",
+        "text-primary max-w-4xl font-bold tracking-tight text-balance",
+        animated && "animate-fade-up animate-stagger",
         size === "sm"
           ? "text-4xl font-semibold md:text-5xl"
           : "text-4xl sm:text-5xl md:text-6xl",
@@ -77,9 +83,11 @@ function PageHeaderHeading({
         className,
       )}
       style={
-        {
-          "--stagger": 1,
-        } as CSSProperties
+        animated
+          ? ({
+              "--stagger": 1,
+            } as CSSProperties)
+          : undefined
       }
     >
       {children}
@@ -96,12 +104,13 @@ function PageHeaderDescription({
   children,
   className,
 }: PageHeaderDescriptionProps) {
-  const { align, size } = usePageHeaderContext();
+  const { align, size, animated } = usePageHeaderContext();
 
   return (
     <p
       className={cn(
-        "text-foreground/80 animate-fade-up animate-stagger max-w-2xl leading-relaxed text-pretty",
+        "text-foreground/80 max-w-2xl leading-relaxed text-pretty",
+        animated && "animate-fade-up animate-stagger",
         size === "sm"
           ? "text-muted-foreground text-base sm:text-lg"
           : "sm:text-lg md:text-xl",
@@ -109,9 +118,11 @@ function PageHeaderDescription({
         className,
       )}
       style={
-        {
-          "--stagger": 2,
-        } as CSSProperties
+        animated
+          ? ({
+              "--stagger": 2,
+            } as CSSProperties)
+          : undefined
       }
     >
       {children}
@@ -125,19 +136,22 @@ interface PageActionsProps {
 }
 
 function PageActions({ children, className }: PageActionsProps) {
-  const { align } = usePageHeaderContext();
+  const { align, animated } = usePageHeaderContext();
 
   return (
     <div
       className={cn(
-        "animate-fade-up animate-stagger mt-3 flex flex-wrap items-center gap-3",
+        "mt-3 flex flex-wrap items-center gap-3",
+        animated && "animate-fade-up animate-stagger",
         align === "center" ? "justify-center" : "justify-start",
         className,
       )}
       style={
-        {
-          "--stagger": 3,
-        } as CSSProperties
+        animated
+          ? ({
+              "--stagger": 3,
+            } as CSSProperties)
+          : undefined
       }
     >
       {children}

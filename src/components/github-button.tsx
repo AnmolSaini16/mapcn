@@ -7,7 +7,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function GitHubButton({ withCount = true }: { withCount?: boolean }) {
   return (
-    <Button variant="ghost" size="sm" asChild>
+    <Button
+      variant="ghost"
+      size="sm"
+      asChild
+      className="text-muted-foreground hover:text-foreground font-normal"
+    >
       <Link
         href={githubRepoUrl}
         target="_blank"
@@ -41,9 +46,7 @@ export async function StarCount() {
   return (
     <>
       {formattedCount && (
-        <span className="text-muted-foreground pt-0.5 text-xs tabular-nums">
-          {formattedCount}
-        </span>
+        <span className="pt-0.5 text-xs tabular-nums">{formattedCount}</span>
       )}
     </>
   );

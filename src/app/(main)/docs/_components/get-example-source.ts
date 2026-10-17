@@ -3,7 +3,7 @@ import path from "path";
 
 const EXAMPLES_DIR = path.join(
   process.cwd(),
-  "src/app/(main)/docs/_components/examples"
+  "src/app/(main)/docs/_components/examples",
 );
 
 export function getExampleSource(filename: string): string {

@@ -1,0 +1,70 @@
+{
+  "analytics-card": {
+    "width": 446,
+    "height": 278
+  },
+  "analytics-map": {
+    "width": 1280,
+    "height": 608
+  },
+  "arcs": {
+    "width": 734,
+    "height": 420
+  },
+  "choropleth": {
+    "width": 960,
+    "height": 640
+  },
+  "clusters": {
+    "width": 734,
+    "height": 420
+  },
+  "custom-layer": {
+    "width": 734,
+    "height": 420
+  },
+  "delivery-tracker": {
+    "width": 584,
+    "height": 380
+  },
+  "geojson-overlay": {
+    "width": 734,
+    "height": 420
+  },
+  "globe": {
+    "width": 734,
+    "height": 420
+  },
+  "heatmap": {
+    "width": 960,
+    "height": 640
+  },
+  "logistics-network": {
+    "width": 844,
+    "height": 530
+  },
+  "marker-popup": {
+    "width": 734,
+    "height": 500
+  },
+  "popup": {
+    "width": 734,
+    "height": 420
+  },
+  "route": {
+    "width": 734,
+    "height": 420
+  },
+  "route-alternatives": {
+    "width": 734,
+    "height": 500
+  },
+  "route-progress": {
+    "width": 734,
+    "height": 420
+  },
+  "uptime-monitor": {
+    "width": 670,
+    "height": 408
+  }
+}

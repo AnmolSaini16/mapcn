@@ -20,7 +20,10 @@
 </p>
 
 <p align="center">
-  <img src="public/banner.png" alt="mapcn banner" />
+  <picture>
+    <source media="(prefers-color-scheme: light)" srcset="public/banner-light.png" />
+    <img src="public/banner.png" alt="mapcn banner" />
+  </picture>
 </p>
 
 ## Features
