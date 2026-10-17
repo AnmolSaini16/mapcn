@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteAnalytics } from "@/components/site-analytics";
+import { siteBanner } from "@/lib/metadata";
 
 import "@/styles/globals.css";
 
@@ -69,21 +70,14 @@ export const metadata: Metadata = {
     siteName: siteName,
     title: "mapcn - Beautiful maps made simple",
     description: siteDescription,
-    images: [
-      {
-        url: "/banner.png",
-        width: 1200,
-        height: 630,
-        alt: "mapcn - Beautiful maps, made simple",
-      },
-    ],
+    images: [siteBanner],
   },
   twitter: {
     card: "summary_large_image",
     title: "mapcn - Beautiful maps made simple",
     description: siteDescription,
     creator: creator,
-    images: ["/banner.png"],
+    images: [siteBanner.url],
   },
   // "./" resolves to each page's own path.
   alternates: {

@@ -10,6 +10,7 @@ import {
 } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { getBlocksInGridOrder } from "@/lib/blocks";
+import { siteBanner } from "@/lib/metadata";
 import { BlockCard } from "../_components/block-card";
 import { BlockDisplay } from "../_components/block-display";
 
@@ -29,12 +30,6 @@ export async function generateMetadata({
   if (!block) notFound();
 
   const title = `${block.title} - mapcn`;
-  const image = {
-    url: `/blocks/${block.name}-dark.jpg`,
-    width: 1280,
-    height: 800,
-    alt: block.title,
-  };
 
   return {
     title: block.title,
@@ -45,13 +40,13 @@ export async function generateMetadata({
       url: "./",
       title,
       description: block.description,
-      images: [image],
+      images: [siteBanner],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description: block.description,
-      images: [image.url],
+      images: [siteBanner.url],
     },
   };
 }
