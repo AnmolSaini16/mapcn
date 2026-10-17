@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { CSSProperties } from "react";
-import { ArrowRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { HeroInstallCommand } from "./_components/hero-install-command";
 import { MapWall } from "./_components/map-wall";
@@ -11,6 +11,7 @@ import {
   PageHeaderDescription,
   PageActions,
 } from "@/components/page-header";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export default function Page() {
@@ -18,16 +19,19 @@ export default function Page() {
     <>
       <div className="flex-1">
         <PageHeader animated className="pt-7 md:pt-12 lg:pt-18 lg:pb-16">
-          <Link
-            href="/docs/skill"
+          <Badge
+            asChild
+            variant="secondary"
             style={{ "--stagger": 1 } as CSSProperties}
-            className="animate-fade-up animate-stagger text-muted-foreground hover:text-foreground -mb-1 inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors"
+            className="animate-fade-up animate-stagger bg-muted/50 text-foreground/80 ring-foreground/5 dark:bg-muted/30 [a&]:hover:bg-muted [a&]:hover:text-foreground dark:[a&]:hover:bg-muted/50 -mb-1 gap-0.5 py-1 pr-1.5 pl-2.5 ring-1"
           >
-            Agent skill for mapcn
-            <ArrowRight className="size-3" />
-          </Link>
+            <Link href="/docs/skill">
+              Agent skill for mapcn
+              <ChevronRight className="size-3.5" />
+            </Link>
+          </Badge>
           <PageHeaderHeading>Beautiful maps, made simple</PageHeaderHeading>
-          <PageHeaderDescription>
+          <PageHeaderDescription className="sm:text-wrap">
             Ready to use, customizable map components for React.{" "}
             <br className="hidden sm:block" />
             Built on MapLibre. Styled with Tailwind.

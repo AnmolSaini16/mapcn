@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Maximize } from "lucide-react";
+import { ThemedImage } from "@/components/themed-image";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { type FileTree, type RegistryBlockItem } from "@/lib/blocks";
@@ -31,7 +32,7 @@ export function BlockPreview({
         } as React.CSSProperties
       }
     >
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 max-md:hidden">
         <TabsList className="bg-background dark:border-input dark:bg-input/30 h-8! gap-0.5 rounded-md border p-0.5 shadow-xs">
           <TabsTrigger value="preview" className={tabTriggerClassName}>
             Preview
@@ -57,15 +58,19 @@ export function BlockPreview({
       </div>
 
       <div className="bg-muted/50 ring-foreground/5 dark:bg-muted/30 rounded-2xl p-2 ring-1">
+        <div className="bg-background ring-foreground/5 relative aspect-[16/10] overflow-hidden rounded-lg shadow-xs ring-1 md:hidden">
+          <ThemedImage src={`/blocks/${block.name}`} sizes="100vw" />
+        </div>
+
         <TabsContent
           value="preview"
           forceMount
-          className="data-[state=inactive]:hidden"
+          className="data-[state=inactive]:hidden max-md:hidden"
         >
           {children}
         </TabsContent>
 
-        <TabsContent value="code">
+        <TabsContent value="code" className="max-md:hidden">
           <BlockViewerCode tree={tree} highlightedFiles={highlightedFiles} />
         </TabsContent>
       </div>

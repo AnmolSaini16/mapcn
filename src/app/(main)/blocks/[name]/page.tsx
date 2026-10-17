@@ -71,11 +71,11 @@ export default async function BlockPage({ params }: BlockPageProps) {
             variant="ghost"
             size="sm"
             asChild
-            className="text-muted-foreground hover:text-foreground -ml-4 w-fit hover:bg-transparent!"
+            className="text-muted-foreground hover:text-foreground -ml-2.5 w-fit gap-1 hover:bg-transparent!"
           >
             <Link href="/blocks">
               <ChevronLeft />
-              Blocks
+              All Blocks
             </Link>
           </Button>
           <PageHeaderHeading>{block.title}</PageHeaderHeading>
