@@ -53,7 +53,7 @@ This project uses [CARTO Basemaps](https://docs.carto.com/faqs/carto-basemaps) w
 
 - **Commercial use**: Requires a CARTO Enterprise license. [Request a demo](https://carto.com/request-live-demo) for pricing details.
 - **Non-commercial use**: Free for CARTO grantees under their [basemap terms](https://carto.com/legal/bmap).
-- **Alternative**: You can switch to [OpenStreetMap](https://www.openstreetmap.org/) tiles or any other MapLibre-compatible tile provider (MapTiler, Stadia Maps, etc).
+- **Alternative**: You can switch to [OpenStreetMap](https://www.openstreetmap.org/) tiles or any other MapLibre-compatible tile provider (MapTiler, Stadia Maps, [unmap](https://unmap.dev/docs/frontend/mapcn), etc).
 
 ## Contributing
 
