@@ -208,7 +208,8 @@
       "title": "Delivery Tracker",
       "description": "Live order tracking with route progress, courier position, and order details.",
       "dependencies": [
-        "lucide-react"
+        "lucide-react",
+        "next-themes"
       ],
       "registryDependencies": [
         "@mapcn/map",

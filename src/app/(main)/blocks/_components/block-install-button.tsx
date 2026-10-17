@@ -2,7 +2,7 @@
 
 import { Check, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCopy } from "@/hooks/use-copy";
+import { getCopyLabel, useCopy } from "@/hooks/use-copy";
 import { trackEvent } from "@/lib/events";
 
 export function BlockInstallButton({ name }: { name: string }) {
@@ -24,14 +24,8 @@ export function BlockInstallButton({ name }: { name: string }) {
       {status === "copied" ? <Check /> : <Terminal />}
       <span className="truncate">npx shadcn add @mapcn/{name}</span>
       <span aria-live="polite" className="sr-only">
-        {STATUS_MESSAGES[status]}
+        {getCopyLabel(status, "")}
       </span>
     </Button>
   );
 }
-
-const STATUS_MESSAGES = {
-  idle: "",
-  copied: "Copied",
-  failed: "Couldn't copy",
-};

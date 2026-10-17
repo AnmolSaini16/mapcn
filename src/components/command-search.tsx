@@ -182,7 +182,7 @@ export function CommandSearch({ className }: { className?: string }) {
             </CommandItem>
             <CommandItem
               value="Copy prompt for your agent"
-              keywords={["ai", "llm", "claude", "cursor"]}
+              keywords={["ai", "llm", "claude", "cursor", "skill"]}
               onSelect={() =>
                 copy("prompt", mapInstallAgentPrompt, "copy_agent_prompt")
               }

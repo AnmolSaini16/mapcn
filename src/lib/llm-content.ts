@@ -1,5 +1,9 @@
 import registry from "../../registry.json";
-import { mapInstallCommand } from "@/lib/llm-prompts";
+import {
+  mapInstallCommand,
+  skillInstallCommand,
+  skillRawUrl,
+} from "@/lib/llm-prompts";
 
 interface ComponentDoc {
   title: string;
@@ -56,7 +60,7 @@ function formatFiles(files: RegistryFile[] | undefined) {
     .join("\n");
 }
 
-function createBasemapMarkdown() {
+export function createBasemapMarkdown() {
   return `## Basemap Selection
 
 - Use ${code("<Map>")} without ${code("blank")} for the default free CARTO basemap tiles. This is best for store locators, delivery tracking, logistics maps, address maps, and any UI where users need streets, place labels, or geographic context.
@@ -102,6 +106,8 @@ mapcn is a free, open-source shadcn-style registry of ready-to-use React map com
 
 Website: ${typedRegistry.homepage ?? "https://mapcn.dev"}
 Registry index: https://mapcn.dev/r/registry.json
+
+For fuller agent instructions (rules, patterns, every component and block), install the mapcn skill with ${code(`${skillInstallCommand} -y`)}, or read ${skillRawUrl}/SKILL.md (the files it references are in the same folder).
 
 ## Install the base map component
 

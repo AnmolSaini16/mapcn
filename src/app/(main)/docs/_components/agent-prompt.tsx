@@ -4,7 +4,7 @@ import { Check, Copy } from "lucide-react";
 
 import { mapInstallAgentPrompt } from "@/lib/llm-prompts";
 import { Button } from "@/components/ui/button";
-import { useCopy } from "@/hooks/use-copy";
+import { getCopyLabel, useCopy } from "@/hooks/use-copy";
 import { trackEvent } from "@/lib/events";
 
 export function AgentPrompt() {
@@ -23,7 +23,7 @@ export function AgentPrompt() {
       aria-live="polite"
       variant="outline"
       size="sm"
-      title="Paste into your AI coding agent to install mapcn"
+      title="Paste into your coding agent to install the mapcn skill and mapcn"
       className="text-muted-foreground hover:text-foreground h-7 shrink-0 gap-1.5 bg-transparent px-2.5 text-[13px] font-normal shadow-none dark:bg-transparent"
     >
       {status === "copied" ? (
@@ -31,13 +31,7 @@ export function AgentPrompt() {
       ) : (
         <Copy className="size-3.5" />
       )}
-      {LABELS[status]}
+      {getCopyLabel(status, "Copy prompt")}
     </Button>
   );
 }
-
-const LABELS = {
-  idle: "Copy prompt",
-  copied: "Copied",
-  failed: "Couldn't copy",
-};

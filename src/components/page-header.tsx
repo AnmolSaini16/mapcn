@@ -141,7 +141,7 @@ function PageActions({ children, className }: PageActionsProps) {
   return (
     <div
       className={cn(
-        "mt-3 flex flex-wrap items-center gap-3",
+        "mt-6 flex flex-wrap items-center gap-4 max-sm:w-full max-sm:flex-col",
         animated && "animate-fade-up animate-stagger",
         align === "center" ? "justify-center" : "justify-start",
         className,

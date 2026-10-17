@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { CSSProperties } from "react";
+import { ArrowRight } from "lucide-react";
 
+import { HeroInstallCommand } from "./_components/hero-install-command";
 import { MapWall } from "./_components/map-wall";
 import { Footer } from "@/components/footer";
 import {
@@ -15,23 +17,25 @@ export default function Page() {
   return (
     <>
       <div className="flex-1">
-        <PageHeader animated>
+        <PageHeader animated className="pt-7 md:pt-12 lg:pt-18 lg:pb-16">
+          <Link
+            href="/docs/skill"
+            style={{ "--stagger": 1 } as CSSProperties}
+            className="animate-fade-up animate-stagger text-muted-foreground hover:text-foreground -mb-1 inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors"
+          >
+            Agent skill for mapcn
+            <ArrowRight className="size-3" />
+          </Link>
           <PageHeaderHeading>Beautiful maps, made simple</PageHeaderHeading>
           <PageHeaderDescription>
             Ready to use, customizable map components for React.{" "}
             <br className="hidden sm:block" />
             Built on MapLibre. Styled with Tailwind.
           </PageHeaderDescription>
-          <PageActions className="mt-5">
-            <Button asChild className="min-w-36 justify-center">
+          <PageActions>
+            <HeroInstallCommand className="max-w-full" />
+            <Button asChild size="lg" className="min-w-36 justify-center">
               <Link href="/docs">Get Started</Link>
-            </Button>
-            <Button
-              variant="outline"
-              asChild
-              className="min-w-36 justify-center"
-            >
-              <Link href="/docs/basic-map">View Components</Link>
             </Button>
           </PageActions>
         </PageHeader>
@@ -40,11 +44,11 @@ export default function Page() {
           className="animate-fade-up animate-stagger relative"
           style={
             {
-              "--stagger": 5,
+              "--stagger": 4.5,
             } as CSSProperties
           }
         >
-          <div className="relative h-[34rem] overflow-hidden mask-b-from-65% max-md:mask-r-from-85% max-md:mask-l-from-85% md:h-[44rem] lg:h-[clamp(52rem,calc(100svh-28.3125rem),90rem)]">
+          <div className="relative h-[34rem] overflow-hidden mask-b-from-65% max-md:mask-r-from-85% max-md:mask-l-from-85% md:h-[44rem] lg:h-[clamp(52rem,calc(100svh-28.5rem),90rem)]">
             <div className="absolute inset-0 [background-image:radial-gradient(var(--color-border)_1px,transparent_0)] mask-t-from-0% [background-size:24px_24px]" />
             <MapWall className="pt-6" />
           </div>

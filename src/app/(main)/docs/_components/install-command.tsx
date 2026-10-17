@@ -4,12 +4,14 @@ import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useCopy } from "@/hooks/use-copy";
+import { getCopyLabel, useCopy } from "@/hooks/use-copy";
 import { trackEvent } from "@/lib/events";
 
 interface InstallCommandProps {
-  /** The shadcn registry item to add, e.g. "@mapcn/map" */
+  /** What to add, e.g. "@mapcn/map" */
   name: string;
+  /** The CLI and subcommand to run it with */
+  cli?: string;
 }
 
 const PACKAGE_MANAGERS = [
@@ -19,10 +21,13 @@ const PACKAGE_MANAGERS = [
   { manager: "bun", exec: "bunx --bun" },
 ] as const;
 
-export function InstallCommand({ name }: InstallCommandProps) {
+export function InstallCommand({
+  name,
+  cli = "shadcn@latest add",
+}: InstallCommandProps) {
   const tabs = PACKAGE_MANAGERS.map(({ manager, exec }) => ({
     manager,
-    command: `${exec} shadcn@latest add ${name}`,
+    command: `${exec} ${cli} ${name}`,
   }));
 
   const [active, setActive] = useState<string>(tabs[0].manager);
@@ -33,7 +38,7 @@ export function InstallCommand({ name }: InstallCommandProps) {
     if (!current || !(await copy(current.command))) return;
     trackEvent({
       name: "copy_install_command",
-      properties: { name, packageManager: active },
+      properties: { name, cli, packageManager: active },
     });
   };
 
@@ -59,7 +64,7 @@ export function InstallCommand({ name }: InstallCommandProps) {
             variant="ghost"
             size="icon-sm"
             onClick={copyCommand}
-            aria-label={COPY_LABELS[status]}
+            aria-label={getCopyLabel(status, "Copy command")}
             className="text-muted-foreground"
           >
             {status === "copied" ? <Check /> : <Copy />}
@@ -78,9 +83,3 @@ export function InstallCommand({ name }: InstallCommandProps) {
     </div>
   );
 }
-
-const COPY_LABELS = {
-  idle: "Copy command",
-  copied: "Copied",
-  failed: "Couldn't copy",
-};

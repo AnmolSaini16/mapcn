@@ -37,6 +37,16 @@
 - 🛤️ **Routes** — Draw routes and paths on your maps
 - 🎮 **Controls** — Zoom, compass, locate, and fullscreen controls
 
+## Agent Skill
+
+Teach your coding agent (Claude Code, Cursor, Codex, …) how to use mapcn:
+
+```bash
+npx skills add AnmolSaini16/mapcn
+```
+
+Then ask for a map, or ask where one would fit in your app. See [mapcn.dev/docs/skill](https://mapcn.dev/docs/skill).
+
 ## Basemap Terms of Service
 
 This project uses [CARTO Basemaps](https://docs.carto.com/faqs/carto-basemaps) which are based on OpenStreetMap data.

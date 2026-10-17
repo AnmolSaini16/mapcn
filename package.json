@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "registry:build": "npx shadcn build -o ./public/r && npx tsx scripts/fix-registry-imports.ts",
+    "registry:build": "npx shadcn build -o ./public/r && npx tsx scripts/fix-registry-imports.ts && npm run skill:build",
+    "skill:build": "npx tsx scripts/build-skill.ts",
     "blocks:thumbnails": "npx tsx scripts/capture-block-thumbnails.ts"
   },
   "dependencies": {

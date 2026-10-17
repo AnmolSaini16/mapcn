@@ -44,7 +44,7 @@ export default function InstallationPage() {
       title="Installation"
       description="How to install and set up mapcn in your project."
       prev={{ title: "Introduction", href: "/docs" }}
-      next={{ title: "API Reference", href: "/docs/api-reference" }}
+      next={{ title: "Skill", href: "/docs/skill" }}
       action={<AgentPrompt />}
     >
       <DocsSection title="Prerequisites">

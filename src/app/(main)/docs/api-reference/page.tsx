@@ -44,7 +44,7 @@ export default function ApiReferencePage() {
     <DocsLayout
       title="API Reference"
       description="Complete reference for all map components and their props."
-      prev={{ title: "Installation", href: "/docs/installation" }}
+      prev={{ title: "Skill", href: "/docs/skill" }}
       next={{ title: "Map", href: "/docs/basic-map" }}
     >
       <DocsNote>

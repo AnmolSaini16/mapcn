@@ -1,3 +1,12 @@
 export const mapInstallCommand = "npx shadcn@latest add @mapcn/map";
 
-export const mapInstallAgentPrompt = `Read the mapcn agent instructions at https://mapcn.dev/llms.txt, then install mapcn in this project. Run ${mapInstallCommand}. Then add a basic example that imports Map and MapControls from "@/components/ui/map" and renders a map inside a sized container. Use the default tiled basemap for maps that need streets, labels, or geographic context. If the user wants a blank/data-only map, such as countries or country borders, use <Map blank> with MapGeoJSON and either a user-provided GeoJSON URL/object or a world countries GeoJSON source. Preserve the existing Tailwind CSS and shadcn/ui setup. Do not manually rewrite the registry component unless the command fails; if it fails, inspect https://mapcn.dev/r/map.json and install the listed dependencies.`;
+export const skillInstallCommand = "npx skills add AnmolSaini16/mapcn";
+
+// Raw skill folder, for agents that can't install skills.
+export const skillRawUrl =
+  "https://raw.githubusercontent.com/AnmolSaini16/mapcn/main/skills/mapcn";
+
+// -y skips the CLI's prompts, which an agent's shell can't answer.
+const skillInstallAgentCommand = `${skillInstallCommand} -y`;
+
+export const mapInstallAgentPrompt = `Install the mapcn agent skill with ${skillInstallAgentCommand} and read its SKILL.md. If you can't install skills, read ${skillRawUrl}/SKILL.md instead, and fetch the files it references from that same folder. Then install mapcn in this project with ${mapInstallCommand} and add a basic map example, following the skill's rules. When you're done, offer to look through the project and suggest where other maps or blocks would fit, but don't build them unless I ask.`;
