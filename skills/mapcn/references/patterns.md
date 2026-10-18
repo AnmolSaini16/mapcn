@@ -110,4 +110,4 @@ script-src 'self' https://unpkg.com;
 worker-src 'self' blob:;
 ```
 
-Add your basemap host too. To self-host the worker, copy `maplibre-gl-worker.mjs` and `maplibre-gl-shared.mjs` from `node_modules/maplibre-gl/dist/` into `public/`, side by side. Then change the worker URL near the top of `map.tsx` to `MapLibreGL.setWorkerUrl("/maplibre-gl-worker.mjs")`.
+Add your basemap host too. To self-host the worker, copy `maplibre-gl-worker.mjs` and `maplibre-gl-shared.mjs` from `node_modules/maplibre-gl/dist/` into `public/`, side by side. Then change the worker URL in `loadMapLibre()` near the top of `map.tsx` to `lib.setWorkerUrl("/maplibre-gl-worker.mjs")`.

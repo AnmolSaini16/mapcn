@@ -19,7 +19,7 @@ const selfHostWorkerCode = `cp node_modules/maplibre-gl/dist/maplibre-gl-worker.
    node_modules/maplibre-gl/dist/maplibre-gl-shared.mjs \\
    public/`;
 
-const workerUrlCode = `MapLibreGL.setWorkerUrl("/maplibre-gl-worker.mjs");`;
+const workerUrlCode = `lib.setWorkerUrl("/maplibre-gl-worker.mjs");`;
 
 const usageCode = `import { Map, MapControls } from "@/components/ui/map";
 import { Card } from "@/components/ui/card";
@@ -101,7 +101,10 @@ export default function InstallationPage() {
           language="bash"
           showLineNumbers={false}
         />
-        <p>Then replace the unpkg URL near the top of the component:</p>
+        <p>
+          Then replace the unpkg URL in <DocsCode>loadMapLibre()</DocsCode> near
+          the top of the component:
+        </p>
         <CodeBlock
           code={workerUrlCode}
           filename="components/ui/map.tsx"
