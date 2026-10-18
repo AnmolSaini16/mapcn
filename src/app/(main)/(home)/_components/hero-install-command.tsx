@@ -24,7 +24,7 @@ export function HeroInstallCommand({ className }: { className?: string }) {
       onClick={copyCommand}
       title="Copy install command"
       className={cn(
-        "group bg-surface ring-foreground/10 focus-visible:ring-ring/50 hover:bg-muted dark:hover:bg-muted/70 inline-flex h-10 min-w-0 items-center gap-2 rounded-md px-4 font-mono text-[13px] ring-1 transition-colors outline-none focus-visible:ring-[3px]",
+        "group bg-surface ring-foreground/10 focus-visible:ring-ring/50 hover:bg-muted dark:hover:bg-muted/70 inline-flex h-10 min-w-0 items-center gap-2 rounded-lg px-4 font-mono text-[13px] ring-1 transition-colors outline-none focus-visible:ring-[3px]",
         className,
       )}
     >

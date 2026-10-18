@@ -45,7 +45,7 @@ function PageHeader({
           "container mx-auto flex w-full max-w-6xl flex-col",
           size === "sm"
             ? "gap-3 py-14 md:py-18"
-            : "gap-4 py-16 md:gap-5 md:py-20 lg:py-24 lg:pb-20",
+            : "gap-4 py-16 md:gap-5 md:py-20",
           align === "center"
             ? "items-center text-center"
             : "items-start text-left",
@@ -78,7 +78,7 @@ function PageHeaderHeading({
         animated && "animate-fade-up animate-stagger",
         size === "sm"
           ? "text-4xl font-semibold md:text-5xl"
-          : "text-4xl sm:text-5xl md:text-6xl",
+          : "text-4xl md:text-6xl",
         align === "center" ? "text-center" : "text-left",
         className,
       )}
@@ -109,7 +109,7 @@ function PageHeaderDescription({
   return (
     <p
       className={cn(
-        "text-foreground/80 max-w-2xl leading-relaxed text-pretty",
+        "text-foreground/80 max-w-2xl leading-relaxed text-balance",
         animated && "animate-fade-up animate-stagger",
         size === "sm"
           ? "text-muted-foreground text-base sm:text-lg"
@@ -141,7 +141,7 @@ function PageActions({ children, className }: PageActionsProps) {
   return (
     <div
       className={cn(
-        "mt-6 flex flex-wrap items-center gap-4 max-sm:w-full max-sm:flex-col",
+        "mt-3 flex flex-wrap items-center gap-4 max-sm:w-full max-sm:flex-col",
         animated && "animate-fade-up animate-stagger",
         align === "center" ? "justify-center" : "justify-start",
         className,

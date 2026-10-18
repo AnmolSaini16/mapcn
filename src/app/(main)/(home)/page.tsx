@@ -18,7 +18,7 @@ export default function Page() {
   return (
     <>
       <div className="flex-1">
-        <PageHeader animated className="pt-7 md:pt-12 lg:pt-18 lg:pb-16">
+        <PageHeader animated className="pt-7 md:pt-12 lg:pt-18">
           <Badge
             asChild
             variant="secondary"
@@ -38,7 +38,7 @@ export default function Page() {
           </PageHeaderDescription>
           <PageActions>
             <HeroInstallCommand className="max-w-full" />
-            <Button asChild size="lg" className="min-w-36 justify-center">
+            <Button asChild size="lg" className="rounded-lg">
               <Link href="/docs">Get Started</Link>
             </Button>
           </PageActions>
