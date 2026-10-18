@@ -1,6 +1,6 @@
 ---
 name: mapcn
-description: Build maps in React with mapcn, themeable shadcn-style map components on MapLibre GL and Tailwind CSS. Use when the user wants to add, customize or theme a map: markers, popups, tooltips, routes, arcs, GeoJSON or choropleth layers, clusters, a globe, custom basemap styles or light/dark theming, or a full map page (analytics dashboard, delivery tracker, store locator) in a React, Next.js or Vite project using shadcn/ui or Tailwind. Also use when they ask where a map would fit in their app.
+description: "Build maps in React with mapcn, themeable shadcn-style map components on MapLibre GL and Tailwind CSS. Use when the user wants to add, customize or theme a map: markers, popups, tooltips, routes, arcs, GeoJSON or choropleth layers, clusters, a globe, custom basemap styles or light/dark theming, or a full map page (analytics dashboard, delivery tracker, store locator) in a React, Next.js or Vite project using shadcn/ui or Tailwind. Also use when they ask where a map would fit in their app."
 ---
 
 # mapcn
