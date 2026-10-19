@@ -1,3 +1,4 @@
+import { MapErrorBoundary } from "@/components/map-error-boundary";
 import { slugToTitle } from "@/lib/utils";
 import { blockComponents } from "@/registry/blocks/__index__";
 import { notFound } from "next/navigation";
@@ -36,7 +37,9 @@ export default async function BlockViewPage({ params }: BlockViewPageProps) {
 
   return (
     <div className="bg-background min-h-screen">
-      <Component />
+      <MapErrorBoundary className="min-h-screen">
+        <Component />
+      </MapErrorBoundary>
     </div>
   );
 }

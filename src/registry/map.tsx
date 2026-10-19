@@ -24,7 +24,6 @@ import { cn } from "@/lib/utils";
 
 type MapLibreModule = typeof MapLibreGL;
 
-let maplibre: MapLibreModule | null = null;
 let maplibrePromise: Promise<MapLibreModule> | null = null;
 
 function loadMapLibre() {
@@ -35,7 +34,6 @@ function loadMapLibre() {
           `https://unpkg.com/maplibre-gl@${lib.getVersion()}/dist/maplibre-gl-worker.mjs`,
         );
       }
-      maplibre = lib;
       return lib;
     })
     .catch((error) => {
@@ -43,11 +41,6 @@ function loadMapLibre() {
       throw error;
     });
   return maplibrePromise;
-}
-
-function getMapLibre() {
-  if (!maplibre) throw new Error("maplibre-gl has not loaded yet");
-  return maplibre;
 }
 
 if (typeof window !== "undefined") loadMapLibre().catch(() => {});
@@ -168,6 +161,7 @@ function useResolvedTheme(themeProp?: "light" | "dark"): Theme {
 
 type MapContextValue = {
   map: MapLibreGL.Map | null;
+  mapLib: MapLibreModule | null;
   isLoaded: boolean;
   resolvedTheme: Theme;
 };
@@ -180,6 +174,14 @@ function useMap() {
     throw new Error("useMap must be used within a Map component");
   }
   return context;
+}
+
+function useMapLib() {
+  const { mapLib } = useMap();
+  if (!mapLib) {
+    throw new Error("useMapLib must be used within a Map component");
+  }
+  return mapLib;
 }
 
 /** Map viewport state */
@@ -275,6 +277,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
   ref,
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [mapLib, setMapLib] = useState<MapLibreModule | null>(null);
   const [mapInstance, setMapInstance] = useState<MapLibreGL.Map | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isStyleLoaded, setIsStyleLoaded] = useState(false);
@@ -306,71 +309,74 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     return defaultStyles;
   }, [stableStyles, blank]);
 
+  const initOptionsRef = useRef({ props, viewport, resolvedTheme, mapStyles });
+  initOptionsRef.current = { props, viewport, resolvedTheme, mapStyles };
+
   // Expose the map instance to the parent component
   useImperativeHandle(ref, () => mapInstance as MapLibreGL.Map, [mapInstance]);
 
   // Initialize the map once maplibre-gl has loaded
   useEffect(() => {
     let cancelled = false;
-    let teardown: (() => void) | undefined;
+    let map: MapLibreGL.Map | undefined;
 
-    const init = (lib: MapLibreModule) => {
-      if (cancelled || !containerRef.current) return;
+    loadMapLibre()
+      .then((lib) => {
+        if (cancelled || !containerRef.current) return;
 
-      const initialStyle =
-        resolvedTheme === "dark" ? mapStyles.dark : mapStyles.light;
-      currentStyleRef.current = initialStyle;
+        // Latest props, not the first render's
+        const { props, viewport, resolvedTheme, mapStyles } =
+          initOptionsRef.current;
+        const initialStyle =
+          resolvedTheme === "dark" ? mapStyles.dark : mapStyles.light;
+        currentStyleRef.current = initialStyle;
 
-      const map = new lib.Map({
-        container: containerRef.current,
-        style: initialStyle,
-        renderWorldCopies: false,
-        attributionControl: {
-          compact: true,
-        },
-        ...props,
-        ...viewport,
+        // Create the map (no painter means WebGL2 is unavailable)
+        const instance = new lib.Map({
+          container: containerRef.current,
+          style: initialStyle,
+          renderWorldCopies: false,
+          attributionControl: {
+            compact: true,
+          },
+          ...props,
+          ...viewport,
+        });
+        if (!instance.painter) throw new lib.GPUInitializationError({}, null);
+        map = instance;
+
+        // Track load state
+        instance.on("load", () => setIsLoaded(true));
+        instance.on("style.load", () => {
+          styleSwapInFlightRef.current = false;
+          setIsStyleLoaded(true);
+        });
+        // Skip viewport changes triggered by internal updates
+        instance.on("move", () => {
+          if (internalUpdateRef.current) return;
+          onViewportChangeRef.current?.(getViewport(instance));
+        });
+
+        // set values for context
+        setMapLib(lib);
+        setMapInstance(instance);
+      })
+      // Rethrow during render so an error boundary catches it
+      .catch((error) => {
+        if (cancelled) return;
+        setMapInstance(() => {
+          throw error;
+        });
       });
-
-      const styleLoadHandler = () => {
-        styleSwapInFlightRef.current = false;
-        setIsStyleLoaded(true);
-      };
-      const loadHandler = () => setIsLoaded(true);
-
-      // Viewport change handler - skip if triggered by internal update
-      const handleMove = () => {
-        if (internalUpdateRef.current) return;
-        onViewportChangeRef.current?.(getViewport(map));
-      };
-
-      map.on("load", loadHandler);
-      map.on("style.load", styleLoadHandler);
-      map.on("move", handleMove);
-      setMapInstance(map);
-
-      teardown = () => {
-        map.off("load", loadHandler);
-        map.off("style.load", styleLoadHandler);
-        map.off("move", handleMove);
-        map.remove();
-        setIsLoaded(false);
-        setIsStyleLoaded(false);
-        setMapInstance(null);
-      };
-    };
-
-    if (maplibre) init(maplibre);
-    else
-      loadMapLibre().then(init, (error) =>
-        console.error("Failed to load maplibre-gl", error),
-      );
 
     return () => {
       cancelled = true;
-      teardown?.();
+      if (!map) return;
+      map.remove();
+      setIsLoaded(false);
+      setIsStyleLoaded(false);
+      setMapInstance(null);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Sync controlled viewport to map
@@ -436,10 +442,11 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
   const contextValue = useMemo(
     () => ({
       map: mapInstance,
+      mapLib,
       isLoaded: isLoaded && isStyleLoaded,
       resolvedTheme,
     }),
-    [mapInstance, isLoaded, isStyleLoaded, resolvedTheme],
+    [mapInstance, mapLib, isLoaded, isStyleLoaded, resolvedTheme],
   );
 
   return (
@@ -506,6 +513,7 @@ function MapMarker({
   ...markerOptions
 }: MapMarkerProps) {
   const { map } = useMap();
+  const { Marker } = useMapLib();
 
   const callbacksRef = useRef({
     onClick,
@@ -525,7 +533,6 @@ function MapMarker({
   };
 
   const marker = useMemo(() => {
-    const { Marker } = getMapLibre();
     const markerInstance = new Marker({
       ...markerOptions,
       element: document.createElement("div"),
@@ -681,11 +688,11 @@ function MarkerPopup({
   ...popupOptions
 }: MarkerPopupProps) {
   const { marker, map } = useMarkerContext();
+  const { Popup } = useMapLib();
   const container = useMemo(() => document.createElement("div"), []);
   const { offset, maxWidth } = popupOptions;
 
   const popup = useMemo(() => {
-    const { Popup } = getMapLibre();
     const popupInstance = new Popup({
       offset: 16,
       ...popupOptions,
@@ -748,11 +755,11 @@ function MarkerTooltip({
   ...popupOptions
 }: MarkerTooltipProps) {
   const { marker, map } = useMarkerContext();
+  const { Popup } = useMapLib();
   const container = useMemo(() => document.createElement("div"), []);
   const { offset, maxWidth } = popupOptions;
 
   const tooltip = useMemo(() => {
-    const { Popup } = getMapLibre();
     const tooltipInstance = new Popup({
       offset: 16,
       ...popupOptions,
@@ -1079,13 +1086,13 @@ function MapPopup({
   ...popupOptions
 }: MapPopupProps) {
   const { map } = useMap();
+  const { Popup } = useMapLib();
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
   const container = useMemo(() => document.createElement("div"), []);
   const { offset, maxWidth } = popupOptions;
 
   const popup = useMemo(() => {
-    const { Popup } = getMapLibre();
     const popupInstance = new Popup({
       offset: 16,
       ...popupOptions,
