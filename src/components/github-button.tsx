@@ -30,18 +30,25 @@ export function GitHubButton({ withCount = true }: { withCount?: boolean }) {
   );
 }
 
+export async function getStarCount() {
+  let count: number | undefined;
+  try {
+    const response = await fetch(
+      "https://api.github.com/repos/AnmolSaini16/mapcn",
+      { next: { revalidate: 60 } },
+    );
+    if (!response.ok) return null;
+    count = (await response.json()).stargazers_count;
+  } catch {
+    return null;
+  }
+  if (typeof count !== "number") return null;
+
+  return count >= 1000 ? `${(count / 1000).toFixed(1)}k` : `${count}`;
+}
+
 export async function StarCount() {
-  const response = await fetch(
-    "https://api.github.com/repos/AnmolSaini16/mapcn",
-    { next: { revalidate: 60 } },
-  );
-
-  const data = await response.json();
-
-  const formattedCount =
-    data.stargazers_count >= 1000
-      ? `${(data.stargazers_count / 1000).toFixed(1)}k`
-      : data.stargazers_count;
+  const formattedCount = await getStarCount();
 
   return (
     <>

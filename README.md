@@ -49,11 +49,22 @@ Then ask for a map, or ask where one would fit in your app. See [mapcn.dev/docs/
 
 ## Basemap Terms of Service
 
-This project uses [CARTO Basemaps](https://docs.carto.com/faqs/carto-basemaps) which are based on OpenStreetMap data.
+mapcn uses [CARTO Basemaps](https://docs.carto.com/faqs/carto-basemaps) powered by OpenStreetMap data for its default styles and examples.
 
-- **Commercial use**: Requires a CARTO Enterprise license. [Request a demo](https://carto.com/request-live-demo) for pricing details.
-- **Non-commercial use**: Free for CARTO grantees under their [basemap terms](https://carto.com/legal/bmap).
-- **Alternative**: You can switch to [OpenStreetMap](https://www.openstreetmap.org/) tiles or any other MapLibre-compatible tile provider (MapTiler, Stadia Maps, etc).
+CARTO offers free tiers for commercial and non-commercial usage, subject to monthly tile request limits and attribution requirements.
+
+- **Commercial use**: Free up to 1 million tile requests per month.
+- **Non-commercial use**: Free up to 5 million tile requests per month.
+- **Attribution**: CARTO and OpenStreetMap attribution must remain visible.
+- **API keys**: CARTO requires API keys for raster basemaps and may extend this requirement to vector basemaps.
+
+For production applications, review [CARTO's terms](https://carto.com/legal/basemap-terms/) and configure your own basemap provider or API key as needed.
+
+mapcn is built on MapLibre and supports alternative MapLibre-compatible basemap providers.
+
+## Sponsors
+
+mapcn is free and open source, kept going by its sponsors. Want your logo here? See [mapcn.dev/sponsors](https://mapcn.dev/sponsors).
 
 ## Contributing
 

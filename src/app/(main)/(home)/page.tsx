@@ -5,6 +5,7 @@ import { ChevronRight } from "lucide-react";
 import { HeroInstallCommand } from "./_components/hero-install-command";
 import { MapWall } from "./_components/map-wall";
 import { Footer } from "@/components/footer";
+import { SponsorStrip } from "@/components/sponsor-logos";
 import {
   PageHeader,
   PageHeaderHeading,
@@ -13,8 +14,11 @@ import {
 } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { hasFeaturedSponsors, pageviewsSinceLaunch } from "@/lib/sponsors";
 
 export default function Page() {
+  const hasSponsors = hasFeaturedSponsors();
+
   return (
     <>
       <div className="flex-1">
@@ -78,6 +82,39 @@ export default function Page() {
             </a>
           </p>
         </section>
+
+        {hasSponsors ? (
+          <section className="container flex flex-col items-center gap-8 pt-20 pb-28 md:pt-24 md:pb-32">
+            <div className="flex flex-col items-center gap-1.5 text-center">
+              <h2 className="text-lg font-medium tracking-tight">Backed by</h2>
+              <p className="text-muted-foreground max-w-sm text-sm text-balance">
+                Thanks to the teams keeping mapcn free and open source.
+              </p>
+            </div>
+            <SponsorStrip />
+            <Link
+              href="/sponsors"
+              className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm transition-colors"
+            >
+              Become a sponsor
+              <ChevronRight className="size-3.5" />
+            </Link>
+          </section>
+        ) : (
+          <section className="container flex flex-col items-center gap-2 py-16 text-center md:py-20">
+            <p className="text-muted-foreground text-sm text-balance">
+              mapcn is free and open source, kept going by sponsors. Reach the
+              developers behind its {pageviewsSinceLaunch} pageviews.
+            </p>
+            <Link
+              href="/sponsors"
+              className="text-foreground/80 hover:text-foreground flex items-center gap-1 text-sm font-medium transition-colors"
+            >
+              Become a sponsor
+              <ChevronRight className="size-3.5" />
+            </Link>
+          </section>
+        )}
       </div>
 
       <Footer className="mt-0!" />

@@ -160,7 +160,7 @@
 }
 
 .container {
-  @apply mx-auto max-w-[1440px] px-6;
+  @apply mx-auto max-w-[1500px] px-6;
 }
 
 .container-wide {

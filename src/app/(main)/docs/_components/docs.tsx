@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { DocsToc } from "./docs-toc";
+import { DocsSponsors } from "@/components/sponsor-logos";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function slugify(text: string): string {
@@ -131,11 +132,13 @@ export function DocsLayout({
             )}
           </div>
         )}
+        <DocsSponsors className="mt-12 xl:hidden" />
       </div>
 
       <aside className="hidden w-42 shrink-0 xl:block">
-        <nav className="sticky top-14 max-h-[calc(100svh-3.5rem)] overflow-y-auto pt-12 pb-10 [scrollbar-gutter:stable]">
+        <nav className="sticky top-14 -mx-3 max-h-[calc(100svh-3.5rem)] overflow-y-auto px-3 pt-12 pb-10 [scrollbar-gutter:stable]">
           {tocItems.length > 0 && <DocsToc items={tocItems} />}
+          <DocsSponsors className={tocItems.length > 0 ? "mt-10" : undefined} />
         </nav>
       </aside>
     </div>

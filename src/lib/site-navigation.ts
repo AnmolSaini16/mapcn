@@ -50,6 +50,7 @@ const navItems: SiteNavigationItem[] = [
   { title: "Docs", href: "/docs", icon: CornerDownRight },
   { title: "Components", href: "/docs/basic-map", icon: CornerDownRight },
   { title: "Blocks", href: "/blocks", icon: CornerDownRight },
+  { title: "Sponsors", href: "/sponsors", icon: CornerDownRight },
 ];
 
 export const siteNavigation: SiteNavigationGroup[] = [

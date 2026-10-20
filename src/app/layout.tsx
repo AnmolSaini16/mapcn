@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteAnalytics } from "@/components/site-analytics";
-import { siteBanner } from "@/lib/metadata";
+import { siteBanner, siteUrl } from "@/lib/metadata";
 
 import "@/styles/globals.css";
 
@@ -18,7 +18,6 @@ const geistMono = Geist_Mono({
   variable: "--font-mono",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 const siteName = "mapcn";
 const creator = "https://github.com/AnmolSaini16";
 const siteDescription =

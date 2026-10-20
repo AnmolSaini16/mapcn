@@ -45,11 +45,7 @@ const footerLinks = {
       href: "https://github.com/AnmolSaini16/mapcn",
       external: true,
     },
-    {
-      label: "Sponsor",
-      href: "https://github.com/sponsors/AnmolSaini16",
-      external: true,
-    },
+    { label: "Sponsor", href: "/sponsors", external: false },
   ],
   resources: [
     { label: "MapLibre GL", href: "https://maplibre.org/", external: true },
@@ -61,6 +57,12 @@ const footerLinks = {
     },
   ],
 };
+
+const legalLinks = [
+  { label: "Terms", href: "/terms" },
+  { label: "Privacy", href: "/terms#privacy" },
+  { label: "Refunds", href: "/terms#refunds" },
+];
 
 export function Footer({ className }: { className?: string }) {
   return (
@@ -142,10 +144,21 @@ export function Footer({ className }: { className?: string }) {
           </div>
         </div>
 
-        <div className="mt-12 border-t pt-6">
+        <div className="mt-12 flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-muted-foreground text-xs">
             © {new Date().getFullYear()} mapcn. All rights reserved.
           </p>
+          <nav aria-label="Legal" className="flex items-center gap-4 text-xs">
+            {legalLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
         </div>
       </div>
     </footer>
