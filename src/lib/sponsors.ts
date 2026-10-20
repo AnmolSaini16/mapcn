@@ -80,7 +80,7 @@ export const pageviewsSinceLaunch = "1M+";
 export const siteStats: SiteStat[] = [
   { label: "Pageviews since launch", value: pageviewsSinceLaunch },
   { label: "Visitors since launch", value: "225K+" },
-  { label: "Monthly pageviews", value: "45K+" },
+  { label: "Monthly pageviews", value: "50K+" },
 ];
 
 export function getSponsorsByTier(tier: SponsorTierId) {

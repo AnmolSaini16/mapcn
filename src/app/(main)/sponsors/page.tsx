@@ -43,8 +43,8 @@ export default function Page() {
         <PageHeader size="sm">
           <PageHeaderHeading>Sponsor mapcn</PageHeaderHeading>
           <PageHeaderDescription>
-            mapcn is free and open source. Sponsors keep it that way, and put
-            their product in front of developers adding maps to React apps.
+            mapcn is free and open source. Sponsors help keep it that way while
+            reaching developers who use mapcn to build their projects.
           </PageHeaderDescription>
           <PageActions className="max-sm:flex-row max-sm:gap-3">
             <Button asChild size="lg" className="rounded-lg">
