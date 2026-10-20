@@ -43,7 +43,6 @@ Never write or paste `map.tsx` by hand. If the CLI fails, read https://mapcn.dev
 - **Routes don't fetch.** `MapRoute` only draws the coordinates it's given; `RouteProgress` and `RouteMarker` go inside it and work from that same line. Fetch directions (OSRM, Mapbox, Google) in the parent and pass `[lng, lat][]` down. See the OSRM example linked under Routes in `references/components.md`. `MapGeoJSON` and `MapClusterLayer` take a GeoJSON object or a URL.
 - **Use theme colors in your own UI.** Marker content, popups and overlays are plain React, so use `bg-background`, `text-muted-foreground`, `border` and so on. Data colors on lines and fills (`MapRoute color`, paint props) can be real colors.
 - **Theme follows the app.** The basemap switches light/dark from a `dark` or `light` class or a `data-theme` attribute on `<html>` (next-themes works out of the box), falling back to the system preference. Pass `theme` only to force one.
-- **Wrap maps in an error boundary.** `<Map>` throws if `maplibre-gl` fails to load or WebGL2 is unavailable, so without a boundary the whole page errors.
 - **Raw MapLibre when you need it:** `useMap()` inside `<Map>` returns `{ map, isLoaded }`, or pass a `ref` (`MapRef`) to `<Map>`. Wait for `isLoaded` before adding sources or layers, and remove them on cleanup.
 
 <!-- generated:basemap -->

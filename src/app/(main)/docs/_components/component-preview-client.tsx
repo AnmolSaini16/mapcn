@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CodeSurface } from "@/components/code-surface";
 import { CodeCopyButton } from "@/components/code-copy-button";
-import { MapErrorBoundary } from "@/components/map-error-boundary";
 
 interface ComponentPreviewClientProps {
   children: React.ReactNode;
@@ -32,7 +31,7 @@ export function ComponentPreviewClient({
       style={{ "--preview-height": height } as React.CSSProperties}
     >
       <div className="h-(--preview-height) w-full overflow-hidden">
-        <MapErrorBoundary>{children}</MapErrorBoundary>
+        {children}
       </div>
 
       <div className="relative w-full overflow-hidden border-t">

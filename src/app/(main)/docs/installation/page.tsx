@@ -10,7 +10,6 @@ import { CodeBlock } from "../_components/code-block";
 import { InstallCommand } from "../_components/install-command";
 import { Metadata } from "next";
 import { Card } from "@/components/ui/card";
-import { MapErrorBoundary } from "@/components/map-error-boundary";
 import { Map, MapControls } from "@/registry/map";
 
 const cspCode = `script-src 'self' https://unpkg.com;
@@ -75,11 +74,9 @@ export default function InstallationPage() {
         <p>Import and use the map component:</p>
         <CodeBlock code={usageCode} />
         <Card className="h-[320px] overflow-hidden rounded-lg p-0">
-          <MapErrorBoundary>
-            <Map center={[-74.006, 40.7128]} zoom={11}>
-              <MapControls />
-            </Map>
-          </MapErrorBoundary>
+          <Map center={[-74.006, 40.7128]} zoom={11}>
+            <MapControls />
+          </Map>
         </Card>
         <DocsNote>
           <strong>Note:</strong> The map uses free CARTO basemap tiles by
