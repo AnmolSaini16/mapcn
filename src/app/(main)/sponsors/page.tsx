@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
 
-import { CodeCopyButton } from "@/components/code-copy-button";
 import { Footer } from "@/components/footer";
 import {
   PageActions,
@@ -17,15 +16,10 @@ import {
 } from "@/components/ui/accordion";
 import { TextLink } from "@/components/text-link";
 import { Button } from "@/components/ui/button";
-import {
-  checkoutEnabled,
-  githubSponsorsUrl,
-  sponsorEmail,
-  sponsors,
-  xProfileUrl,
-} from "@/lib/sponsors";
+import { checkoutEnabled, githubSponsorsUrl, sponsors } from "@/lib/sponsors";
 import { PlacementPreviews } from "./_components/placement-preview";
 import { SponsorContactButton } from "./_components/sponsor-contact-button";
+import { SponsorCustom } from "./_components/sponsor-custom";
 import { SponsorStats } from "./_components/sponsor-stats";
 import { SponsorTiers } from "./_components/sponsor-tiers";
 import { SponsorWall } from "./_components/sponsor-wall";
@@ -61,7 +55,7 @@ export default function Page() {
         </PageHeader>
 
         <div className="container pb-24">
-          <div className="mx-auto max-w-6xl space-y-24 md:space-y-36">
+          <div className="mx-auto max-w-7xl space-y-24 md:space-y-36">
             <SponsorStats />
 
             {sponsors.length > 0 && (
@@ -110,43 +104,7 @@ export default function Page() {
               </Accordion>
             </Section>
 
-            <section className="bg-muted ring-foreground/5 dark:bg-muted/30 flex flex-col items-center gap-8 rounded-2xl px-6 py-14 text-center ring-1 md:py-20">
-              <div className="space-y-3">
-                <h2 className="text-2xl font-semibold tracking-tight text-balance md:text-3xl">
-                  Need something custom?
-                </h2>
-                <p className="text-muted-foreground mx-auto max-w-sm text-[15px] leading-relaxed text-pretty md:text-base">
-                  A launch campaign, a different placement, or just a question
-                  first. Happy to put something together.
-                </p>
-              </div>
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <div className="bg-background ring-foreground/10 flex h-10 items-center gap-1 rounded-lg pr-1 pl-4 shadow-xs ring-1">
-                  <span className="text-foreground/80 text-sm">
-                    {sponsorEmail}
-                  </span>
-                  <CodeCopyButton
-                    text={sponsorEmail}
-                    label="Copy email"
-                    className="bg-transparent"
-                  />
-                </div>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="rounded-lg"
-                  asChild
-                >
-                  <a
-                    href={xProfileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    DM on X
-                  </a>
-                </Button>
-              </div>
-            </section>
+            <SponsorCustom />
           </div>
         </div>
       </div>
