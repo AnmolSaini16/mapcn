@@ -92,9 +92,19 @@ export default function Page() {
                 <TextLink href="/sponsors">sponsors page</TextLink>.
               </p>
               <p>
-                {checkoutEnabled
-                  ? "You pay at checkout through Dodo Payments. Sponsorships are billed monthly in USD and renew until cancelled."
-                  : "Sponsorships are currently arranged by email. Once a sponsorship is approved, we send payment instructions. Sponsorships are billed monthly in USD and renew until cancelled, under the payment arrangement we agree with you."}
+                {checkoutEnabled ? (
+                  <>
+                    You pay at checkout through Dodo Payments, which sells the
+                    sponsorship as our reseller (merchant of record) under its{" "}
+                    <TextLink href="https://dodopayments.com/legal/buyer-terms">
+                      Buyer Terms
+                    </TextLink>
+                    . Sponsorships are billed monthly in USD and renew until
+                    cancelled.
+                  </>
+                ) : (
+                  "Sponsorships are currently arranged by email. Once a sponsorship is approved, we send payment instructions. Sponsorships are billed monthly in USD and renew until cancelled, under the payment arrangement we agree with you."
+                )}
               </p>
               <p>
                 We aim to publish approved sponsor assets within three business
@@ -168,6 +178,23 @@ export default function Page() {
                 local storage, and the docs sidebar may save its open state in a
                 cookie. Neither is used for tracking.
               </p>
+
+              {checkoutEnabled && (
+                <>
+                  <h3>Payments</h3>
+                  <p>
+                    Sponsorship payments are processed by Dodo Payments, which
+                    collects your payment details to process them under its own{" "}
+                    <TextLink href="https://dodopayments.com/legal/privacy-policy">
+                      privacy policy
+                    </TextLink>
+                    . We never see or store your full card details. We receive
+                    your contact and billing details, such as your name and
+                    email address, and your payment status to run your
+                    sponsorship.
+                  </p>
+                </>
+              )}
 
               <h3>Emails and sponsorships</h3>
               <p>

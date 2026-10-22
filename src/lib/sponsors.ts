@@ -40,7 +40,7 @@ export const sponsorTiers: SponsorTier[] = [
     name: "Platinum",
     price: 500,
     slots: 2,
-    productId: "",
+    productId: "pdt_0NqIeV2hbo0ni9jNeksSH",
     perks: [
       "Largest logo on the homepage, below the showcase",
       "Top logo with tagline on every docs page",
@@ -53,7 +53,7 @@ export const sponsorTiers: SponsorTier[] = [
     name: "Gold",
     price: 250,
     slots: 4,
-    productId: "",
+    productId: "pdt_0NqIeUdSGqsHQbF9YsPeb",
     perks: [
       "Logo on the homepage, below the showcase",
       "Logo on every docs page",
@@ -65,7 +65,7 @@ export const sponsorTiers: SponsorTier[] = [
     id: "silver",
     name: "Silver",
     price: 100,
-    productId: "",
+    productId: "pdt_0NqIeTdQ8DSQrDQyGJW1d",
     perks: ["Logo on the sponsors page", "Logo in the README"],
   },
 ];

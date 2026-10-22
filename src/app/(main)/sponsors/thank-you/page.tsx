@@ -21,7 +21,7 @@ import {
 
 export const metadata: Metadata = {
   title: "Thank you",
-  description: "Your mapcn sponsorship is confirmed.",
+  description: "Thanks for sponsoring mapcn.",
   robots: { index: false, follow: false },
 };
 
@@ -50,12 +50,13 @@ export default async function Page({
         <PageHeader size="sm">
           <PageHeaderHeading>
             {tier
-              ? `You're a ${tier.name} sponsor`
+              ? `Thanks for choosing ${tier.name}`
               : "Thanks for sponsoring mapcn"}
           </PageHeaderHeading>
           <PageHeaderDescription>
-            Your sponsorship is confirmed. Thank you for helping keep mapcn free
-            and open source.
+            Your payment went through. We review every sponsorship and will
+            email you once yours is approved. Thank you for helping keep mapcn
+            free and open source.
           </PageHeaderDescription>
         </PageHeader>
 
@@ -67,8 +68,8 @@ export default async function Page({
                   What to send next
                 </h2>
                 <p className="text-muted-foreground text-[15px]">
-                  Send these over and your logo goes live within three business
-                  days.
+                  Send these over. Once your sponsorship is approved, your logo
+                  goes live within three business days.
                 </p>
               </div>
 

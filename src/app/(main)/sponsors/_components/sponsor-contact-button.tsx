@@ -22,6 +22,8 @@ export function SponsorContactButton({
     <Button asChild {...props}>
       <a
         href={action.href}
+        target={action.kind === "checkout" ? "_blank" : undefined}
+        rel={action.kind === "checkout" ? "noopener noreferrer" : undefined}
         onClick={() =>
           trackEvent({
             name:

@@ -149,7 +149,7 @@ const faqs = [
   {
     question: "How does booking work?",
     answer: checkoutEnabled
-      ? "Pick a tier with an open slot and pay through Dodo Payments, which handles invoices and tax. You land back on mapcn with a short list of what to send."
+      ? "Pick a tier with an open slot and pay through Dodo Payments, which handles invoices and tax. You land back on mapcn with a short list of what to send. We review every sponsorship, and if we can't place yours, you get a full refund."
       : "Pick a tier with an open slot and reserve your spot by email. Once your sponsorship is approved, we send payment instructions and a short list of what to send.",
   },
   {
