@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { SponsorLink } from "@/components/sponsor-link";
 import {
@@ -81,15 +81,12 @@ export function DocsSponsors({ className }: { className?: string }) {
       <Link
         href="/sponsors"
         className={cn(
-          "group bg-muted/60 hover:bg-muted dark:bg-muted/30 dark:hover:bg-muted/50 -mx-3 block rounded-xl px-3 py-3 transition-colors",
+          "bg-muted/60 hover:bg-muted dark:bg-muted/30 dark:hover:bg-muted/50 -ml-3 block rounded-xl px-3 py-3 transition-colors",
           className,
         )}
       >
-        <span className="flex items-center justify-between gap-2 text-sm font-medium">
-          Sponsor mapcn
-          <ArrowRight className="text-muted-foreground group-hover:text-foreground size-3.5 transition-[color,translate] group-hover:translate-x-0.5" />
-        </span>
-        <span className="text-muted-foreground mt-1 block text-xs leading-relaxed">
+        <span className="block text-sm font-medium">Sponsor mapcn</span>
+        <span className="text-muted-foreground mt-1.5 block text-xs leading-relaxed">
           Reach developers building with mapcn.
         </span>
       </Link>

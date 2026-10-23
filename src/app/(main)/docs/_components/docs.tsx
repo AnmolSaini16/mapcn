@@ -138,7 +138,7 @@ export function DocsLayout({
       <aside className="hidden w-42 shrink-0 xl:block">
         <nav className="sticky top-14 -mx-3 max-h-[calc(100svh-3.5rem)] overflow-y-auto px-3 pt-12 pb-10 [scrollbar-gutter:stable]">
           {tocItems.length > 0 && <DocsToc items={tocItems} />}
-          <DocsSponsors className={tocItems.length > 0 ? "mt-10" : undefined} />
+          <DocsSponsors className={tocItems.length > 0 ? "mt-8" : undefined} />
         </nav>
       </aside>
     </div>
