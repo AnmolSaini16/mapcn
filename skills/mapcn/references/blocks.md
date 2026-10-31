@@ -94,6 +94,19 @@ npx shadcn@latest add @mapcn/heatmap
 - Pulls in: `@mapcn/map`
 - Preview: https://mapcn.dev/blocks/heatmap
 
+## Community Globe
+
+Globe of community members with avatar markers, a member list, local time, and an awake filter.
+
+```bash
+npx shadcn@latest add @mapcn/community-globe
+```
+
+- Adds the page at `app/community-globe/page.tsx`
+- Files: `app/community-globe/page.tsx`, `app/community-globe/data.ts`, `app/community-globe/components/member-marker.tsx`, `app/community-globe/components/member-list.tsx`, `app/community-globe/components/member-avatar.tsx`
+- Pulls in: `@mapcn/map`, `tabs`
+- Preview: https://mapcn.dev/blocks/community-globe
+
 ## Logistics Network
 
 Domestic logistics map with a sidebar of stats.

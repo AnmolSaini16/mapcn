@@ -303,6 +303,54 @@
       }
     },
     {
+      "name": "community-globe",
+      "type": "registry:block",
+      "title": "Community Globe",
+      "description": "Globe of community members with avatar markers, a member list, local time, and an awake filter.",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@mapcn/map",
+        "tabs"
+      ],
+      "files": [
+        {
+          "path": "src/registry/blocks/community-globe/page.tsx",
+          "type": "registry:page",
+          "target": "app/community-globe/page.tsx"
+        },
+        {
+          "path": "src/registry/blocks/community-globe/data.ts",
+          "type": "registry:component",
+          "target": "app/community-globe/data.ts"
+        },
+        {
+          "path": "src/registry/blocks/community-globe/components/member-marker.tsx",
+          "type": "registry:component",
+          "target": "app/community-globe/components/member-marker.tsx"
+        },
+        {
+          "path": "src/registry/blocks/community-globe/components/member-list.tsx",
+          "type": "registry:component",
+          "target": "app/community-globe/components/member-list.tsx"
+        },
+        {
+          "path": "src/registry/blocks/community-globe/components/member-avatar.tsx",
+          "type": "registry:component",
+          "target": "app/community-globe/components/member-avatar.tsx"
+        }
+      ],
+      "categories": [
+        "location",
+        "community",
+        "globe"
+      ],
+      "meta": {
+        "iframeHeight": "800px"
+      }
+    },
+    {
       "name": "logistics-network",
       "type": "registry:block",
       "title": "Logistics Network",

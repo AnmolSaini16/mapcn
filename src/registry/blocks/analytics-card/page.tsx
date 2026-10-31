@@ -57,7 +57,7 @@ export default function Page() {
           </Map>
         </div>
 
-        <CardHeader className="from-card via-card/85 to-card/0 relative z-10 gap-1 rounded-t-[inherit] bg-linear-to-b pt-4 pb-10 mask-[linear-gradient(to_bottom,black_calc(100%_-_2.5rem),transparent)] backdrop-blur-[2px]">
+        <CardHeader className="from-card via-card/85 to-card/0 relative z-10 gap-1 rounded-t-[inherit] bg-linear-to-b mask-[linear-gradient(to_bottom,black_calc(100%_-_2.5rem),transparent)] pt-4 pb-10 backdrop-blur-[2px]">
           <CardDescription>Visitors</CardDescription>
           <CardTitle className="text-lg tabular-nums">
             {totalVisitors}

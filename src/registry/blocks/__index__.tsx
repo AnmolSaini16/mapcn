@@ -11,6 +11,7 @@ export const blockComponents: Record<
   "delivery-tracker": React.lazy(() => import("./delivery-tracker/page")),
   "uptime-monitor": React.lazy(() => import("./uptime-monitor/page")),
   heatmap: React.lazy(() => import("./heatmap/page")),
+  "community-globe": React.lazy(() => import("./community-globe/page")),
   "logistics-network": React.lazy(() => import("./logistics-network/page")),
   "store-locator": React.lazy(() => import("./store-locator/page")),
 };

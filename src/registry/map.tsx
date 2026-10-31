@@ -68,6 +68,20 @@ const blankMapStyle: MapLibreGL.StyleSpecification = {
   ],
 };
 
+// On a globe the background only covers the sphere, so a neutral tint gives it
+// a visible edge in both themes.
+const blankGlobeStyle: MapLibreGL.StyleSpecification = {
+  ...blankMapStyle,
+  projection: { type: "globe" },
+  layers: [
+    {
+      id: "background",
+      type: "background",
+      paint: { "background-color": "rgba(128, 128, 128, 0.12)" },
+    },
+  ],
+};
+
 // Prevent equivalent inline style objects from triggering a full map style reload.
 function useStableValue<T>(value: T): T {
   const key = useMemo(() => JSON.stringify(value) ?? "", [value]);
@@ -218,7 +232,7 @@ type MapProps = {
    * Use a transparent, tile-less basemap instead of the default Carto street
    * basemap — a blank canvas. Used alone it renders nothing; add your own
    * layers on top (`<MapGeoJSON>`, `<MapArc>`, markers, etc.). Ideal for data
-   * visualizations (choropleths, arcs, dot maps).
+   * visualizations (choropleths, arcs, dot maps). Globes get a tinted sphere.
    * Ignored when an explicit `styles` prop is provided.
    */
   blank?: boolean;
@@ -293,6 +307,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
   onViewportChangeRef.current = onViewportChange;
 
   const stableStyles = useStableValue(styles);
+  const isGlobe = projection?.type === "globe";
 
   const mapStyles = useMemo(() => {
     // Explicit styles win. Otherwise `blank` opts into the transparent
@@ -304,10 +319,11 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
       };
     }
     if (blank) {
-      return { dark: blankMapStyle, light: blankMapStyle };
+      const style = isGlobe ? blankGlobeStyle : blankMapStyle;
+      return { dark: style, light: style };
     }
     return defaultStyles;
-  }, [stableStyles, blank]);
+  }, [stableStyles, blank, isGlobe]);
 
   const initOptionsRef = useRef({ props, viewport, resolvedTheme, mapStyles });
   initOptionsRef.current = { props, viewport, resolvedTheme, mapStyles };

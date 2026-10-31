@@ -118,7 +118,7 @@ export default function ApiReferencePage() {
               type: "boolean",
               default: "false",
               description:
-                "Use a transparent, tile-less basemap instead of the default Carto street basemap. This is a blank canvas — used alone it renders nothing, so you must add your own layers (e.g. MapGeoJSON, MapArc, markers) on top. Ideal for data visualizations (choropleths, arcs, dot maps). Ignored when an explicit styles prop is provided.",
+                "Use a transparent, tile-less basemap instead of Carto, then add your own layers. Globes get a tinted sphere. Ignored when styles is provided.",
             },
             {
               name: "projection",
