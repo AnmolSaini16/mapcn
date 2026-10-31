@@ -135,7 +135,7 @@ export default function Page() {
             </MapPopup>
           )}
 
-          <MapControls />
+          <MapControls className="bottom-2" />
         </Map>
       </div>
     </div>
