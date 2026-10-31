@@ -13,11 +13,11 @@ export function SponsorCustom() {
         <div className="flex flex-col justify-center gap-3 p-6 sm:p-8 md:p-10">
           <h2
             id="custom-heading"
-            className="text-2xl font-semibold tracking-tight text-balance md:text-3xl"
+            className="text-2xl font-semibold tracking-tight text-balance"
           >
             Need something custom?
           </h2>
-          <p className="text-muted-foreground max-w-sm text-[15px] leading-relaxed text-pretty">
+          <p className="text-muted-foreground max-w-sm text-sm leading-relaxed text-pretty">
             A launch campaign, a different placement, or just a question first.
             Happy to put something together.
           </p>
@@ -59,7 +59,7 @@ function ContactValue({
   return (
     <div className="flex min-w-0 flex-col gap-1">
       <span className="text-muted-foreground text-sm">{label}</span>
-      <span className="truncate text-[15px] font-medium">{children}</span>
+      <span className="truncate text-sm font-medium">{children}</span>
     </div>
   );
 }

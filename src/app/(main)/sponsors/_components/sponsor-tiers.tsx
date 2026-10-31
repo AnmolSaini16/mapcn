@@ -39,15 +39,15 @@ function TierCard({ tier }: { tier: SponsorTier }) {
           </span>
         </div>
         <p className="mt-4 flex items-baseline gap-1">
-          <span className="text-4xl font-semibold tracking-tight tabular-nums sm:text-5xl">
+          <span className="text-4xl font-semibold tracking-tight tabular-nums">
             ${tier.price}
           </span>
           <span className="text-muted-foreground text-base">/month</span>
         </p>
-        <ul className="mt-6 mb-7 space-y-2.5 text-[15px]">
+        <ul className="mt-6 mb-7 space-y-2.5 text-sm">
           {tier.perks.map((perk) => (
             <li key={perk} className="flex gap-2.5">
-              <Check className="text-muted-foreground mt-1 size-4 shrink-0" />
+              <Check className="text-muted-foreground mt-0.5 size-4 shrink-0" />
               <span>{perk}</span>
             </li>
           ))}

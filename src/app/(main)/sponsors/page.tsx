@@ -59,20 +59,16 @@ export default function Page() {
             <SponsorStats />
 
             {sponsors.length > 0 && (
-              <Section id="sponsors" label="Sponsors" title="Backed by">
+              <Section id="sponsors" title="Backed by">
                 <SponsorWall />
               </Section>
             )}
 
-            <Section
-              id="placements"
-              label="Placements"
-              title="Seen where developers build"
-            >
+            <Section id="placements" title="Seen where developers build">
               <PlacementPreviews />
             </Section>
 
-            <Section id="tiers" label="Pricing" title="Pick a tier">
+            <Section id="tiers" title="Pick a tier">
               <SponsorTiers />
               <p className="text-muted-foreground text-center text-sm text-balance">
                 {checkoutEnabled
@@ -85,7 +81,7 @@ export default function Page() {
               </p>
             </Section>
 
-            <Section id="faq" label="FAQ" title="Common questions">
+            <Section id="faq" title="Common questions">
               <Accordion
                 type="single"
                 collapsible
@@ -116,12 +112,10 @@ export default function Page() {
 
 function Section({
   id,
-  label,
   title,
   children,
 }: {
   id: string;
-  label: string;
   title: string;
   children: React.ReactNode;
 }) {
@@ -131,15 +125,12 @@ function Section({
       aria-labelledby={`${id}-heading`}
       className="scroll-m-24 space-y-10 md:space-y-12"
     >
-      <div className="flex flex-col items-center gap-3 text-center">
-        <p className="text-muted-foreground text-sm font-medium">{label}</p>
-        <h2
-          id={`${id}-heading`}
-          className="text-foreground text-3xl font-semibold tracking-tight text-balance md:text-4xl"
-        >
-          {title}
-        </h2>
-      </div>
+      <h2
+        id={`${id}-heading`}
+        className="text-foreground text-center text-3xl font-semibold tracking-tight text-balance md:text-4xl"
+      >
+        {title}
+      </h2>
       {children}
     </section>
   );

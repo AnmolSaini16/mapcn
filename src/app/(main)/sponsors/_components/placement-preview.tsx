@@ -21,7 +21,7 @@ export function PlacementPreviews() {
                 {placement.tiers}
               </span>
             </div>
-            <p className="text-muted-foreground mt-0.5 text-sm">
+            <p className="text-muted-foreground mt-1 text-sm text-pretty">
               {placement.description}
             </p>
           </figcaption>
@@ -38,19 +38,19 @@ function HomePreview() {
         <Bar className="h-2 w-2/5" />
         <Bar className="w-1/4" />
       </div>
-      <div className="mt-5 grid grid-cols-3 gap-2 mask-b-from-30%">
+      <div className="mt-5 grid min-h-0 flex-1 grid-cols-3 gap-2 mask-b-from-30%">
         {Array.from({ length: 3 }, (_, i) => (
-          <div key={i} className="bg-muted aspect-[4/3] rounded-sm" />
+          <div key={i} className="bg-muted rounded-sm" />
         ))}
       </div>
-      <div className="mt-auto flex flex-col items-center gap-2.5">
-        <div className="flex gap-4">
-          <Slot className="h-2.5 w-12" />
-          <Slot className="h-2.5 w-12" />
+      <div className="mx-auto mt-3 flex w-2/5 flex-col gap-2">
+        <div className="grid grid-cols-2 gap-2">
+          <Slot className="h-2.5" />
+          <Slot className="h-2.5" />
         </div>
-        <div className="flex gap-3">
+        <div className="grid grid-cols-4 gap-2">
           {Array.from({ length: 4 }, (_, i) => (
-            <Slot key={i} className="h-2 w-8" />
+            <Slot key={i} className="h-2" />
           ))}
         </div>
       </div>
@@ -69,14 +69,14 @@ function DocsPreview() {
       <div className="flex flex-col gap-2">
         <Bar className="h-2 w-1/2" />
         <Bar className="w-5/6" />
-        <div className="bg-muted mt-2 h-2/5 rounded-sm" />
+        <div className="bg-muted mt-2 min-h-0 flex-1 rounded-sm mask-b-from-30%" />
       </div>
       <div className="flex flex-col gap-2">
         <Bar className="w-full" />
         <Bar className="w-2/3" />
-        <Slot className="mt-4 h-2.5 w-3/4" />
-        <Slot className="h-2.5 w-3/4" />
-        <div className="mt-1 grid grid-cols-2 gap-2">
+        <Slot className="mt-4 h-2.5" />
+        <Slot className="h-2.5" />
+        <div className="grid grid-cols-2 gap-2">
           <Slot className="h-2" />
           <Slot className="h-2" />
         </div>
@@ -90,7 +90,7 @@ function Bar({ className }: { className?: string }) {
 }
 
 function Slot({ className }: { className?: string }) {
-  return <div className={cn("bg-foreground/20 rounded-full", className)} />;
+  return <div className={cn("bg-foreground/40 rounded-full", className)} />;
 }
 
 const placements = [
