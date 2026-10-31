@@ -192,26 +192,6 @@ export function DocsNote({ children }: DocsNoteProps) {
   );
 }
 
-// DocsLink - Styled link
-interface DocsLinkProps {
-  href: string;
-  children: React.ReactNode;
-  external?: boolean;
-}
-
-export function DocsLink({ href, children, external }: DocsLinkProps) {
-  return (
-    <Link
-      href={href}
-      target={external ? "_blank" : undefined}
-      rel={external ? "noopener noreferrer" : undefined}
-      className="decoration-foreground/25 hover:text-foreground hover:decoration-foreground/60 underline decoration-1 underline-offset-[5px] transition-colors"
-    >
-      {children}
-    </Link>
-  );
-}
-
 // DocsCode - Inline code
 export function DocsCode({
   children,

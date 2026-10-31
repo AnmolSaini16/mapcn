@@ -1,9 +1,4 @@
-import {
-  DocsLayout,
-  DocsSection,
-  DocsCode,
-  DocsLink,
-} from "../_components/docs";
+import { DocsLayout, DocsSection, DocsCode } from "../_components/docs";
 import { ComponentPreview } from "../_components/component-preview";
 import { RouteExample } from "../_components/examples/route-example";
 import { RouteProgressExample } from "../_components/examples/route-progress-example";

@@ -1,10 +1,10 @@
 import {
   DocsCode,
   DocsLayout,
-  DocsLink,
   DocsNote,
   DocsSection,
 } from "../_components/docs";
+import { TextLink } from "@/components/text-link";
 import { AgentPrompt } from "../_components/agent-prompt";
 import { CodeBlock } from "../_components/code-block";
 import { InstallCommand } from "../_components/install-command";
@@ -50,14 +50,8 @@ export default function InstallationPage() {
       <DocsSection title="Prerequisites">
         <p>
           A project with{" "}
-          <DocsLink href="https://tailwindcss.com" external>
-            Tailwind CSS
-          </DocsLink>{" "}
-          and{" "}
-          <DocsLink href="https://ui.shadcn.com" external>
-            shadcn/ui
-          </DocsLink>{" "}
-          set up.
+          <TextLink href="https://tailwindcss.com">Tailwind CSS</TextLink> and{" "}
+          <TextLink href="https://ui.shadcn.com">shadcn/ui</TextLink> set up.
         </p>
       </DocsSection>
 

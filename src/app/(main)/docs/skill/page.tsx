@@ -1,11 +1,7 @@
 import { Metadata } from "next";
 
-import {
-  DocsCode,
-  DocsLayout,
-  DocsLink,
-  DocsSection,
-} from "../_components/docs";
+import { DocsCode, DocsLayout, DocsSection } from "../_components/docs";
+import { TextLink } from "@/components/text-link";
 import { CodeBlock } from "../_components/code-block";
 import { InstallCommand } from "../_components/install-command";
 import { CodeCopyButton } from "@/components/code-copy-button";
@@ -30,9 +26,9 @@ export default function SkillPage() {
         <p>
           Works with Claude Code, Cursor, Codex and other agents that support
           skills. To add it by hand, copy the{" "}
-          <DocsLink href={`${githubRepoUrl}/tree/main/skills/mapcn`} external>
+          <TextLink href={`${githubRepoUrl}/tree/main/skills/mapcn`}>
             skills/mapcn
-          </DocsLink>{" "}
+          </TextLink>{" "}
           folder into <DocsCode>.claude/skills/</DocsCode> or your agent&apos;s
           skills folder.
         </p>
@@ -42,10 +38,7 @@ export default function SkillPage() {
         </p>
         <p>
           Agent doesn&apos;t support skills? Point it at{" "}
-          <DocsLink href="/llms.txt" external>
-            llms.txt
-          </DocsLink>{" "}
-          instead.
+          <TextLink href="/llms.txt">llms.txt</TextLink> instead.
         </p>
       </DocsSection>
 

@@ -2,9 +2,9 @@ import {
   DocsLayout,
   DocsSection,
   DocsCode,
-  DocsLink,
   DocsNote,
 } from "../_components/docs";
+import { TextLink } from "@/components/text-link";
 import { ComponentPreview } from "../_components/component-preview";
 import { BasicMapExample } from "../_components/examples/basic-map-example";
 import { ControlledMapExample } from "../_components/examples/controlled-map-example";
@@ -63,7 +63,7 @@ export default function BasicMapPage() {
           Used alone, <DocsCode>{"<Map blank />"}</DocsCode> renders nothing -
           you must add your own layers on top (e.g.{" "}
           <DocsCode>MapGeoJSON</DocsCode>, <DocsCode>MapArc</DocsCode>, or
-          markers). See <DocsLink href="/docs/geojson">GeoJSON</DocsLink> for
+          markers). See <TextLink href="/docs/geojson">GeoJSON</TextLink> for
           more on rendering shapes on a blank map.
         </DocsNote>
         <p>
@@ -79,10 +79,8 @@ export default function BasicMapPage() {
         <p>
           Use the <DocsCode>styles</DocsCode> prop to provide custom map styles.
           This example uses free vector tiles from{" "}
-          <DocsLink href="https://openfreemap.org" external>
-            OpenFreeMap
-          </DocsLink>
-          , an open-source project, the data comes from OpenStreetMap.
+          <TextLink href="https://openfreemap.org">OpenFreeMap</TextLink>, an
+          open-source project, the data comes from OpenStreetMap.
         </p>
         <ComponentPreview code={customStyleSource}>
           <CustomStyleExample />

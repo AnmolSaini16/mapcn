@@ -2,10 +2,10 @@ import {
   DocsLayout,
   DocsSection,
   DocsCode,
-  DocsLink,
   DocsNote,
   DocsPropTable,
 } from "../_components/docs";
+import { TextLink } from "@/components/text-link";
 import { CodeBlock } from "../_components/code-block";
 import { Metadata } from "next";
 
@@ -49,16 +49,13 @@ export default function ApiReferencePage() {
     >
       <DocsNote>
         <strong>Note:</strong> This library is built on top of{" "}
-        <DocsLink href="https://maplibre.org/maplibre-gl-js/docs/API/" external>
+        <TextLink href="https://maplibre.org/maplibre-gl-js/docs/API/">
           MapLibre GL JS
-        </DocsLink>
+        </TextLink>
         . Most components extend the native MapLibre options. Refer to the{" "}
-        <DocsLink
-          href="https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/"
-          external
-        >
+        <TextLink href="https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/">
           MapLibre Map API
-        </DocsLink>{" "}
+        </TextLink>{" "}
         for additional options not listed here.
       </DocsNote>
 
@@ -79,12 +76,9 @@ export default function ApiReferencePage() {
         </p>
         <p>
           Extends{" "}
-          <DocsLink
-            href="https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/MapOptions/"
-            external
-          >
+          <TextLink href="https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/MapOptions/">
             MapOptions
-          </DocsLink>{" "}
+          </TextLink>{" "}
           from MapLibre GL (excluding <DocsCode>container</DocsCode> and{" "}
           <DocsCode>style</DocsCode>).
         </p>
@@ -157,12 +151,9 @@ export default function ApiReferencePage() {
         <CodeBlock code={useMapCode} language="tsx" showCopyButton={false} />
         <p>
           Returns <DocsCode>map</DocsCode> (
-          <DocsLink
-            href="https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/"
-            external
-          >
+          <TextLink href="https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/">
             MapLibre.Map
-          </DocsLink>
+          </TextLink>
           ) and <DocsCode>isLoaded</DocsCode> (boolean) tells you if the map is
           loaded and ready to use.
         </p>
@@ -228,12 +219,9 @@ export default function ApiReferencePage() {
         </p>
         <p>
           Extends{" "}
-          <DocsLink
-            href="https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/MarkerOptions/"
-            external
-          >
+          <TextLink href="https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/MarkerOptions/">
             MarkerOptions
-          </DocsLink>{" "}
+          </TextLink>{" "}
           from MapLibre GL (excluding <DocsCode>element</DocsCode>).
         </p>
         <DocsPropTable
@@ -322,12 +310,9 @@ export default function ApiReferencePage() {
         </p>
         <p>
           Extends{" "}
-          <DocsLink
-            href="https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/PopupOptions/"
-            external
-          >
+          <TextLink href="https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/PopupOptions/">
             PopupOptions
-          </DocsLink>{" "}
+          </TextLink>{" "}
           from MapLibre GL (excluding <DocsCode>className</DocsCode> and{" "}
           <DocsCode>closeButton</DocsCode>).
         </p>
@@ -367,12 +352,9 @@ export default function ApiReferencePage() {
         </p>
         <p>
           Extends{" "}
-          <DocsLink
-            href="https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/PopupOptions/"
-            external
-          >
+          <TextLink href="https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/PopupOptions/">
             PopupOptions
-          </DocsLink>{" "}
+          </TextLink>{" "}
           from MapLibre GL (excluding <DocsCode>className</DocsCode>,{" "}
           <DocsCode>closeButton</DocsCode>, and{" "}
           <DocsCode>closeOnClick</DocsCode> as tooltips auto-dismiss on hover
@@ -436,12 +418,9 @@ export default function ApiReferencePage() {
         </p>
         <p>
           Extends{" "}
-          <DocsLink
-            href="https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/PopupOptions/"
-            external
-          >
+          <TextLink href="https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/PopupOptions/">
             PopupOptions
-          </DocsLink>{" "}
+          </TextLink>{" "}
           from MapLibre GL (excluding <DocsCode>className</DocsCode> and{" "}
           <DocsCode>closeButton</DocsCode>).
         </p>
@@ -696,21 +675,15 @@ export default function ApiReferencePage() {
         </p>
         <p>
           Built on a MapLibre{" "}
-          <DocsLink
-            href="https://maplibre.org/maplibre-style-spec/layers/#line"
-            external
-          >
+          <TextLink href="https://maplibre.org/maplibre-style-spec/layers/#line">
             line layer
-          </DocsLink>
+          </TextLink>
           , so <DocsCode>paint</DocsCode> and <DocsCode>layout</DocsCode> accept
           any field from <DocsCode>LineLayerSpecification</DocsCode>. Any paint
           value can be a{" "}
-          <DocsLink
-            href="https://maplibre.org/maplibre-style-spec/expressions/"
-            external
-          >
+          <TextLink href="https://maplibre.org/maplibre-style-spec/expressions/">
             MapLibre expression
-          </DocsLink>{" "}
+          </TextLink>{" "}
           — reference datum fields with{" "}
           <DocsCode>{`["get", "fieldName"]`}</DocsCode>.
         </p>
@@ -801,12 +774,9 @@ export default function ApiReferencePage() {
         <p>
           Fill and outline default to a theme-aware monochrome tone, so shapes
           read clearly on light/dark out of the box. Any paint value can be a{" "}
-          <DocsLink
-            href="https://maplibre.org/maplibre-style-spec/expressions/"
-            external
-          >
+          <TextLink href="https://maplibre.org/maplibre-style-spec/expressions/">
             MapLibre expression
-          </DocsLink>{" "}
+          </TextLink>{" "}
           for data-driven styling.
         </p>
         <DocsPropTable

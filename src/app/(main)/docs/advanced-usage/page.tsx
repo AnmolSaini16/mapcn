@@ -2,9 +2,9 @@ import {
   DocsLayout,
   DocsSection,
   DocsCode,
-  DocsLink,
   DocsNote,
 } from "../_components/docs";
+import { TextLink } from "@/components/text-link";
 import { ComponentPreview } from "../_components/component-preview";
 import { AdvancedUsageExample } from "../_components/examples/advanced-usage-example";
 import { CustomLayerExample } from "../_components/examples/custom-layer-example";
@@ -83,12 +83,9 @@ export default function AdvancedPage() {
 
       <DocsNote>
         <strong>Tip:</strong> Check the{" "}
-        <DocsLink
-          href="https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/"
-          external
-        >
+        <TextLink href="https://maplibre.org/maplibre-gl-js/docs/API/classes/Map/">
           MapLibre GL JS documentation
-        </DocsLink>{" "}
+        </TextLink>{" "}
         for the full list of available methods and events.
       </DocsNote>
 

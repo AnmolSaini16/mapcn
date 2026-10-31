@@ -3,8 +3,8 @@ import {
   DocsSection,
   DocsCode,
   DocsNote,
-  DocsLink,
 } from "../_components/docs";
+import { TextLink } from "@/components/text-link";
 import { ComponentPreview } from "../_components/component-preview";
 import { MarkersExample } from "../_components/examples/markers-example";
 import { PopupExample } from "../_components/examples/popup-example";
@@ -42,9 +42,9 @@ export default function MarkersPage() {
         <strong>Performance tip:</strong> <DocsCode>MapMarker</DocsCode> is
         DOM-based and works best for a few hundred markers. For larger datasets,
         see the{" "}
-        <DocsLink href="/docs/advanced-usage#example-markers-via-layers">
+        <TextLink href="/docs/advanced-usage#example-markers-via-layers">
           GeoJSON layers example
-        </DocsLink>{" "}
+        </TextLink>{" "}
         instead. Rendering many DOM markers can make the browser sluggish.
       </DocsNote>
 

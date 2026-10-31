@@ -1,5 +1,6 @@
 import { Zap, Puzzle, Code, Box, Layers, Palette } from "lucide-react";
-import { DocsLayout, DocsSection, DocsLink } from "./_components/docs";
+import { DocsLayout, DocsSection } from "./_components/docs";
+import { TextLink } from "@/components/text-link";
 import { Metadata } from "next";
 
 const features = [
@@ -52,18 +53,10 @@ export default function IntroductionPage() {
         <p>
           <strong>mapcn</strong> provides beautifully designed, accessible, and
           customizable map components. Built on{" "}
-          <DocsLink href="https://maplibre.org" external>
-            MapLibre GL
-          </DocsLink>
-          , styled with{" "}
-          <DocsLink href="https://tailwindcss.com" external>
-            Tailwind CSS
-          </DocsLink>
-          , and designed to work with{" "}
-          <DocsLink href="https://ui.shadcn.com" external>
-            shadcn/ui
-          </DocsLink>
-          .
+          <TextLink href="https://maplibre.org">MapLibre GL</TextLink>, styled
+          with <TextLink href="https://tailwindcss.com">Tailwind CSS</TextLink>,
+          and designed to work with{" "}
+          <TextLink href="https://ui.shadcn.com">shadcn/ui</TextLink>.
         </p>
       </DocsSection>
 
@@ -114,40 +107,34 @@ export default function IntroductionPage() {
       <DocsSection title="Any Map Style">
         <p>
           mapcn works with any{" "}
-          <DocsLink href="https://maplibre.org/maplibre-style-spec/" external>
+          <TextLink href="https://maplibre.org/maplibre-style-spec/">
             MapLibre-compatible tiles
-          </DocsLink>
+          </TextLink>
           . This means you can use tiles from virtually any provider:
         </p>
         <ul>
           <li>
-            <DocsLink href="https://www.openstreetmap.org" external>
+            <TextLink href="https://www.openstreetmap.org">
               OpenStreetMap
-            </DocsLink>{" "}
+            </TextLink>{" "}
             - Community-driven, open-source map data
           </li>
           <li>
-            <DocsLink href="https://carto.com/basemaps" external>
-              Carto
-            </DocsLink>{" "}
-            - Clean, minimal basemaps perfect for data visualization
+            <TextLink href="https://carto.com/basemaps">Carto</TextLink> -
+            Clean, minimal basemaps perfect for data visualization
           </li>
           <li>
-            <DocsLink href="https://www.maptiler.com" external>
-              MapTiler
-            </DocsLink>{" "}
-            - Beautiful vector tiles with extensive customization options
+            <TextLink href="https://www.maptiler.com">MapTiler</TextLink> -
+            Beautiful vector tiles with extensive customization options
           </li>
           <li>
-            <DocsLink href="https://stadiamaps.com" external>
-              Stadia Maps
-            </DocsLink>{" "}
-            - Fast, reliable tile hosting with multiple styles
+            <TextLink href="https://stadiamaps.com">Stadia Maps</TextLink> -
+            Fast, reliable tile hosting with multiple styles
           </li>
           <li>
-            <DocsLink href="https://www.thunderforest.com" external>
+            <TextLink href="https://www.thunderforest.com">
               Thunderforest
-            </DocsLink>{" "}
+            </TextLink>{" "}
             - Specialized maps for outdoors, cycling, and transport
           </li>
           <li>And any other provider that supports the MapLibre style spec</li>
