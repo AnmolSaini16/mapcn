@@ -16,6 +16,9 @@ const schemes = ["light", "dark"] as const;
 // Smaller than the default, so block UI matches the docs maps in scale.
 const blockViewport = { width: 960, height: 640 };
 
+// Space kept around a block that floats in the middle of the page.
+const blockMargin = 60;
+
 // Home page wall tiles. `click` presses something first (and hides it if it is
 // a button), `zoom` and `pan` (in pixels) reframe the map, and `trim` cuts
 // pixels off the top and bottom.
@@ -121,9 +124,20 @@ async function main() {
 
     for (const name of blocks) {
       await open(page, `/view/${name}`);
+      const frame = await measureBlockFrame(page);
+      const framedContext = frame
+        ? await browser.newContext({
+            viewport: frame,
+            deviceScaleFactor: viewport.width / frame.width,
+            colorScheme: scheme,
+          })
+        : undefined;
+      const blockPage = framedContext ? await framedContext.newPage() : page;
+      if (framedContext) await open(blockPage, `/view/${name}`);
       const file = path.join(blocksDir, `${name}-${scheme}.jpg`);
-      await page.screenshot({ path: file, type: "jpeg", quality: 85 });
+      await blockPage.screenshot({ path: file, type: "jpeg", quality: 85 });
       logSaved(file);
+      await framedContext?.close();
     }
 
     for (const maps of showcasePages.values()) {
@@ -169,6 +183,36 @@ async function open(page: Page, route: string) {
     .waitForLoadState("networkidle", { timeout: 10_000 })
     .catch(() => {});
   await page.waitForTimeout(1_500);
+}
+
+// Returns a tighter 16:10 viewport for a block centered in the page, so it fills
+// the thumbnail once scaled back up. Page-filling blocks return undefined.
+async function measureBlockFrame(page: Page) {
+  const box = await page.evaluate(() => {
+    let block = document.querySelector(".maplibregl-map");
+    while (block?.parentElement) {
+      const parent = block.parentElement.getBoundingClientRect();
+      if (parent.width >= innerWidth && parent.height >= innerHeight) break;
+      block = block.parentElement;
+    }
+    if (!block) return null;
+
+    const { left, top, width, height } = block.getBoundingClientRect();
+    const centered =
+      Math.abs(left + width / 2 - innerWidth / 2) <= 1 &&
+      Math.abs(top + height / 2 - innerHeight / 2) <= 1;
+    return centered ? { width, height } : null;
+  });
+  if (!box) return undefined;
+
+  const minWidth = Math.max(
+    box.width + blockMargin * 2,
+    ((box.height + blockMargin * 2) * 8) / 5,
+  );
+  const width = Math.ceil(minWidth / 8) * 8;
+  return width < viewport.width
+    ? { width, height: (width * 5) / 8 }
+    : undefined;
 }
 
 // The Map component keeps its MapLibre instance in React state, so this walks
