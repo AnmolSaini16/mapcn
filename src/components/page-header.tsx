@@ -74,11 +74,9 @@ function PageHeaderHeading({
   return (
     <Comp
       className={cn(
-        "text-foreground max-w-4xl font-bold tracking-tight text-balance",
+        "max-w-4xl font-semibold tracking-tight text-balance",
         animated && "animate-fade-up animate-stagger",
-        size === "sm"
-          ? "text-4xl font-semibold md:text-5xl"
-          : "text-4xl md:text-6xl",
+        size === "sm" ? "text-4xl md:text-5xl" : "text-4xl md:text-6xl",
         align === "center" ? "text-center" : "text-left",
         className,
       )}
