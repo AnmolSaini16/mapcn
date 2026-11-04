@@ -12,11 +12,9 @@ import { TextLink } from "@/components/text-link";
 import { Button } from "@/components/ui/button";
 import {
   checkoutEnabled,
-  getSponsorTier,
   sponsorAssetsMailto,
   sponsorEmail,
   xProfileUrl,
-  type SponsorTierId,
 } from "@/lib/sponsors";
 
 export const metadata: Metadata = {
@@ -31,28 +29,16 @@ export default async function Page({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const params = await searchParams;
-  const tier = getSponsorTier(params.tier);
 
-  if (
-    params.status !== undefined &&
-    !paidStatuses.includes(`${params.status}`)
-  ) {
+  if (failedStatuses.includes(`${params.status}`)) {
     return <PaymentPending />;
   }
-
-  const items = assetChecklist.filter(
-    (item) => !item.tiers || !tier || item.tiers.includes(tier.id),
-  );
 
   return (
     <>
       <div className="flex-1">
         <PageHeader size="sm">
-          <PageHeaderHeading>
-            {tier
-              ? `Thanks for choosing ${tier.name}`
-              : "Thanks for sponsoring mapcn"}
-          </PageHeaderHeading>
+          <PageHeaderHeading>Thanks for sponsoring mapcn</PageHeaderHeading>
           <PageHeaderDescription>
             Your payment went through. We review every sponsorship and will
             email you once yours is approved. Thank you for helping keep mapcn
@@ -75,7 +61,7 @@ export default async function Page({
 
               <div className="bg-muted ring-foreground/5 dark:bg-muted/30 rounded-2xl p-2 ring-1">
                 <ol className="bg-background ring-foreground/10 dark:ring-foreground/5 divide-y rounded-lg shadow-xs ring-1">
-                  {items.map((item, index) => (
+                  {assetChecklist.map((item, index) => (
                     <li
                       key={item.title}
                       className="flex items-baseline gap-4 px-5 py-4"
@@ -96,7 +82,7 @@ export default async function Page({
 
               <div className="flex flex-wrap items-center gap-3">
                 <Button asChild size="lg" className="rounded-lg">
-                  <a href={sponsorAssetsMailto(tier)}>Email your assets</a>
+                  <a href={sponsorAssetsMailto()}>Email your assets</a>
                 </Button>
                 <Button
                   asChild
@@ -149,12 +135,12 @@ function PaymentPending() {
         <PageHeader size="sm">
           <PageHeaderHeading>Payment not confirmed</PageHeaderHeading>
           <PageHeaderDescription>
-            Your payment hasn&apos;t gone through. Try again from the tiers, or
-            email us if you were charged and we&apos;ll sort it out.
+            Your payment hasn&apos;t gone through. Try again from the sponsors
+            page, or email us if you were charged and we&apos;ll sort it out.
           </PageHeaderDescription>
           <PageActions className="max-sm:flex-row max-sm:gap-3">
             <Button asChild size="lg" className="rounded-lg">
-              <Link href="/sponsors#tiers">Back to tiers</Link>
+              <Link href="/sponsors#sponsorship">Try again</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="rounded-lg">
               <a href={`mailto:${sponsorEmail}`}>Email us</a>
@@ -168,13 +154,14 @@ function PaymentPending() {
   );
 }
 
-const paidStatuses = ["active", "succeeded"];
+const failedStatuses = ["failed", "cancelled", "expired"];
 
-const assetChecklist: {
-  title: string;
-  detail: string;
-  tiers?: SponsorTierId[];
-}[] = [
+const assetChecklist = [
+  {
+    title: "Your company name",
+    detail:
+      "Exactly as you want it written. It labels your logo for screen readers and is used in your shoutout.",
+  },
   {
     title: "Your logo",
     detail:
@@ -191,13 +178,7 @@ const assetChecklist: {
       "Where your logo should point. ref=mapcn.dev and UTM tags are added for you.",
   },
   {
-    title: "A one-line tagline",
-    detail: "Shown under your logo on the homepage and every docs page.",
-    tiers: ["platinum"],
-  },
-  {
     title: "Your X handle",
     detail: "For your one-time shoutout on X.",
-    tiers: ["platinum", "gold"],
   },
 ];

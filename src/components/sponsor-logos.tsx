@@ -3,16 +3,10 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
 import { SponsorLink } from "@/components/sponsor-link";
-import {
-  getFeaturedSponsors,
-  hasFeaturedSponsors,
-  type Sponsor,
-} from "@/lib/sponsors";
+import { sponsors, type Sponsor } from "@/lib/sponsors";
 import { cn } from "@/lib/utils";
 
 export function SponsorStrip({ className }: { className?: string }) {
-  const { platinum, gold } = getFeaturedSponsors();
-
   return (
     <div
       className={cn(
@@ -20,63 +14,30 @@ export function SponsorStrip({ className }: { className?: string }) {
         className,
       )}
     >
-      <div className="bg-border ring-foreground/10 dark:ring-foreground/5 flex flex-col gap-px overflow-hidden rounded-lg shadow-xs ring-1">
-        {platinum.length > 0 && (
-          <div
-            className={cn(
-              "grid gap-px",
-              platinum.length > 1 && "sm:grid-cols-2",
-            )}
-          >
-            {platinum.map((sponsor) => (
-              <SponsorLink
-                key={sponsor.name}
-                sponsor={sponsor}
-                placement="home"
-                className={cn(
-                  stripCellClassName,
-                  "flex-col gap-2.5 px-6 py-8 text-center md:py-10",
-                )}
-              >
-                <SponsorImage sponsor={sponsor} className="h-8 w-36" />
-                {sponsor.tagline && (
-                  <span className="text-muted-foreground group-hover:text-foreground/80 text-sm transition-colors">
-                    {sponsor.tagline}
-                  </span>
-                )}
-              </SponsorLink>
-            ))}
-          </div>
+      <div
+        className={cn(
+          "bg-border ring-foreground/10 dark:ring-foreground/5 grid gap-px overflow-hidden rounded-lg shadow-xs ring-1",
+          sponsors.length > 1 &&
+            "sm:grid-cols-2 sm:[&>*:last-child:nth-child(odd)]:col-span-2",
         )}
-        {gold.length > 0 && (
-          <div
-            className={cn(
-              "grid gap-px max-sm:[&>*:last-child:nth-child(odd)]:col-span-2",
-              gold.length > 1 ? "grid-cols-2" : "grid-cols-1",
-              goldColumns[Math.min(gold.length, 4)],
-            )}
+      >
+        {sponsors.map((sponsor) => (
+          <SponsorLink
+            key={sponsor.name}
+            sponsor={sponsor}
+            placement="home"
+            className="bg-background flex h-20 items-center justify-center px-6 transition-colors duration-200 hover:bg-[color-mix(in_oklab,var(--muted)_35%,var(--background))] md:h-24"
           >
-            {gold.map((sponsor) => (
-              <SponsorLink
-                key={sponsor.name}
-                sponsor={sponsor}
-                placement="home"
-                className={cn(stripCellClassName, "h-16 md:h-20")}
-              >
-                <SponsorImage sponsor={sponsor} className="h-6 w-24" />
-              </SponsorLink>
-            ))}
-          </div>
-        )}
+            <SponsorImage sponsor={sponsor} className="h-8 w-36" />
+          </SponsorLink>
+        ))}
       </div>
     </div>
   );
 }
 
 export function DocsSponsors({ className }: { className?: string }) {
-  const { platinum, gold } = getFeaturedSponsors();
-
-  if (!hasFeaturedSponsors()) {
+  if (sponsors.length === 0) {
     return (
       <Link
         href="/sponsors"
@@ -97,51 +58,20 @@ export function DocsSponsors({ className }: { className?: string }) {
     <div className={cn("flex flex-col", className)}>
       <p className="text-muted-foreground mb-3 text-xs font-medium">Sponsors</p>
       <div className="-mx-3 flex flex-col gap-2">
-        {platinum.map((sponsor) => (
+        {sponsors.map((sponsor) => (
           <SponsorLink
             key={sponsor.name}
             sponsor={sponsor}
             placement="docs"
-            className={cn(
-              docsTileClassName,
-              "flex flex-col gap-2 rounded-xl p-3",
-            )}
+            className="bg-muted/60 hover:bg-muted dark:bg-muted/30 dark:hover:bg-muted/50 block rounded-xl p-3 transition-colors"
           >
             <SponsorImage
               sponsor={sponsor}
               className="h-6 w-full"
               imageClassName="object-left"
             />
-            {sponsor.tagline && (
-              <span className="text-muted-foreground group-hover:text-foreground/80 text-xs leading-relaxed transition-colors">
-                {sponsor.tagline}
-              </span>
-            )}
           </SponsorLink>
         ))}
-        {gold.length > 0 && (
-          <div
-            className={cn(
-              "grid grid-cols-2 gap-x-4 gap-y-3 px-3",
-              platinum.length > 0 && "pt-2",
-            )}
-          >
-            {gold.map((sponsor) => (
-              <SponsorLink
-                key={sponsor.name}
-                sponsor={sponsor}
-                placement="docs"
-                className="flex items-center"
-              >
-                <SponsorImage
-                  sponsor={sponsor}
-                  className="h-5 w-full"
-                  imageClassName="object-left"
-                />
-              </SponsorLink>
-            ))}
-          </div>
-        )}
       </div>
       <Link
         href="/sponsors"
@@ -189,16 +119,3 @@ export function SponsorImage({
     </span>
   );
 }
-
-const docsTileClassName =
-  "bg-muted/60 hover:bg-muted dark:bg-muted/30 dark:hover:bg-muted/50 transition-colors";
-
-const stripCellClassName =
-  "bg-background hover:bg-[color-mix(in_oklab,var(--muted)_35%,var(--background))] flex items-center justify-center transition-colors duration-200";
-
-const goldColumns: Record<number, string> = {
-  1: "sm:grid-cols-1",
-  2: "sm:grid-cols-2",
-  3: "sm:grid-cols-3",
-  4: "sm:grid-cols-4",
-};

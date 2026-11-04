@@ -87,8 +87,8 @@ export default function Page() {
               <h3 id="sponsorships">Sponsorships</h3>
               <p>
                 A sponsorship is a monthly placement of your logo and link on
-                mapcn.dev and in the README, depending on the tier. Tiers,
-                prices and what each includes are listed on the{" "}
+                mapcn.dev and in the README. The price, open spots and what it
+                includes are listed on the{" "}
                 <TextLink href="/sponsors">sponsors page</TextLink>.
               </p>
               <p>
@@ -108,11 +108,11 @@ export default function Page() {
               </p>
               <p>
                 We aim to publish approved sponsor assets within three business
-                days after receiving all required materials (your logo, link
-                and, for Platinum, a tagline) and confirming payment. Your logo
-                stays up for as long as your sponsorship is active. Traffic
-                figures on the sponsors page describe past traffic and
-                aren&apos;t a guarantee of future views or clicks.
+                days after receiving all required materials (your logo and link)
+                and confirming payment. Your logo stays up for as long as your
+                sponsorship is active. Traffic figures on the sponsors page
+                describe past traffic and aren&apos;t a guarantee of future
+                views or clicks.
               </p>
               <p>
                 Individual sponsorships through{" "}
@@ -131,8 +131,8 @@ export default function Page() {
 
               <h3>Sponsor content</h3>
               <p>
-                You confirm you have the right to use the logo, name and tagline
-                you send, and you allow us to show them on mapcn.dev and in the
+                You confirm you have the right to use the logo and name you
+                send, and you allow us to show them on mapcn.dev and in the
                 README while your sponsorship is active. Logos are shown in grey
                 to match the site, and in full colour on hover.
               </p>

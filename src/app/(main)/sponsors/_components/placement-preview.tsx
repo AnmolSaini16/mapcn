@@ -15,12 +15,7 @@ export function PlacementPreviews() {
             <placement.preview />
           </div>
           <figcaption className="px-2 pt-3.5 pb-2">
-            <div className="flex items-baseline justify-between gap-4">
-              <h3 className="text-base font-medium">{placement.title}</h3>
-              <span className="text-muted-foreground text-sm">
-                {placement.tiers}
-              </span>
-            </div>
+            <h3 className="text-base font-medium">{placement.title}</h3>
             <p className="text-muted-foreground mt-1 text-sm text-pretty">
               {placement.description}
             </p>
@@ -35,24 +30,22 @@ function HomePreview() {
   return (
     <div className="flex h-full flex-col">
       <div className="flex flex-col items-center gap-2">
-        <Bar className="h-2 w-2/5" />
+        <Heading className="w-2/5" />
         <Bar className="w-1/4" />
+        <div className="mt-1 flex gap-1.5">
+          <div className="bg-foreground/15 h-2.5 w-9 rounded-full" />
+          <div className="bg-muted h-2.5 w-9 rounded-full" />
+        </div>
       </div>
-      <div className="mt-5 grid min-h-0 flex-1 grid-cols-3 gap-2 mask-b-from-30%">
+      <div className="mt-4 grid min-h-0 flex-1 grid-cols-3 gap-2 mask-b-from-30%">
         {Array.from({ length: 3 }, (_, i) => (
-          <div key={i} className="bg-muted rounded-sm" />
+          <div key={i} className="bg-muted rounded-md" />
         ))}
       </div>
-      <div className="mx-auto mt-3 flex w-2/5 flex-col gap-2">
-        <div className="grid grid-cols-2 gap-2">
-          <Slot className="h-2.5" />
-          <Slot className="h-2.5" />
-        </div>
-        <div className="grid grid-cols-4 gap-2">
-          {Array.from({ length: 4 }, (_, i) => (
-            <Slot key={i} className="h-2" />
-          ))}
-        </div>
+      <div className="mx-auto mt-3 grid w-1/2 grid-cols-4 gap-2">
+        {Array.from({ length: 4 }, (_, i) => (
+          <Slot key={i} />
+        ))}
       </div>
     </div>
   );
@@ -62,26 +55,40 @@ function DocsPreview() {
   return (
     <div className="grid h-full grid-cols-[1fr_3fr_1fr] gap-5">
       <div className="flex flex-col gap-2">
-        {Array.from({ length: 5 }, (_, i) => (
-          <Bar key={i} className={i % 2 === 0 ? "w-full" : "w-2/3"} />
-        ))}
-      </div>
-      <div className="flex flex-col gap-2">
-        <Bar className="h-2 w-1/2" />
-        <Bar className="w-5/6" />
-        <div className="bg-muted mt-2 min-h-0 flex-1 rounded-sm mask-b-from-30%" />
-      </div>
-      <div className="flex flex-col gap-2">
+        <Label />
         <Bar className="w-full" />
         <Bar className="w-2/3" />
-        <Slot className="mt-4 h-2.5" />
-        <Slot className="h-2.5" />
-        <div className="grid grid-cols-2 gap-2">
-          <Slot className="h-2" />
-          <Slot className="h-2" />
-        </div>
+        <Label className="mt-2" />
+        <Bar className="w-full" />
+        <Bar className="w-3/4" />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Heading className="w-1/2" />
+        <Bar className="w-5/6" />
+        <Bar className="w-2/3" />
+        <div className="bg-muted mt-2 min-h-0 flex-1 rounded-md mask-b-from-30%" />
+      </div>
+      <div className="flex flex-col gap-2">
+        <Label />
+        <Bar className="w-full" />
+        <Bar className="w-2/3" />
+        <Slot className="mt-3" />
+        <Slot />
+        <Slot />
       </div>
     </div>
+  );
+}
+
+function Heading({ className }: { className?: string }) {
+  return <div className={cn("bg-foreground/15 h-2 rounded-full", className)} />;
+}
+
+function Label({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn("bg-foreground/10 h-1.5 w-1/2 rounded-full", className)}
+    />
   );
 }
 
@@ -90,20 +97,20 @@ function Bar({ className }: { className?: string }) {
 }
 
 function Slot({ className }: { className?: string }) {
-  return <div className={cn("bg-foreground/40 rounded-full", className)} />;
+  return (
+    <div className={cn("bg-foreground/40 h-2.5 rounded-full", className)} />
+  );
 }
 
 const placements = [
   {
     title: "Homepage",
-    tiers: "Platinum · Gold",
     description:
       "Right below the map showcase, seen by everyone exploring mapcn.",
     preview: HomePreview,
   },
   {
     title: "Every docs page",
-    tiers: "Platinum · Gold",
     description:
       "Beside every page developers read, right under the table of contents.",
     preview: DocsPreview,

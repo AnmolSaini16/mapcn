@@ -14,15 +14,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { TextLink } from "@/components/text-link";
 import { Button } from "@/components/ui/button";
-import { checkoutEnabled, githubSponsorsUrl, sponsors } from "@/lib/sponsors";
+import { checkoutEnabled, sponsors } from "@/lib/sponsors";
 import { PlacementPreviews } from "./_components/placement-preview";
 import { SponsorContactButton } from "./_components/sponsor-contact-button";
 import { SponsorCustom } from "./_components/sponsor-custom";
 import { SponsorStats } from "./_components/sponsor-stats";
-import { SponsorTiers } from "./_components/sponsor-tiers";
 import { SponsorWall } from "./_components/sponsor-wall";
+import { SponsorshipCard } from "./_components/sponsorship-card";
 
 export const metadata: Metadata = {
   title: "Sponsor",
@@ -42,7 +41,7 @@ export default function Page() {
           </PageHeaderDescription>
           <PageActions className="max-sm:flex-row max-sm:gap-3">
             <Button asChild size="lg" className="rounded-lg">
-              <Link href="#tiers">See tiers</Link>
+              <Link href="#sponsorship">Become a sponsor</Link>
             </Button>
             <SponsorContactButton
               variant="outline"
@@ -68,17 +67,8 @@ export default function Page() {
               <PlacementPreviews />
             </Section>
 
-            <Section id="tiers" title="Pick a tier">
-              <SponsorTiers />
-              <p className="text-muted-foreground text-center text-sm text-balance">
-                {checkoutEnabled
-                  ? "Billed monthly in USD through Dodo Payments."
-                  : "Billed monthly in USD once your sponsorship is approved."}{" "}
-                Cancel anytime. See the{" "}
-                <TextLink href="/terms#sponsorships">terms</TextLink>.
-                Supporting as an individual?{" "}
-                <TextLink href={githubSponsorsUrl}>Sponsor on GitHub</TextLink>
-              </p>
+            <Section id="sponsorship" title="One sponsorship, every placement">
+              <SponsorshipCard />
             </Section>
 
             <Section id="faq" title="Common questions">
@@ -140,13 +130,13 @@ const faqs = [
   {
     question: "How does booking work?",
     answer: checkoutEnabled
-      ? "Pick a tier with an open slot and pay through Dodo Payments, which handles invoices and tax. You land back on mapcn with a short list of what to send. We review every sponsorship, and if we can't place yours, you get a full refund."
-      : "Pick a tier with an open slot and reserve your spot by email. Once your sponsorship is approved, we send payment instructions and a short list of what to send.",
+      ? "Pick an open spot and pay through Dodo Payments, which handles invoices and tax. You land back on mapcn with a short list of what to send. We review every sponsorship, and if we can't place yours, you get a full refund."
+      : "Reserve an open spot by email. Once your sponsorship is approved, we send payment instructions and a short list of what to send.",
   },
   {
     question: "What do I need to send?",
     answer:
-      "An SVG logo (plus a dark-mode version if it needs one), the link it should point to, and, for Platinum, a one-line tagline. A monochrome logo works best. Colour is fine too: it shows in grey to match the site, and in full colour on hover.",
+      "Your company name exactly as you want it written, an SVG logo (plus a dark-mode version if it needs one), and the link it should point to. A monochrome logo works best. Colour is fine too: it shows in grey to match the site, and in full colour on hover.",
   },
   {
     question: "When does my logo go live?",

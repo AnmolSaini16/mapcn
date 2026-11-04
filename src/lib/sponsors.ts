@@ -5,14 +5,9 @@ export const githubSponsorsUrl = "https://github.com/sponsors/AnmolSaini16";
 export const xProfileUrl = "https://x.com/anmold_s";
 export const dodoCheckoutBase = "https://checkout.dodopayments.com";
 
-export type SponsorTierId = "platinum" | "gold" | "silver";
-
-export interface SponsorTier {
-  id: SponsorTierId;
-  name: string;
+export interface Sponsorship {
   price: number;
-  /** Max concurrent sponsors. Omit for unlimited. */
-  slots?: number;
+  slots: number;
   perks: string[];
   /** Dodo Payments product ID. Falls back to email when unset. */
   productId?: string;
@@ -20,13 +15,11 @@ export interface SponsorTier {
 
 export interface Sponsor {
   name: string;
-  tier: SponsorTierId;
   href: string;
   /** Monochrome SVG in `public/sponsors/`. */
   logo: string;
   /** Optional dark-mode variant of `logo`. */
   logoDark?: string;
-  tagline?: string;
 }
 
 export interface SiteStat {
@@ -34,45 +27,23 @@ export interface SiteStat {
   value: string;
 }
 
-export const sponsorTiers: SponsorTier[] = [
-  {
-    id: "platinum",
-    name: "Platinum",
-    price: 500,
-    slots: 2,
-    productId: "pdt_0NqIeV2hbo0ni9jNeksSH",
-    perks: [
-      "Largest logo on the homepage, below the showcase",
-      "Top logo with tagline on every docs page",
-      "Largest logo on the sponsors page and README",
-      "One-time shoutout on X",
-    ],
-  },
-  {
-    id: "gold",
-    name: "Gold",
-    price: 250,
-    slots: 4,
-    productId: "pdt_0NqIeUdSGqsHQbF9YsPeb",
-    perks: [
-      "Logo on the homepage, below the showcase",
-      "Logo on every docs page",
-      "Logo on the sponsors page and README",
-      "One-time shoutout on X",
-    ],
-  },
-  {
-    id: "silver",
-    name: "Silver",
-    price: 100,
-    productId: "pdt_0NqIeTdQ8DSQrDQyGJW1d",
-    perks: ["Logo on the sponsors page", "Logo in the README"],
-  },
-];
+export const sponsorship: Sponsorship = {
+  price: 249,
+  slots: 4,
+  productId: "pdt_0NrCHKLSFIlwdqu4AKpL4",
+  perks: [
+    "Logo on the homepage, below the showcase",
+    "Logo on every docs page",
+    "Logo on the sponsors page and in the README",
+    "One-time shoutout on X",
+  ],
+};
 
 export const sponsors: Sponsor[] = [];
 
-export const checkoutEnabled = sponsorTiers.some((tier) => tier.productId);
+export const openSlots = Math.max(sponsorship.slots - sponsors.length, 0);
+
+export const checkoutEnabled = Boolean(sponsorship.productId);
 
 /** Rounded down so they stay true without monthly updates. */
 export const pageviewsSinceLaunch = "1M+";
@@ -82,27 +53,6 @@ export const siteStats: SiteStat[] = [
   { label: "Visitors since launch", value: "225K+" },
   { label: "Monthly pageviews", value: "50K+" },
 ];
-
-export function getSponsorsByTier(tier: SponsorTierId) {
-  return sponsors.filter((sponsor) => sponsor.tier === tier);
-}
-
-export function getFeaturedSponsors() {
-  return {
-    platinum: getSponsorsByTier("platinum"),
-    gold: getSponsorsByTier("gold"),
-  };
-}
-
-export function hasFeaturedSponsors() {
-  const { platinum, gold } = getFeaturedSponsors();
-  return platinum.length + gold.length > 0;
-}
-
-export function getOpenSlots(tier: SponsorTier) {
-  if (tier.slots === undefined) return undefined;
-  return Math.max(tier.slots - getSponsorsByTier(tier.id).length, 0);
-}
 
 export function sponsorHref(href: string, placement: string) {
   try {
@@ -116,38 +66,38 @@ export function sponsorHref(href: string, placement: string) {
   }
 }
 
-export function getSponsorTier(id: unknown) {
-  if (typeof id !== "string") return undefined;
-  const tierId = id.split("?")[0];
-  return sponsorTiers.find((tier) => tier.id === tierId);
-}
+export type SponsorAction = ReturnType<typeof getSponsorAction>;
 
-export function getSponsorAction(tier?: SponsorTier) {
-  const checkoutUrl = tier && sponsorCheckoutUrl(tier);
+export const sponsorActionLabels: Record<SponsorAction["kind"], string> = {
+  checkout: "Continue to checkout",
+  waitlist: "Join the waitlist",
+  contact: "Reserve a spot",
+};
+
+export function getSponsorAction() {
+  const checkoutUrl = sponsorCheckoutUrl();
   if (checkoutUrl) return { kind: "checkout", href: checkoutUrl } as const;
-  if (tier && getOpenSlots(tier) === 0) {
-    return { kind: "waitlist", href: sponsorMailto(tier, "waitlist") } as const;
+  if (openSlots === 0) {
+    return { kind: "waitlist", href: sponsorMailto("waitlist") } as const;
   }
-  return { kind: "contact", href: sponsorMailto(tier) } as const;
+  return { kind: "contact", href: sponsorMailto() } as const;
 }
 
-export function sponsorCheckoutUrl(tier: SponsorTier) {
-  if (!tier.productId || getOpenSlots(tier) === 0) return undefined;
+export function sponsorCheckoutUrl() {
+  if (!sponsorship.productId || openSlots === 0) return undefined;
 
-  const redirect = `${siteUrl}/sponsors/thank-you?tier=${tier.id}`;
-  return `${dodoCheckoutBase}/buy/${tier.productId}?quantity=1&redirect_url=${encodeURIComponent(redirect)}`;
+  const redirect = `${siteUrl}/sponsors/thank-you`;
+  return `${dodoCheckoutBase}/buy/${sponsorship.productId}?quantity=1&redirect_url=${encodeURIComponent(redirect)}`;
 }
 
-export function sponsorMailto(tier?: SponsorTier, intent?: "waitlist") {
-  const subject = tier
-    ? `mapcn sponsorship - ${tier.name}${intent ? " waitlist" : ""}`
-    : "mapcn sponsorship";
+export function sponsorMailto(intent?: "waitlist") {
+  const subject = `mapcn sponsorship${intent ? " waitlist" : ""}`;
   const body = [
     "Hi Anmol,",
     "",
-    intent && tier
-      ? `I'd like to join the waitlist for the ${tier.name} tier.`
-      : `I'd like to sponsor mapcn${tier ? ` at the ${tier.name} tier` : ""}.`,
+    intent
+      ? "I'd like to join the sponsorship waitlist."
+      : "I'd like to sponsor mapcn.",
     "",
     "Company:",
     "Website:",
@@ -156,7 +106,6 @@ export function sponsorMailto(tier?: SponsorTier, intent?: "waitlist") {
   return `mailto:${sponsorEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-export function sponsorAssetsMailto(tier?: SponsorTier) {
-  const subject = `mapcn ${tier ? `${tier.name} ` : ""}sponsorship assets`;
-  return `mailto:${sponsorEmail}?subject=${encodeURIComponent(subject)}`;
+export function sponsorAssetsMailto() {
+  return `mailto:${sponsorEmail}?subject=${encodeURIComponent("mapcn sponsorship assets")}`;
 }

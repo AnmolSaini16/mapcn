@@ -2,35 +2,35 @@
 
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/events";
-import { getSponsorAction, type SponsorTier } from "@/lib/sponsors";
+import { sponsorMailto, type SponsorAction } from "@/lib/sponsors";
 
 interface SponsorContactButtonProps extends Omit<
   React.ComponentProps<typeof Button>,
   "asChild" | "onClick"
 > {
-  tier?: SponsorTier;
+  action?: SponsorAction;
 }
 
 export function SponsorContactButton({
-  tier,
+  action,
   children,
   ...props
 }: SponsorContactButtonProps) {
-  const action = getSponsorAction(tier);
+  const { kind, href } = action ?? { kind: "contact", href: sponsorMailto() };
 
   return (
     <Button asChild {...props}>
       <a
-        href={action.href}
-        target={action.kind === "checkout" ? "_blank" : undefined}
-        rel={action.kind === "checkout" ? "noopener noreferrer" : undefined}
+        href={href}
+        target={kind === "checkout" ? "_blank" : undefined}
+        rel={kind === "checkout" ? "noopener noreferrer" : undefined}
         onClick={() =>
           trackEvent({
             name:
-              action.kind === "checkout"
+              kind === "checkout"
                 ? "click_sponsor_checkout"
                 : "click_sponsor_contact",
-            properties: { tier: tier?.id ?? "custom" },
+            properties: { tier: action ? "sponsorship" : "custom" },
           })
         }
       >

@@ -14,11 +14,9 @@ import {
 } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { hasFeaturedSponsors } from "@/lib/sponsors";
+import { sponsors } from "@/lib/sponsors";
 
 export default function Page() {
-  const hasSponsors = hasFeaturedSponsors();
-
   return (
     <>
       <div className="flex-1">
@@ -83,7 +81,7 @@ export default function Page() {
           </p>
         </section>
 
-        {hasSponsors && (
+        {sponsors.length > 0 && (
           <section className="container flex flex-col items-center gap-8 pt-20 pb-28 md:pt-24 md:pb-32">
             <div className="flex flex-col items-center gap-1.5 text-center">
               <h2 className="text-lg font-medium tracking-tight">Backed by</h2>
