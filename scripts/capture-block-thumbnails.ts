@@ -71,7 +71,7 @@ const showcaseMaps: ShowcaseMap[] = [
     name: "logistics-network",
     path: "/view/logistics-network",
     viewport: { width: 1100, height: 600 },
-    zoom: -0.8,
+    zoom: -0.2,
     trim: [0, 70],
   },
 ];
@@ -186,7 +186,8 @@ async function open(page: Page, route: string) {
 }
 
 // Returns a tighter 16:10 viewport for a block centered in the page, so it fills
-// the thumbnail once scaled back up. Page-filling blocks return undefined.
+// the thumbnail once scaled back up, but never narrower than `blockViewport` so
+// small blocks keep the same scale. Page-filling blocks return undefined.
 async function measureBlockFrame(page: Page) {
   const box = await page.evaluate(() => {
     let block = document.querySelector(".maplibregl-map");
@@ -206,6 +207,7 @@ async function measureBlockFrame(page: Page) {
   if (!box) return undefined;
 
   const minWidth = Math.max(
+    blockViewport.width,
     box.width + blockMargin * 2,
     ((box.height + blockMargin * 2) * 8) / 5,
   );

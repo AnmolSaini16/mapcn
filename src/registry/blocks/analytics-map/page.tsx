@@ -79,10 +79,14 @@ export default function Page() {
       </div>
 
       <div className="grid gap-4 p-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <BreakdownCard title="Visited pages" rows={visitedPagesRows} />
-        <BreakdownCard title="Referrers" rows={referrersRows} />
-        <BreakdownCard title="Countries" rows={countriesRows} />
-        <BreakdownCard title="Browsers" rows={browsersRows} />
+        <BreakdownCard
+          title="Visited pages"
+          label="Page"
+          rows={visitedPagesRows}
+        />
+        <BreakdownCard title="Referrers" label="Source" rows={referrersRows} />
+        <BreakdownCard title="Countries" label="Country" rows={countriesRows} />
+        <BreakdownCard title="Browsers" label="Browser" rows={browsersRows} />
       </div>
     </div>
   );

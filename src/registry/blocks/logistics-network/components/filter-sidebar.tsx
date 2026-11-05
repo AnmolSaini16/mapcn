@@ -3,7 +3,6 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -14,23 +13,39 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { Network, Plane, Truck } from "lucide-react";
-import { regionLabels, statusConfig, type Hub, type Route } from "../data";
-
-const regionIcons: Record<Hub["region"], string> = {
-  west: "W",
-  midwest: "MW",
-  south: "S",
-  northeast: "NE",
-};
+import { MapPin, Network, Plane, Truck } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  regionLabels,
+  statusConfig,
+  type Filter,
+  type Hub,
+  type Route,
+} from "../data";
 
 interface FilterSidebarProps {
   hubs: Hub[];
   routes: Route[];
+  visibleRoutes: Route[];
+  hidden: Set<Filter>;
+  onToggle: (filter: Filter) => void;
 }
 
-export function FilterSidebar({ hubs, routes }: FilterSidebarProps) {
-  const totalShipments = routes.reduce((s, r) => s + r.shipments, 0);
+export function FilterSidebar({
+  hubs,
+  routes,
+  visibleRoutes,
+  hidden,
+  onToggle,
+}: FilterSidebarProps) {
+  const totalShipments = visibleRoutes.reduce((s, r) => s + r.shipments, 0);
+  const onTimeShipments = visibleRoutes
+    .filter((r) => r.status === "active")
+    .reduce((s, r) => s + r.shipments, 0);
+  const delayedShipments = totalShipments - onTimeShipments;
+  const onTimeRate = totalShipments
+    ? Math.round((onTimeShipments / totalShipments) * 100)
+    : 0;
   const activeCount = routes.filter((r) => r.status === "active").length;
   const delayedCount = routes.filter((r) => r.status === "delayed").length;
   const airRouteCount = routes.filter((r) => r.mode === "air").length;
@@ -50,55 +65,57 @@ export function FilterSidebar({ hubs, routes }: FilterSidebarProps) {
             </span>
           </div>
         </div>
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          <div className="bg-background rounded-md border px-2.5 py-2 text-center">
-            <p className="text-lg leading-none font-bold tabular-nums">
-              {hubs.length}
-            </p>
-            <p className="text-muted-foreground mt-1 text-[10px]">Hubs</p>
-          </div>
-          <div className="bg-background rounded-md border px-2.5 py-2 text-center">
-            <p className="text-lg leading-none font-bold tabular-nums">
-              {activeCount}
-            </p>
-            <p className="text-muted-foreground mt-1 text-[10px]">Active</p>
-          </div>
-          <div className="bg-background rounded-md border px-2.5 py-2 text-center">
-            <p className="text-lg leading-none font-bold tabular-nums">
-              {delayedCount}
-            </p>
-            <p className="text-muted-foreground mt-1 text-[10px]">Delayed</p>
-          </div>
-        </div>
       </SidebarHeader>
 
       <SidebarSeparator className="mx-0" />
 
       <SidebarContent>
+        <SidebarGroup className="gap-3 px-4 pt-4 pb-2">
+          <dl className="grid grid-cols-2 gap-4">
+            <Stat label="Shipments" value={totalShipments.toLocaleString()} />
+            <Stat label="On time" value={`${onTimeRate}%`} />
+          </dl>
+          <div className="flex h-1 gap-0.5">
+            {(
+              [
+                ["active", onTimeShipments],
+                ["delayed", delayedShipments],
+              ] as const
+            )
+              .filter(([, value]) => value > 0)
+              .map(([status, value]) => (
+                <span
+                  key={status}
+                  className="rounded-full"
+                  style={{
+                    flexGrow: value,
+                    backgroundColor: statusConfig[status].color,
+                  }}
+                />
+              ))}
+          </div>
+        </SidebarGroup>
+
         <SidebarGroup>
           <SidebarGroupLabel>Transport Mode</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  tooltip="Air"
-                  className="pointer-events-none"
-                >
-                  <Plane className="size-4" />
-                  <span>Air Freight</span>
-                </SidebarMenuButton>
-                <SidebarMenuBadge>{airRouteCount}</SidebarMenuBadge>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  tooltip="Ground"
-                  className="pointer-events-none"
-                >
-                  <Truck className="size-4" />
-                  <span>Ground</span>
-                </SidebarMenuButton>
-                <SidebarMenuBadge>{groundRouteCount}</SidebarMenuBadge>
-              </SidebarMenuItem>
+              <FilterItem
+                label="Air Freight"
+                count={airRouteCount}
+                hidden={hidden.has("air")}
+                onToggle={() => onToggle("air")}
+              >
+                <Plane />
+              </FilterItem>
+              <FilterItem
+                label="Ground"
+                count={groundRouteCount}
+                hidden={hidden.has("ground")}
+                onToggle={() => onToggle("ground")}
+              >
+                <Truck />
+              </FilterItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -107,36 +124,22 @@ export function FilterSidebar({ hubs, routes }: FilterSidebarProps) {
           <SidebarGroupLabel>Status</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  tooltip={statusConfig.active.label}
-                  className="pointer-events-none"
+              {(["active", "delayed"] as const).map((status) => (
+                <FilterItem
+                  key={status}
+                  label={statusConfig[status].label}
+                  count={status === "active" ? activeCount : delayedCount}
+                  hidden={hidden.has(status)}
+                  onToggle={() => onToggle(status)}
                 >
                   <span className="flex size-4 items-center justify-center">
                     <span
                       className="size-2 rounded-full"
-                      style={{ backgroundColor: statusConfig.active.color }}
+                      style={{ backgroundColor: statusConfig[status].color }}
                     />
                   </span>
-                  <span>{statusConfig.active.label}</span>
-                </SidebarMenuButton>
-                <SidebarMenuBadge>{activeCount}</SidebarMenuBadge>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  tooltip={statusConfig.delayed.label}
-                  className="pointer-events-none"
-                >
-                  <span className="flex size-4 items-center justify-center">
-                    <span
-                      className="size-2 rounded-full"
-                      style={{ backgroundColor: statusConfig.delayed.color }}
-                    />
-                  </span>
-                  <span>{statusConfig.delayed.label}</span>
-                </SidebarMenuButton>
-                <SidebarMenuBadge>{delayedCount}</SidebarMenuBadge>
-              </SidebarMenuItem>
+                </FilterItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -146,46 +149,57 @@ export function FilterSidebar({ hubs, routes }: FilterSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu>
               {(["west", "midwest", "south", "northeast"] as const).map(
-                (region) => {
-                  const hubsInRegion = hubs.filter((h) => h.region === region);
-                  return (
-                    <SidebarMenuItem key={region}>
-                      <SidebarMenuButton
-                        tooltip={regionLabels[region]}
-                        className="pointer-events-none"
-                      >
-                        <span className="bg-muted text-muted-foreground flex size-4 items-center justify-center rounded text-[9px] font-bold">
-                          {regionIcons[region]}
-                        </span>
-                        <span>{regionLabels[region]}</span>
-                      </SidebarMenuButton>
-                      <SidebarMenuBadge>{hubsInRegion.length}</SidebarMenuBadge>
-                    </SidebarMenuItem>
-                  );
-                },
+                (region) => (
+                  <FilterItem
+                    key={region}
+                    label={regionLabels[region]}
+                    count={hubs.filter((h) => h.region === region).length}
+                    hidden={hidden.has(region)}
+                    onToggle={() => onToggle(region)}
+                  >
+                    <MapPin />
+                  </FilterItem>
+                ),
               )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarFooter className="p-4 pt-0">
-        <p className="text-muted-foreground mb-2 text-[11px] font-medium tracking-wider uppercase">
-          Summary
-        </p>
-        <div className="bg-background space-y-1.5 rounded-md border px-3 py-2 text-xs">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Shipments</span>
-            <span className="font-medium tabular-nums">
-              {totalShipments.toLocaleString()}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Routes</span>
-            <span className="font-medium tabular-nums">{routes.length}</span>
-          </div>
-        </div>
-      </SidebarFooter>
     </Sidebar>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <dt className="text-muted-foreground text-xs">{label}</dt>
+      <dd className="text-lg font-medium tabular-nums">{value}</dd>
+    </div>
+  );
+}
+
+function FilterItem({
+  label,
+  count,
+  hidden,
+  onToggle,
+  children,
+}: {
+  label: string;
+  count: number;
+  hidden: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <SidebarMenuItem
+      className={cn("transition-opacity", hidden && "opacity-50")}
+    >
+      <SidebarMenuButton aria-pressed={!hidden} onClick={onToggle}>
+        {children}
+        <span>{label}</span>
+      </SidebarMenuButton>
+      <SidebarMenuBadge>{count}</SidebarMenuBadge>
+    </SidebarMenuItem>
   );
 }

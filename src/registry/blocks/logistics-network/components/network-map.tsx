@@ -12,6 +12,7 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
   modeConfig,
+  networkBounds,
   regionLabels,
   statusConfig,
   type Hub,
@@ -88,7 +89,13 @@ export function NetworkMap({ hubs, routes }: NetworkMapProps) {
     <div className="relative h-full">
       <MapControlsCard />
 
-      <Map center={[-98, 39]} zoom={4} projection={{ type: "globe" }}>
+      <Map
+        bounds={networkBounds}
+        fitBoundsOptions={{
+          padding: { top: 80, bottom: 40, left: 40, right: 40 },
+        }}
+        projection={{ type: "globe" }}
+      >
         <MapControls />
         <MapArc
           data={arcs}

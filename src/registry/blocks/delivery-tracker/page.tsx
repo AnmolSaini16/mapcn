@@ -27,13 +27,13 @@ import {
 } from "./data";
 
 function formatDistance(meters?: number) {
-  if (!meters) return "--";
+  if (meters === undefined) return "--";
   if (meters < 1000) return `${Math.round(meters)} m`;
   return `${(meters / 1000).toFixed(1)} km`;
 }
 
 function formatDuration(seconds?: number) {
-  if (!seconds) return "--";
+  if (seconds === undefined) return "--";
   const minutes = Math.round(seconds / 60);
   if (minutes < 60) return `${minutes} min`;
   const hours = Math.floor(minutes / 60);
@@ -49,6 +49,12 @@ export default function Page() {
     resolvedTheme === "dark"
       ? routeStyle.remaining.color.dark
       : routeStyle.remaining.color.light;
+  const remainingDuration = routeData
+    ? routeData.duration * (1 - progressFraction)
+    : undefined;
+  const remainingDistance = routeData
+    ? routeData.distance * (1 - progressFraction)
+    : undefined;
 
   useEffect(() => {
     async function fetchRoute() {
@@ -82,7 +88,9 @@ export default function Page() {
             <h3 className="text-2xl font-semibold tracking-tight">
               Track Delivery
             </h3>
-            <p className="text-muted-foreground text-sm">Mon Feb 10 - 2-3 PM</p>
+            <p className="text-muted-foreground text-sm">
+              Mon, Feb 10 · 2–3 PM
+            </p>
           </div>
 
           <Card className="mt-5">
@@ -134,11 +142,10 @@ export default function Page() {
                 <p className="text-muted-foreground text-sm">
                   Remaining travel
                 </p>
-                <p className="text-sm font-medium">
-                  {formatDuration(routeData?.duration)}
+                <p className="flex items-baseline gap-1.5 text-sm font-medium">
+                  {formatDuration(remainingDuration)}
                   <span className="text-muted-foreground font-normal">
-                    {" · "}
-                    {formatDistance(routeData?.distance)}
+                    {formatDistance(remainingDistance)}
                   </span>
                 </p>
               </CardContent>
@@ -157,11 +164,11 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="relative h-[450px] overflow-hidden rounded-xl shadow-sm md:h-full">
+        <div className="relative h-[450px] overflow-hidden rounded-xl shadow-sm max-md:order-first md:h-full">
           <Map
             loading={loading}
-            center={mapView.center}
-            zoom={mapView.zoom}
+            bounds={mapView.bounds}
+            fitBoundsOptions={{ padding: mapView.padding }}
             minZoom={mapView.minZoom}
             maxZoom={mapView.maxZoom}
           >
@@ -188,7 +195,7 @@ export default function Page() {
                   >
                     <Truck className="size-4 text-white" />
                     <div className="bg-popover text-popover-foreground absolute bottom-full left-1/2 mb-2.5 -translate-x-1/2 rounded-md border px-2 py-1 text-xs font-medium whitespace-nowrap shadow-md">
-                      {formatDuration(routeData?.duration)} away
+                      {formatDuration(remainingDuration)} away
                       <span className="bg-popover absolute top-full left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rotate-45 border-r border-b" />
                     </div>
                   </div>

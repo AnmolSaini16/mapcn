@@ -20,10 +20,13 @@ export const deliveryMeals: DeliveryMeal[] = [
 export const pickup = { lng: -122.4185, lat: 37.7645 };
 export const dropoff = { lng: -122.434, lat: 37.7475 };
 
-/** Initial map viewport. */
+/** Initial map viewport, fitted around pickup and dropoff. */
 export const mapView = {
-  center: [-122.4263, 37.756] as [number, number],
-  zoom: 13.6,
+  bounds: [
+    [dropoff.lng, dropoff.lat],
+    [pickup.lng, pickup.lat],
+  ] as [[number, number], [number, number]],
+  padding: 72,
   minZoom: 12,
   maxZoom: 15,
 };

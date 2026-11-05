@@ -65,7 +65,7 @@ export function OverviewCard() {
           <span className="text-muted-foreground">vs previous 30 days</span>
         </div>
 
-        <div className="border-border/60 mt-4 border-t pt-4">
+        <div className="border-border/60 mt-4 border-t pt-4 max-md:hidden">
           <p className="text-muted-foreground text-[10px] tracking-wider uppercase">
             Device category in last 30 days
           </p>

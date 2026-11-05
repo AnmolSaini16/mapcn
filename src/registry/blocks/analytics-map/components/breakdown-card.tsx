@@ -5,10 +5,11 @@ import { type BreakdownRow } from "../data";
 
 interface BreakdownCardProps {
   title: string;
+  label: string;
   rows: BreakdownRow[];
 }
 
-export function BreakdownCard({ title, rows }: BreakdownCardProps) {
+export function BreakdownCard({ title, label, rows }: BreakdownCardProps) {
   const maxRowValue =
     rows.length > 0 ? Math.max(...rows.map((row) => row.value)) : 0;
 
@@ -20,7 +21,7 @@ export function BreakdownCard({ title, rows }: BreakdownCardProps) {
 
       <CardContent>
         <div className="text-muted-foreground mb-2 flex items-center justify-between text-[11px] tracking-wider uppercase">
-          <span>{title}</span>
+          <span>{label}</span>
           <span>Visitors</span>
         </div>
         <div className="space-y-1.5">
