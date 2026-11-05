@@ -17,14 +17,14 @@ export const deliveryMeals: DeliveryMeal[] = [
 ];
 
 /** Pickup (origin) and dropoff (destination) coordinates. */
-export const pickup = { lng: -122.4185, lat: 37.7645 };
-export const dropoff = { lng: -122.434, lat: 37.7475 };
+export const pickup = { lng: -73.9445, lat: 40.6885 };
+export const dropoff = { lng: -73.959, lat: 40.685 };
 
 /** Initial map viewport, fitted around pickup and dropoff. */
 export const mapView = {
   bounds: [
-    [dropoff.lng, dropoff.lat],
-    [pickup.lng, pickup.lat],
+    [Math.min(pickup.lng, dropoff.lng), Math.min(pickup.lat, dropoff.lat)],
+    [Math.max(pickup.lng, dropoff.lng), Math.max(pickup.lat, dropoff.lat)],
   ] as [[number, number], [number, number]],
   padding: 72,
   minZoom: 12,
@@ -32,7 +32,7 @@ export const mapView = {
 };
 
 /** Fraction of the route the courier has already covered (0–1). */
-export const progressFraction = 0.62;
+export const progressFraction = 0.45;
 
 /**
  * OSRM demo routing endpoint. Swap in your own routing service by returning a
@@ -55,6 +55,6 @@ export const routeStyle = {
   remaining: {
     width: 5.2,
     opacity: 0.5,
-    color: { light: "#6b7280", dark: "#9ca3af" },
+    color: { light: "#6b7280", dark: "#e5e7eb" },
   },
 } as const;

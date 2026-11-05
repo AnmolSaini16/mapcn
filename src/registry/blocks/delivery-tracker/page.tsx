@@ -187,7 +187,7 @@ export default function Page() {
                 opacity={routeStyle.progress.opacity}
               />
 
-              <RouteMarker at="progress" offset={[0, 10]}>
+              <RouteMarker at="progress">
                 <MarkerContent>
                   <div
                     className="relative grid size-9 place-items-center rounded-full shadow-md"

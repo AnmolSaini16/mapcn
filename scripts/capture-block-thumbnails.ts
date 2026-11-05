@@ -49,7 +49,7 @@ const showcaseMaps: ShowcaseMap[] = [
   {
     name: "delivery-tracker",
     path: "/view/delivery-tracker",
-    zoom: -0.55,
+    zoom: -0.25,
     trim: [90, 95],
   },
   { name: "uptime-monitor", path: "/view/uptime-monitor", trim: [25, 65] },
