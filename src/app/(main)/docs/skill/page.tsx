@@ -4,7 +4,6 @@ import { DocsCode, DocsLayout, DocsSection } from "../_components/docs";
 import { TextLink } from "@/components/text-link";
 import { CodeBlock } from "../_components/code-block";
 import { InstallCommand } from "../_components/install-command";
-import { CodeCopyButton } from "@/components/code-copy-button";
 import { githubRepoUrl } from "@/lib/site-navigation";
 
 export const metadata: Metadata = {
@@ -69,23 +68,11 @@ export default function SkillPage() {
       </DocsSection>
 
       <DocsSection title="Try asking">
-        <div className="bg-surface overflow-hidden rounded-lg">
-          <ul className="divide-y">
-            {examplePrompts.map((prompt) => (
-              <li
-                key={prompt}
-                className="group flex items-center justify-between gap-4 py-2.5 pr-2.5 pl-4"
-              >
-                <span>{prompt}</span>
-                <CodeCopyButton
-                  text={prompt}
-                  label="Copy prompt"
-                  className="shrink-0 bg-transparent opacity-0 group-hover:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100"
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
+        <ul>
+          {examplePrompts.map((prompt) => (
+            <li key={prompt}>&ldquo;{prompt}&rdquo;</li>
+          ))}
+        </ul>
       </DocsSection>
 
       <DocsSection title="What's inside">

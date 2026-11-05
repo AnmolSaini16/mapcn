@@ -20,7 +20,7 @@ export default function Page() {
   return (
     <>
       <div className="flex-1">
-        <PageHeader animated className="pt-7 md:pt-12 lg:pt-18">
+        <PageHeader animated className="pt-7 pb-12 md:pt-12 md:pb-14 lg:pt-16">
           <Badge
             asChild
             variant="secondary"
