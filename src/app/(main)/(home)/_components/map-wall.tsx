@@ -90,7 +90,7 @@ const RAIL_OFFSETS = [3, 6];
 const MAIN: TileName[][] = [
   ["analytics-map", "route-alternatives", "heatmap", "analytics-card"],
   ["logistics-network", "choropleth", "clusters", "route-alternatives"],
-  ["store-locator", "globe", "delivery-tracker", "uptime-monitor"],
+  ["delivery-tracker", "globe", "store-locator", "uptime-monitor"],
 ];
 
 // Ordered left to right, so the outer column of the left rail comes first.
