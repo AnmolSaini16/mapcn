@@ -17,7 +17,7 @@ export function SponsorLink({
 }) {
   return (
     <a
-      href={sponsorHref(sponsor.href, placement)}
+      href={sponsorHref(sponsor.href)}
       target="_blank"
       rel="sponsored noopener"
       aria-label={sponsor.name}

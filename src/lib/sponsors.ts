@@ -39,7 +39,14 @@ export const sponsorship: Sponsorship = {
   ],
 };
 
-export const sponsors: Sponsor[] = [];
+export const sponsors: Sponsor[] = [
+  {
+    name: "UIAble",
+    href: "https://links.codedthemes.com/DNWBc",
+    logo: "/sponsors/uiable.svg",
+    logoDark: "/sponsors/uiable-dark.svg",
+  },
+];
 
 export const openSlots = Math.max(sponsorship.slots - sponsors.length, 0);
 
@@ -54,12 +61,10 @@ export const siteStats: SiteStat[] = [
   { label: "Monthly pageviews", value: "50K+" },
 ];
 
-export function sponsorHref(href: string, placement: string) {
+export function sponsorHref(href: string) {
   try {
     const url = new URL(href);
     url.searchParams.set("ref", "mapcn.dev");
-    url.searchParams.set("utm_source", "mapcn.dev");
-    url.searchParams.set("utm_medium", placement);
     return url.toString();
   } catch {
     return href;

@@ -22,7 +22,6 @@ export function SponsorWall() {
         <Link
           key={i}
           href="#sponsorship"
-          aria-label="Sponsor mapcn"
           className="text-muted-foreground hover:text-foreground ring-foreground/10 hover:bg-muted/30 flex h-24 items-center justify-center gap-1.5 rounded-xl text-sm ring-1 transition-colors ring-inset"
         >
           <Plus className="size-3.5" />

@@ -14,7 +14,7 @@ import {
 } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { sponsors } from "@/lib/sponsors";
+import { openSlots, sponsors } from "@/lib/sponsors";
 
 export default function Page() {
   return (
@@ -89,13 +89,15 @@ export default function Page() {
               </p>
             </div>
             <SponsorStrip />
-            <Link
-              href="/sponsors"
-              className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm transition-colors"
-            >
-              Become a sponsor
-              <ChevronRight className="size-3.5" />
-            </Link>
+            {openSlots === 0 && (
+              <Link
+                href="/sponsors"
+                className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm transition-colors"
+              >
+                Become a sponsor
+                <ChevronRight className="size-3.5" />
+              </Link>
+            )}
           </section>
         )}
       </div>

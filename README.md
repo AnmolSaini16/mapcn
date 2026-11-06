@@ -28,14 +28,14 @@
 
 ## Features
 
-- 🎨 **Theme-aware** — Automatically adapts to light/dark mode
-- 🎯 **Zero config** — Works out of the box with sensible defaults
-- 📦 **shadcn/ui compatible** — Uses the same patterns and styling conventions
-- 🗺️ **MapLibre GL powered** — Full access to MapLibre's powerful mapping capabilities
-- 🧩 **Composable** — Build complex map UIs with simple, declarative components
-- 📍 **Markers & Popups** — Rich marker system with popups, tooltips, and labels
-- 🛤️ **Routes** — Draw routes and paths on your maps
-- 🎮 **Controls** — Zoom, compass, locate, and fullscreen controls
+- **Theme-aware** — Automatically adapts to light/dark mode
+- **Zero config** — Works out of the box with sensible defaults
+- **shadcn/ui compatible** — Uses the same patterns and styling conventions
+- **MapLibre GL powered** — Full access to MapLibre's powerful mapping capabilities
+- **Composable** — Build complex map UIs with simple, declarative components
+- **Markers & Popups** — Rich marker system with popups, tooltips, and labels
+- **Routes** — Draw routes and paths on your maps
+- **Controls** — Zoom, compass, locate, and fullscreen controls
 
 ## Agent Skill
 
@@ -46,6 +46,22 @@ npx skills add AnmolSaini16/mapcn
 ```
 
 Then ask for a map, or ask where one would fit in your app. See [mapcn.dev/docs/skill](https://mapcn.dev/docs/skill).
+
+## Sponsors
+
+mapcn is free and open source, supported by sponsors.
+[Become a sponsor](https://mapcn.dev/sponsors).
+
+<p>
+  <a href="https://links.codedthemes.com/Bcozd" rel="sponsored">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="public/sponsors/uiable-dark.svg" />
+      <img src="public/sponsors/uiable.svg" alt="UIAble" height="40" />
+    </picture>
+  </a>
+</p>
+
+**[UIAble](https://links.codedthemes.com/Bcozd)** by CodedThemes — Get 50% off with code `MAP50` until December 5, 2026.
 
 ## Basemap Terms of Service
 
@@ -61,10 +77,6 @@ CARTO offers free tiers for commercial and non-commercial usage, subject to mont
 For production applications, review [CARTO's terms](https://carto.com/legal/basemap-terms/) and configure your own basemap provider or API key as needed.
 
 mapcn is built on MapLibre and supports alternative MapLibre-compatible basemap providers.
-
-## Sponsors
-
-mapcn is free and open source, kept going by its sponsors. Want your logo here? See [mapcn.dev/sponsors](https://mapcn.dev/sponsors).
 
 ## Contributing
 
