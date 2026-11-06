@@ -55,6 +55,14 @@ const showcaseMaps: ShowcaseMap[] = [
   { name: "uptime-monitor", path: "/view/uptime-monitor", trim: [25, 65] },
   { name: "analytics-map", path: "/view/analytics-map" },
   {
+    name: "store-locator",
+    path: "/view/store-locator",
+    viewport: { width: 860, height: 560 },
+    zoom: -0.9,
+    pan: [-40, -50],
+    trim: [110, 110],
+  },
+  {
     name: "choropleth",
     path: "/view/choropleth",
     viewport: blockViewport,
