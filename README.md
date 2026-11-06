@@ -52,16 +52,20 @@ Then ask for a map, or ask where one would fit in your app. See [mapcn.dev/docs/
 mapcn is free and open source, supported by sponsors.
 [Become a sponsor](https://mapcn.dev/sponsors).
 
-<p>
+<table>
+<tr>
+<td align="center" width="340">
   <a href="https://links.codedthemes.com/Bcozd" rel="sponsored">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="public/sponsors/uiable-dark.svg" />
-      <img src="public/sponsors/uiable.svg" alt="UIAble" height="40" />
+      <img src="public/sponsors/uiable.svg" alt="UIAble" width="200" />
     </picture>
   </a>
-</p>
-
-**[UIAble](https://links.codedthemes.com/Bcozd)** by CodedThemes — Get 50% off with code `MAP50` until December 5, 2026.
+  <br />
+  <sub>50% off with code <code>MAP50</code> until December 5, 2026</sub>
+</td>
+</tr>
+</table>
 
 ## Basemap Terms of Service
 

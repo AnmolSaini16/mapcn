@@ -52,7 +52,7 @@ export function DocsSponsors({ className }: { className?: string }) {
       <Link
         href="/sponsors"
         className={cn(
-          "bg-muted/60 hover:bg-muted dark:bg-muted/30 dark:hover:bg-muted/50 -ml-3 block rounded-xl px-3 py-3 transition-colors",
+          "bg-muted/60 hover:bg-muted dark:bg-muted/30 dark:hover:bg-muted/50 -ml-3 block rounded-xl px-3 py-3 transition-colors focus-visible:-outline-offset-2",
           className,
         )}
       >
@@ -73,7 +73,7 @@ export function DocsSponsors({ className }: { className?: string }) {
             key={sponsor.name}
             sponsor={sponsor}
             placement="docs"
-            className="bg-muted/60 hover:bg-muted dark:bg-muted/30 dark:hover:bg-muted/50 block rounded-xl px-3 py-3.5 transition-colors"
+            className="bg-muted/60 hover:bg-muted dark:bg-muted/30 dark:hover:bg-muted/50 block rounded-xl px-3 py-3.5 transition-colors focus-visible:-outline-offset-2"
           >
             <SponsorImage
               sponsor={sponsor}
