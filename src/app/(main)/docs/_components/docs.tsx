@@ -36,7 +36,7 @@ interface DocsTitleProps {
 function DocsTitle({ title, description, action }: DocsTitleProps) {
   return (
     <div className="space-y-2">
-      <div className="flex items-baseline justify-between gap-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-3">
         <h1 className="text-foreground text-3xl font-semibold tracking-tight">
           {title}
         </h1>
@@ -97,7 +97,7 @@ export function DocsLayout({
 
   return (
     <div className="flex min-w-0 flex-1">
-      <div className="mx-auto flex max-w-[52rem] min-w-0 flex-1 flex-col pt-10 pb-20 lg:px-12 lg:pt-12">
+      <div className="mx-auto flex max-w-[50rem] min-w-0 flex-1 flex-col pt-10 pb-20 lg:px-12 lg:pt-12">
         <DocsTitle title={title} description={description} action={action} />
         <div className="mt-12 mb-12 space-y-14 [&>*:has(+[data-slot=docs-note])]:mb-6">
           {children}

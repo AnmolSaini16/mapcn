@@ -47,7 +47,7 @@ export default function Page() {
         </PageHeader>
 
         <section
-          className="animate-fade-up animate-stagger relative"
+          className="animate-fade-up animate-stagger"
           style={
             {
               "--stagger": 4.5,
@@ -57,37 +57,13 @@ export default function Page() {
           <div className="relative h-[34rem] overflow-hidden mask-b-from-65% max-md:mask-r-from-85% max-md:mask-l-from-85% md:h-[44rem] lg:h-[clamp(52rem,calc(100svh-28.5rem),90rem)]">
             <MapWall className="pt-6" />
           </div>
-
-          <p className="text-muted-foreground absolute inset-x-0 bottom-4 container text-right text-xs">
-            Map data ©{" "}
-            <a
-              href="https://www.openstreetmap.org/copyright"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-foreground transition-colors"
-            >
-              OpenStreetMap
-            </a>{" "}
-            contributors · ©{" "}
-            <a
-              href="https://carto.com/attributions"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-foreground transition-colors"
-            >
-              CARTO
-            </a>
-          </p>
         </section>
 
         {sponsors.length > 0 && (
-          <section className="container flex flex-col items-center gap-8 pt-20 pb-28 md:pt-24 md:pb-32">
-            <div className="flex flex-col items-center gap-1.5 text-center">
-              <h2 className="text-lg font-medium tracking-tight">Backed by</h2>
-              <p className="text-muted-foreground max-w-sm text-sm text-balance">
-                Thanks to the teams keeping mapcn free and open source.
-              </p>
-            </div>
+          <section className="container flex flex-col items-center gap-6 pt-16 pb-24 md:pt-20 md:pb-28">
+            <h2 className="text-muted-foreground text-center text-sm text-balance">
+              Backed by the teams keeping mapcn free and open source
+            </h2>
             <SponsorStrip />
             {openSlots === 0 && (
               <Link

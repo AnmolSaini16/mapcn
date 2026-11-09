@@ -27,14 +27,14 @@ export function ComponentPreviewClient({
 
   return (
     <div
-      className={cn("w-full overflow-hidden rounded-lg border", className)}
+      className={cn("bg-code overflow-hidden rounded-lg lg:-mx-4", className)}
       style={{ "--preview-height": height } as React.CSSProperties}
     >
-      <div className="h-(--preview-height) w-full overflow-hidden">
+      <div className="bg-background h-(--preview-height) overflow-hidden rounded-lg border *:h-full!">
         {children}
       </div>
 
-      <div className="relative w-full overflow-hidden border-t">
+      <div className="relative">
         <div className="absolute top-2 right-2 z-10">
           <CodeCopyButton text={code} />
         </div>
@@ -48,10 +48,10 @@ export function ComponentPreviewClient({
           html={highlightedCode}
         />
         {!expanded && (
-          <div className="from-surface to-surface/0 pointer-events-none absolute inset-x-0 bottom-0 flex w-full items-center justify-center bg-linear-to-t pt-12 pb-3">
+          <div className="from-surface to-surface/0 pointer-events-none absolute inset-x-0 bottom-0 flex w-full items-center justify-center bg-linear-to-t pt-12 pb-4">
             <Button
               variant="outline"
-              size="sm"
+              size="xs"
               onClick={() => setExpanded(true)}
               aria-expanded={expanded}
               aria-controls={codeId}

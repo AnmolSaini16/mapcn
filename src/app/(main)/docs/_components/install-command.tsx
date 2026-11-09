@@ -43,18 +43,15 @@ export function InstallCommand({
   };
 
   return (
-    <div className="bg-surface relative w-full overflow-hidden rounded-lg">
-      <Tabs value={active} onValueChange={setActive} className="gap-0">
-        <div className="flex items-center justify-between border-b pr-2 pl-[5px]">
-          <TabsList
-            variant="line"
-            className="h-10 bg-transparent group-data-[orientation=horizontal]/tabs:h-10"
-          >
+    <div className="bg-muted/50 ring-foreground/5 dark:bg-muted/30 w-full rounded-xl p-1 ring-1">
+      <Tabs value={active} onValueChange={setActive} className="gap-1">
+        <div className="flex items-center justify-between p-0.5">
+          <TabsList className="h-8 gap-0.5 bg-transparent p-0 group-data-[orientation=horizontal]/tabs:h-8">
             {tabs.map((tab) => (
               <TabsTrigger
                 key={tab.manager}
                 value={tab.manager}
-                className="font-mono text-xs"
+                className="h-7 flex-none px-2.5 font-mono text-xs"
               >
                 {tab.manager}
               </TabsTrigger>
@@ -72,7 +69,7 @@ export function InstallCommand({
         </div>
         {tabs.map((tab) => (
           <TabsContent key={tab.manager} value={tab.manager}>
-            <pre className="overflow-x-auto p-4 text-sm">
+            <pre className="bg-background ring-foreground/5 overflow-x-auto rounded-lg p-4 text-sm shadow-xs ring-1">
               <code className="font-mono" data-language="bash">
                 {tab.command}
               </code>

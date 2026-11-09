@@ -6,7 +6,7 @@ import { Map, type MapViewport } from "@/registry/map";
 export function ControlledMapExample() {
   const [viewport, setViewport] = useState<MapViewport>({
     center: [-74.006, 40.7128],
-    zoom: 8,
+    zoom: 7,
     bearing: 0,
     pitch: 0,
   });

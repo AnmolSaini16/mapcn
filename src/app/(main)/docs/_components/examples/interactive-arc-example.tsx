@@ -117,7 +117,7 @@ export function InteractiveArcExample() {
 
   return (
     <div className="relative h-[420px] w-full">
-      <Map center={[20, 20]} zoom={0.8}>
+      <Map center={[20, 20]} zoom={0.6}>
         <MapArc<Lane>
           data={lanes}
           paint={{

@@ -145,9 +145,29 @@ export function Footer({ className }: { className?: string }) {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-muted-foreground text-xs">
-            © {new Date().getFullYear()} mapcn. All rights reserved.
-          </p>
+          <div className="text-muted-foreground flex flex-col gap-1.5 text-xs">
+            <p>© {new Date().getFullYear()} mapcn. All rights reserved.</p>
+            <p>
+              Map data ©{" "}
+              <a
+                href="https://www.openstreetmap.org/copyright"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground transition-colors"
+              >
+                OpenStreetMap
+              </a>{" "}
+              contributors · ©{" "}
+              <a
+                href="https://carto.com/attributions"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground transition-colors"
+              >
+                CARTO
+              </a>
+            </p>
+          </div>
           <nav aria-label="Legal" className="flex items-center gap-4 text-xs">
             {legalLinks.map((link) => (
               <Link

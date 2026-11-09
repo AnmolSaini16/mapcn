@@ -31,7 +31,7 @@ export function AgentPrompt() {
       ) : (
         <Copy className="size-3.5" />
       )}
-      {getCopyLabel(status, "Copy prompt")}
+      {getCopyLabel(status, "Copy agent prompt")}
     </Button>
   );
 }
