@@ -27,7 +27,7 @@ export function ComponentPreviewClient({
 
   return (
     <div
-      className={cn("bg-code overflow-hidden rounded-lg lg:-mx-4", className)}
+      className={cn("bg-code overflow-hidden rounded-lg lg:-mx-3", className)}
       style={{ "--preview-height": height } as React.CSSProperties}
     >
       <div className="bg-background h-(--preview-height) overflow-hidden rounded-lg border *:h-full!">

@@ -109,7 +109,7 @@ export function DocsLayout({
                 variant="ghost"
                 size="sm"
                 asChild
-                className="-ml-2 h-auto py-2"
+                className="-ml-3 h-auto py-2"
               >
                 <Link href={prev.href}>
                   <ChevronLeft /> {prev.title}
@@ -123,7 +123,7 @@ export function DocsLayout({
                 variant="ghost"
                 size="sm"
                 asChild
-                className="-mr-2 h-auto py-2"
+                className="-mr-3 h-auto py-2"
               >
                 <Link href={next.href}>
                   {next.title} <ChevronRight />

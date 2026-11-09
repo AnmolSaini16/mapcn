@@ -73,11 +73,11 @@ export function DocsSponsors({ className }: { className?: string }) {
             key={sponsor.name}
             sponsor={sponsor}
             placement="docs"
-            className="bg-muted/60 hover:bg-muted dark:bg-muted/30 dark:hover:bg-muted/50 block rounded-xl px-3 py-3.5 transition-colors focus-visible:-outline-offset-2"
+            className="bg-muted/60 hover:bg-muted dark:bg-muted/30 dark:hover:bg-muted/50 block rounded-xl px-3 py-3 transition-colors focus-visible:-outline-offset-2"
           >
             <SponsorImage
               sponsor={sponsor}
-              className="h-7.5 w-full"
+              className="h-7 w-full"
               imageClassName="object-left"
             />
           </SponsorLink>
