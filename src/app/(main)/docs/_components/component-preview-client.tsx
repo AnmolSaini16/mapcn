@@ -55,7 +55,7 @@ export function ComponentPreviewClient({
               onClick={() => setExpanded(true)}
               aria-expanded={expanded}
               aria-controls={codeId}
-              className="dark:bg-background dark:hover:bg-muted pointer-events-auto h-7 px-2.5 text-[13px]"
+              className="dark:bg-background dark:hover:bg-muted pointer-events-auto"
             >
               View Code
             </Button>
