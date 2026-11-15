@@ -27,7 +27,7 @@ export function ComponentPreviewClient({
 
   return (
     <div
-      className={cn("bg-code overflow-hidden rounded-lg lg:-mx-3", className)}
+      className={cn("bg-code overflow-hidden rounded-lg", className)}
       style={{ "--preview-height": height } as React.CSSProperties}
     >
       <div className="bg-background h-(--preview-height) overflow-hidden rounded-lg border *:h-full!">
@@ -51,11 +51,11 @@ export function ComponentPreviewClient({
           <div className="from-surface to-surface/0 pointer-events-none absolute inset-x-0 bottom-0 flex w-full items-center justify-center bg-linear-to-t pt-12 pb-4">
             <Button
               variant="outline"
-              size="xs"
+              size="sm"
               onClick={() => setExpanded(true)}
               aria-expanded={expanded}
               aria-controls={codeId}
-              className="dark:bg-background dark:hover:bg-muted pointer-events-auto"
+              className="dark:bg-background dark:hover:bg-muted pointer-events-auto h-7 px-2.5 text-[13px]"
             >
               View Code
             </Button>
