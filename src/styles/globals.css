@@ -163,10 +163,6 @@
   @apply mx-auto max-w-[1500px] px-6;
 }
 
-.container-wide {
-  @apply mx-auto max-w-[1650px] px-6;
-}
-
 @keyframes fade-up {
   from {
     opacity: 0;
